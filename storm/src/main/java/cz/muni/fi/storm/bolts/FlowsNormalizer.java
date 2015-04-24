@@ -6,6 +6,9 @@ import backtype.storm.topology.base.BaseBasicBolt;
 import backtype.storm.tuple.Fields;
 import backtype.storm.tuple.Tuple;
 import backtype.storm.tuple.Values;
+import org.json.simple.JSONObject;
+import org.json.simple.parser.JSONParser;
+import org.json.simple.parser.ParseException;
 
 /**
  *
@@ -18,17 +21,16 @@ public class FlowsNormalizer extends BaseBasicBolt {
     
     @Override
     public void execute(Tuple input, BasicOutputCollector collector) {
-        //TODO
-        /*
-        String sentence = input.getString(0);
-        String[] words = sentence.split(" ");
-        for (String word : words) {
-            word = word.trim();
-            if (!word.isEmpty()) {
-                word = word.toLowerCase();
-                collector.emit(new Values(word));
+        try {
+            String line = input.getString(0);
+            JSONParser jsonParser = new JSONParser();
+            JSONObject flow = (JSONObject) jsonParser.parse(line);
+            if (!flow.get("src_ip_addr").toString().isEmpty()) {
+                collector.emit(new Values(flow.toJSONString()));
             }
-        }*/
+        } catch (ParseException e) {
+            e.printStackTrace();
+        }
     }
     
     @Override

@@ -5,6 +5,7 @@ import backtype.storm.LocalCluster;
 import backtype.storm.topology.TopologyBuilder;
 import backtype.storm.tuple.Fields;
 import cz.muni.fi.storm.bolts.FlowsNormalizer;
+import cz.muni.fi.storm.bolts.PacketCounter;
 import cz.muni.fi.storm.spouts.FlowsReader;
 
 
@@ -16,10 +17,13 @@ public class TopologyMain {
         builder.setSpout("flows-reader", new FlowsReader());
         builder.setBolt("flows-normalizer", new FlowsNormalizer())
                 .fieldsGrouping("flows-reader", new Fields("line"));
+        builder.setBolt("packet-counter", new PacketCounter())
+                .fieldsGrouping("flows-normalizer", new Fields("flow"));
 
         /* Configuration */
         Config conf = new Config();
-        conf.put("flowsFile", args[0]);
+        //conf.put("flowsFile", "/home/radozaj/NetBeansProjects/storm-book-examples-ch02-getting_started-8e42636/target/classes/words.txt");
+        conf.put("flowsFile", "/mnt/data/radozaj/Masarykova univerzita/Magisterske studium/diplomovka/out");
         conf.setDebug(false);
 
         /* Topology run */

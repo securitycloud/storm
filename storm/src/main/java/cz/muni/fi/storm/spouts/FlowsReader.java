@@ -66,7 +66,7 @@ public class FlowsReader extends BaseRichSpout {
     @Override
     public void open(Map conf, TopologyContext context, SpoutOutputCollector collector) {
         try {
-            this.fileReader = new FileReader(conf.get("wordsFile").toString());
+            this.fileReader = new FileReader(conf.get("flowsFile").toString());
         } catch (FileNotFoundException e) {
             throw new RuntimeException("Error reading file [" + conf.get("wordFile") + "]");
         }
