@@ -1,7 +1,9 @@
 package cz.muni.fi.storm;
 
 import backtype.storm.Config;
-import backtype.storm.LocalCluster;
+import backtype.storm.StormSubmitter;
+import backtype.storm.generated.AlreadyAliveException;
+import backtype.storm.generated.InvalidTopologyException;
 import backtype.storm.topology.TopologyBuilder;
 import backtype.storm.tuple.Fields;
 import cz.muni.fi.storm.bolts.FlowsNormalizer;
@@ -10,7 +12,7 @@ import cz.muni.fi.storm.spouts.FlowsReader;
 
 
 public class TopologyMain {
-    public static void main(String[] args) throws InterruptedException {
+    public static void main(String[] args) throws InterruptedException, AlreadyAliveException, InvalidTopologyException {
 
         /* Topology definition */
         TopologyBuilder builder = new TopologyBuilder();
@@ -22,15 +24,16 @@ public class TopologyMain {
 
         /* Configuration */
         Config conf = new Config();
-        //conf.put("flowsFile", "/home/radozaj/NetBeansProjects/storm-book-examples-ch02-getting_started-8e42636/target/classes/words.txt");
         conf.put("flowsFile", "/mnt/data/radozaj/Masarykova univerzita/Magisterske studium/diplomovka/out");
         conf.setDebug(false);
 
         /* Topology run */
         conf.put(Config.TOPOLOGY_MAX_SPOUT_PENDING, 1);
-        LocalCluster cluster = new LocalCluster();
-        cluster.submitTopology("Flows-Toplogie", conf, builder.createTopology());
-        Thread.sleep(10000);
-        cluster.shutdown();
+        //LocalCluster cluster = new LocalCluster();
+        //cluster.submitTopology("Flows-Toplogie", conf, builder.createTopology());
+        //Thread.sleep(180000);
+        //cluster.shutdown();
+        
+        StormSubmitter.submitTopology("Flows-Topology", conf, builder.createTopology());
     }
 }
