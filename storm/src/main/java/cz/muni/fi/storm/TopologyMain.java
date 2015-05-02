@@ -34,6 +34,7 @@ public class TopologyMain {
         //Thread.sleep(180000);
         //cluster.shutdown();
         
+        System.setProperty("storm.jar","/home/radozaj/NetBeansProjects/storm/storm/target/storm-1.0-SNAPSHOT.jar" );
         StormSubmitter.submitTopology("Flows-Topology", conf, builder.createTopology());
     }
 }

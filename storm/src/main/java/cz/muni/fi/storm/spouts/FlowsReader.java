@@ -20,6 +20,7 @@ public class FlowsReader extends BaseRichSpout {
     private SpoutOutputCollector collector;
     private FileReader fileReader;
     private boolean completed = false;
+    private Integer counter = 0;
     
     @Override
     public void ack(Object msgId) {
@@ -50,10 +51,23 @@ public class FlowsReader extends BaseRichSpout {
         BufferedReader reader = new BufferedReader(fileReader);
         try {
             //Read all lines
+            //Integer count = 0;
             while ((str = reader.readLine()) != null) {
                 /**
                  * By each line emmit a new value with the line as a their
-                 */
+                 *
+                count++;
+                if (count % 400 == 0) {
+                    try {
+                        System.out.println("prerusujem");
+                        Thread.sleep(2000);
+                        System.out.println("uvolnujem");
+                    } catch (InterruptedException e) {
+                        System.out.println("ZLE, NEDOBRE");
+                    }
+                }*/
+                counter++;
+                System.out.println("receiver " + counter);
                 this.collector.emit(new Values(str), str);
             }
         } catch(Exception e) {
