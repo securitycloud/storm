@@ -51,6 +51,7 @@ public class PacketCounter extends BaseBasicBolt {
         //this.counters = new HashMap<String, Integer>();
         this.name = context.getThisComponentId();
         this.id = context.getThisTaskId();
+        //komentar
     }
 
     @Override
