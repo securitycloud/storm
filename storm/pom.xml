@@ -31,25 +31,17 @@
         </plugins>
     </build>
 
-    <repositories>
-        
-        <!-- Repository where we can found the storm dependencies  -->
-        <repository>
-            <id>clojars.org</id>
-            <url>http://clojars.org/repo</url>
-        </repository>
-
-    </repositories>
-
     <dependencies>
 
         <!-- Storm Dependency -->
-        <dependency> 
-            <groupId>storm</groupId>
-            <artifactId>storm</artifactId>
-            <version>0.9.0</version>
+        <dependency>
+            <groupId>org.apache.storm</groupId>
+            <artifactId>storm-core</artifactId>
+            <version>0.9.4</version>
+            <scope>provided</scope>
         </dependency>
         
+        <!-- Json -->
         <dependency>
             <groupId>com.googlecode.json-simple</groupId>
             <artifactId>json-simple</artifactId>
