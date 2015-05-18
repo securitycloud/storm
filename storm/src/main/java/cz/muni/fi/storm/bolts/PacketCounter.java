@@ -1,57 +1,34 @@
 package cz.muni.fi.storm.bolts;
 
+import backtype.storm.task.OutputCollector;
 import backtype.storm.task.TopologyContext;
-import backtype.storm.topology.BasicOutputCollector;
 import backtype.storm.topology.OutputFieldsDeclarer;
-import backtype.storm.topology.base.BaseBasicBolt;
+import backtype.storm.topology.base.BaseRichBolt;
 import backtype.storm.tuple.Tuple;
-import java.io.BufferedWriter;
-import java.io.FileWriter;
-import java.io.IOException;
-import java.io.PrintWriter;
-//import java.util.HashMap;
+import cz.muni.fi.storm.FileOutput;
+import cz.muni.fi.storm.SimpleFileOutput;
+import java.math.BigInteger;
+import java.util.HashMap;
 import java.util.Map;
 import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
 import org.json.simple.parser.ParseException;
 
-public class PacketCounter extends BaseBasicBolt {
+public class PacketCounter extends BaseRichBolt {
 
-    private Integer id;
-    private String name;
-    //private Map<String, Integer> counters;
-    private Integer counter = 0;
-
-    /**
-     * At the end of the spout (when the cluster is shutdown
-     * We will show the packet counters
-     */
+    private Map<String, BigInteger> packetsPerIP;
+    private OutputCollector collector;
+    private FileOutput fileOut = null;
+    private JSONParser jsonParser = new JSONParser();
+    
     @Override
-    public void cleanup() {
-        try {
-            PrintWriter output = new PrintWriter(new BufferedWriter(new FileWriter("packet-counter.txt", true)));
-            output.println("-- Pacek Counter [" + name + "-" + id + "] --");
-            //for (Map.Entry<String, Integer> entry : counters.entrySet()) {
-                //if (entry.getValue() > 1000) {
-                    //output.println(String.format("%-20s", entry.getKey()) + ": " + entry.getValue());
-                //}
-            //}
-            output.println("dohromady " + counter);
-            output.close();
-        } catch (IOException e) {
-            System.err.println("Problem writing to output file.");
-        }
-    }
+    public void cleanup() {}
 
-    /**
-     * On create 
-     */
     @Override
-    public void prepare(Map stormConf, TopologyContext context) {
-        //this.counters = new HashMap<String, Integer>();
-        this.name = context.getThisComponentId();
-        this.id = context.getThisTaskId();
-        //komentar
+    public void prepare(Map stormConf, TopologyContext context, OutputCollector collector) {
+        this.packetsPerIP = new HashMap<String, BigInteger>();
+        this.collector = collector;
+        fileOut = new SimpleFileOutput((String)stormConf.get("outputFile"));
     }
 
     @Override
@@ -59,24 +36,27 @@ public class PacketCounter extends BaseBasicBolt {
 
 
     @Override
-    public void execute (Tuple input, BasicOutputCollector collector) {       
+    public void execute (Tuple tuple) {
         try {
-            String line = input.getString(0);
-            JSONParser jsonParser = new JSONParser();
-            JSONObject flow = (JSONObject) jsonParser.parse(line);
+            JSONObject flow = (JSONObject) jsonParser.parse(tuple.getString(0));
+
+            String dstIp = (String) flow.get("dst_ip_addr");
+            Long packets = (Long) flow.get("packets");
+
+            if (!packetsPerIP.containsKey(dstIp)){
+                packetsPerIP.put(dstIp, new BigInteger("0"));
+            }
+
+            BigInteger packetCount = packetsPerIP.get(dstIp);
+            BigInteger newPacketCount = packetCount.add(new BigInteger(packets.toString()));
+
+            packetsPerIP.put(dstIp, newPacketCount);
+            fileOut.append(dstIp + " ----- " + newPacketCount.toString());
+
+            collector.ack(tuple);
             
-            String dstIp = flow.get("dst_ip_addr").toString();
-            //Integer packets = 0;
-            //if (counters.containsKey(dstIp)) {
-            //    packets = counters.get(dstIp);
-            //}
-            //packets += Integer.valueOf(flow.get("packets").toString());
-            //counters.put(dstIp, packets);
-            
-            counter++;
-            System.out.println("counter " + counter + " a IP je: " + dstIp);
         } catch (ParseException e) {
-            e.printStackTrace();
+            throw new RuntimeException("Error parsing JSON from text string: " + tuple, e);
         }
     }
 }

@@ -22,6 +22,7 @@ public class TopologyMain {
         /* Configuration */
         Config conf = new Config();
         conf.put("flowsFile", "/mnt/data/radozaj/Masarykova univerzita/Magisterske studium/diplomovka/out");
+        conf.put("outputFile", "/home/radozaj/result");
         conf.setDebug(false);
 
         /* Topology run */
