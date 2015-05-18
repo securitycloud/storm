@@ -6,7 +6,6 @@ import backtype.storm.generated.AlreadyAliveException;
 import backtype.storm.generated.InvalidTopologyException;
 import backtype.storm.topology.TopologyBuilder;
 import backtype.storm.tuple.Fields;
-import cz.muni.fi.storm.bolts.FlowsNormalizer;
 import cz.muni.fi.storm.bolts.PacketCounter;
 import cz.muni.fi.storm.spouts.FlowsReader;
 
@@ -17,10 +16,8 @@ public class TopologyMain {
         /* Topology definition */
         TopologyBuilder builder = new TopologyBuilder();
         builder.setSpout("flows-reader", new FlowsReader());
-        builder.setBolt("flows-normalizer", new FlowsNormalizer())
-                .fieldsGrouping("flows-reader", new Fields("line"));
         builder.setBolt("packet-counter", new PacketCounter())
-                .fieldsGrouping("flows-normalizer", new Fields("flow"));
+                .fieldsGrouping("flows-reader", new Fields("flow"));
 
         /* Configuration */
         Config conf = new Config();

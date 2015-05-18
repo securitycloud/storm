@@ -89,6 +89,6 @@ public class FlowsReader extends BaseRichSpout {
     
     @Override
     public void declareOutputFields(OutputFieldsDeclarer declarer) {
-        declarer.declare(new Fields("line"));
+        declarer.declare(new Fields("flow"));
     }
 }
