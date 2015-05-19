@@ -19,7 +19,7 @@ public class PacketCounter extends BaseRichBolt {
     private Map<String, BigInteger> packetsPerIP;
     private OutputCollector collector;
     private FileOutput fileOut = null;
-    private JSONParser jsonParser = new JSONParser();
+    private JSONParser jsonParser;
     
     @Override
     public void cleanup() {}
@@ -29,6 +29,7 @@ public class PacketCounter extends BaseRichBolt {
         this.packetsPerIP = new HashMap<String, BigInteger>();
         this.collector = collector;
         fileOut = new SimpleFileOutput((String)stormConf.get("outputFile"));
+        jsonParser = new JSONParser();
     }
 
     @Override
