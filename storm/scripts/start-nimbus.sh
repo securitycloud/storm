@@ -1,10 +1,16 @@
 #!/bin/bash
 
-. setenv.sh
+. scripts/setenv.sh
 
-cp $CONFDIR/storm-nimbus.yaml $WRK/$STORM/conf/storm.yaml
+if [ -z "$1" ] 
+then
+    echo "You must specify server"
+    exit 1;
+fi
 
-cd $WRK/$STORM
-bin/storm nimbus  > /dev/null 2>&1  &
-bin/storm ui  > /dev/null 2>&1  &
+SERVER=$1
 
+ssh root@$SERVER "
+    $WRK/storm/bin/storm nimbus  > /dev/null 2>&1  &
+    $WRK/storm/bin/storm ui  > /dev/null 2>&1  &
+"

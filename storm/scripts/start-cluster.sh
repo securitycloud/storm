@@ -1,15 +1,19 @@
 #!/bin/bash
 
-. setenv.sh
+. scripts/setenv.sh
 
-./run-script.sh start-zk.sh $SRV_ZK
+echo starting zookeeper on $SRV_ZK
+scripts/start-zk.sh $SRV_ZK
+
 sleep 5
-./run-script.sh start-nimbus.sh $SRV_NIMBUS
+echo starting nimbus and ui on $SRV_NIMBUS
+scripts/start-nimbus.sh $SRV_NIMBUS
 
 
-for i in "${SRV_SLAVE[@]}"
+for i in "${SRV_SUPERVISOR[@]}"
 do
-  ./run-script.sh start-slave.sh $i
+    echo starting supervisor on $i
+    scripts/start-supervisor.sh $i
 done
 
 

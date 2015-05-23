@@ -20,7 +20,7 @@ storm.zookeeper.servers:
 #     - "server2"
 # 
 nimbus.host: "10.16.31.211"
-storm.local.dir: "/root/fnguyen/workdir/tmp-storm"
+storm.local.dir: "/root/stormisti/workdir/tmp-storm"
 supervisor.slots.ports:
      - 6700
      - 6701

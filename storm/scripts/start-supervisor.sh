@@ -11,5 +11,5 @@ fi
 SERVER=$1
 
 ssh root@$SERVER "
-    $WRK/zk/bin/zkServer.sh start > /dev/null 2>&1 &
+    $WRK/storm/bin/storm supervisor  > /dev/null 2>&1  &
 "

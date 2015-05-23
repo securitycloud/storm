@@ -1,7 +1,17 @@
 #!/bin/bash
 
-. setenv.sh
+. scripts/setenv.sh
 
-cd ../
-mvn assembly:assembly
-storm jar target/storm-1.0-SNAPSHOT-jar-with-dependencies.jar cz.muni.fi.storm.Production
+if [ -z "$1" ] 
+then
+    MAIN_CLASS=cz.muni.fi.storm.TopologyMain
+else
+    MAIN_CLASS=$1
+fi
+
+mvn clean package
+scp target/storm-1.0-SNAPSHOT.jar root@$SRV_NIMBUS:/$WRK
+
+ssh root@$SRV_NIMBUS "
+    $WRK/storm/bin/storm jar $WRK/storm-1.0-SNAPSHOT.jar $MAIN_CLASS
+"

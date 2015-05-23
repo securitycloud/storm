@@ -1,27 +1,22 @@
 #!/bin/bash
 
-ALLSERVERS[1]=10.16.31.211
-ALLSERVERS[2]=10.16.31.212
-ALLSERVERS[3]=10.16.31.213
-ALLSERVERS[4]=10.16.31.214
-ALLSERVERS[5]=10.16.31.215
+ALL_SERVERS[1]=10.16.31.211
+ALL_SERVERS[2]=10.16.31.212
+#ALL_SERVERS[3]=10.16.31.213
+#ALL_SERVERS[4]=10.16.31.214
+#ALL_SERVERS[5]=10.16.31.215
 
+SRV_SUPERVISOR[1]=${ALL_SERVERS[2]}
+#SRV_SUPERVISOR[2]=${ALL_SERVERS[3]}
+#SRV_SUPERVISOR[3]=${ALL_SERVERS[4]}
+#SRV_SUPERVISOR[4]=${ALL_SERVERS[5]}
 
-SRV_SLAVE[1]=${ALLSERVERS[2]}
-SRV_SLAVE[2]=${ALLSERVERS[3]}
-SRV_SLAVE[3]=${ALLSERVERS[4]}
-SRV_SLAVE[4]=${ALLSERVERS[5]}
+SRV_NIMBUS=${ALL_SERVERS[1]}
+SRV_ZK=${ALL_SERVERS[1]}
 
-SRV_NIMBUS=${ALLSERVERS[1]}
-SRV_ZK=${ALLSERVERS[1]}
+URL_STORM=http://mirror.hosting90.cz/apache/storm/apache-storm-0.9.4/apache-storm-0.9.4.tar.gz
+URL_ZK=http://mirror.hosting90.cz/apache/zookeeper/stable/zookeeper-3.4.6.tar.gz
+WRK=/root/stormisti/workdir
 
-
-ISTORM=http://mirror.hosting90.cz/apache/storm/apache-storm-0.9.4/apache-storm-0.9.4.zip
-IZK=http://mirror.hosting90.cz/apache/zookeeper/stable/zookeeper-3.4.6.tar.gz
-STORM=apache-storm-0.9.4
-ZK=zookeeper-3.4.6
-GIT=https://github.com/nguyenfilip/storm.git
-WRK=/root/fnguyen/workdir
-
-CONFDIR=$WRK/configs
-LOGDIR=$WRK/logs
+CONF_DIR=$WRK/configs
+LOG_DIR=$WRK/logs

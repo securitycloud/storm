@@ -1,13 +1,14 @@
 #!/bin/bash
 
-. setenv.sh
+. scripts/setenv.sh
 
-./run-script.sh install-zk.sh $SRV_ZK
-./run-script.sh install-storm.sh $SRV_NIMBUS
+echo installing zookeeper on $SRV_ZK
+scripts/install-zk.sh $SRV_ZK
 
-for i in "${SRV_SLAVE[@]}"
+for i in "${ALL_SERVERS[@]}"
 do
-  ./run-script.sh install-storm.sh $i
+    echo installing storm on $i
+    scripts/install-storm.sh $i
 done
 
 

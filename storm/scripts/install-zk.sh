@@ -1,10 +1,20 @@
 #!/bin/bash
 
-. setenv.sh
+. scripts/setenv.sh
 
-cd $WRK
-wget -q $IZK 
+if [ -z "$1" ] 
+then
+    echo "You must specify server"
+    exit 1;
+fi
 
-tar xvf $ZK.tar.gz
+SERVER=$1
 
-cp $CONFDIR/zk-local.cfg $WRK/$ZK/conf/local.cfg
+ssh root@$SERVER "
+    cd $WRK
+    wget -q $URL_ZK -O zk.tar.gz
+    mkdir zk
+    tar -xzf zk.tar.gz -C zk --strip 1
+"
+
+scp config/zoo.cfg root@$SERVER:$WRK/zk/conf/zoo.cfg
