@@ -10,6 +10,11 @@ else
 fi
 
 mvn clean package
+if [ "$?" -eq 1 ]
+then
+    exit 1;
+fi
+
 scp target/storm-1.0-SNAPSHOT.jar root@$SRV_NIMBUS:/$WRK
 
 ssh root@$SRV_NIMBUS "
