@@ -10,7 +10,7 @@ else
 fi
 
 mvn clean package
-if [ "$?" -eq 1 ]
+if [ "$?" -gt 0 ]
 then
     exit 1;
 fi
