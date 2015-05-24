@@ -25,6 +25,8 @@ public class TopologyMain {
         conf.put("outputFile", "/root/stormisti/result");
         conf.setDebug(false);
 
+        //komentar GIT
+        
         /* Topology run */
         conf.put(Config.TOPOLOGY_MAX_SPOUT_PENDING, 1);
         StormSubmitter.submitTopology("Flows-Topology", conf, builder.createTopology());
