@@ -21,18 +21,12 @@ public class TopologyMain {
 
         /* Configuration */
         Config conf = new Config();
-        conf.put("flowsFile", "/mnt/data/radozaj/Masarykova univerzita/Magisterske studium/diplomovka/out");
-        conf.put("outputFile", "/home/radozaj/result");
+        conf.put("flowsFile", "/root/smallOut");
+        conf.put("outputFile", "/root/stormisti/result");
         conf.setDebug(false);
 
         /* Topology run */
         conf.put(Config.TOPOLOGY_MAX_SPOUT_PENDING, 1);
-        //LocalCluster cluster = new LocalCluster();
-        //cluster.submitTopology("Flows-Toplogie", conf, builder.createTopology());
-        //Thread.sleep(180000);
-        //cluster.shutdown();
-        
-        System.setProperty("storm.jar","/home/radozaj/NetBeansProjects/storm/storm/target/storm-1.0-SNAPSHOT.jar" );
         StormSubmitter.submitTopology("Flows-Topology", conf, builder.createTopology());
     }
 }
