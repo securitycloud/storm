@@ -22,7 +22,7 @@ public class TopologyMain {
         /* Configuration */
         Config conf = new Config();
         conf.put("flowsFile", "/root/smallOut");
-        conf.put("outputFile", "/root/stormisti/result");
+        conf.put("outputFile", "/root/stormisti/workdir/result");
         conf.setDebug(false);
 
         /* Topology run */
