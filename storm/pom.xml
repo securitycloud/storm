@@ -9,7 +9,7 @@
     <version>1.0-SNAPSHOT</version>
     <packaging>jar</packaging>
 
-    <name>storm-testovanie</name>
+    <name>storm</name>
     <url>http://maven.apache.org</url>
 
     <properties>
@@ -73,7 +73,7 @@
                 <configuration>
                     <archive>
                         <manifest>
-                            <mainClass>cz.muni.fi.kafka.KafkaProducerMain</mainClass>
+                            <mainClass>cz.muni.fi.storm.TopologyMain</mainClass>
                         </manifest>
                     </archive>
                     <descriptorRefs>
