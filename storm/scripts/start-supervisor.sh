@@ -10,6 +10,7 @@ fi
 
 SERVER=$1
 
+# RUN STORM SUPERVISOR
 ssh root@$SERVER "
     $WRK/storm/bin/storm supervisor  > /dev/null 2>&1  &
 "

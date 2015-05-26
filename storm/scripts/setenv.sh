@@ -18,5 +18,4 @@ URL_STORM=http://mirror.hosting90.cz/apache/storm/apache-storm-0.9.4/apache-stor
 URL_ZK=http://mirror.hosting90.cz/apache/zookeeper/stable/zookeeper-3.4.6.tar.gz
 WRK=/root/stormisti/workdir
 
-CONF_DIR=$WRK/configs
 LOG_DIR=$WRK/logs

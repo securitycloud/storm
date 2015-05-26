@@ -10,6 +10,7 @@ fi
 
 SERVER=$1
 
+# DOWNLOAD AND EXTRACT
 ssh root@$SERVER "
     cd $WRK
     wget -q $URL_ZK -O zk.tar.gz
@@ -17,4 +18,5 @@ ssh root@$SERVER "
     tar -xzf zk.tar.gz -C zk --strip 1
 "
 
+#CONFIGURE
 scp config/zoo.cfg root@$SERVER:$WRK/zk/conf/zoo.cfg

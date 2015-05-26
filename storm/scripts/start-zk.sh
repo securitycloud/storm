@@ -10,6 +10,7 @@ fi
 
 SERVER=$1
 
+# RUN ZOOKEEPER
 ssh root@$SERVER "
     $WRK/zk/bin/zkServer.sh start > /dev/null 2>&1 &
 "
