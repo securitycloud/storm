@@ -21,10 +21,10 @@ public class TopologyMain {
 
         /* Topology definition */
         TopologyBuilder builder = new TopologyBuilder();
-        builder.setSpout("flows-reader", new FlowsReader(),1);
+        //builder.setSpout("flows-reader", new FlowsReader(),1);
         
         //verification-topic len preto, ze u mna na locale som mal vytvoreny tento topic
-       // builder.setSpout("flows-reader", new ConsumerGroupExample("verification-topic", "localhost:218","1"));
+        builder.setSpout("flows-reader", new ConsumerGroupExample("verification-topic", "localhost:218","1"));
         builder.setBolt("packet-counter", new PacketCounter(),3)
                 .fieldsGrouping("flows-reader", new Fields("flow"));
 
@@ -44,8 +44,8 @@ public class TopologyMain {
         
         /* Topology run */
         conf.put(Config.TOPOLOGY_MAX_SPOUT_PENDING, 1);
-        //LocalCluster cluster = new LocalCluster();
-        //cluster.submitTopology("Flows-Topology", conf, builder.createTopology());
-        StormSubmitter.submitTopology("Flows-Topology", conf, builder.createTopology());
+        LocalCluster cluster = new LocalCluster();
+        cluster.submitTopology("Flows-Topology", conf, builder.createTopology());
+        //StormSubmitter.submitTopology("Flows-Topology", conf, builder.createTopology());
     }
 }
