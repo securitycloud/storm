@@ -26,10 +26,10 @@ import kafka.message.MessageAndMetadata;
 
 
 public class ConsumerGroupExample implements IRichSpout{
-     private SpoutOutputCollector collector;
+     protected transient SpoutOutputCollector collector;
     public static final String DEFAULT_TOPIC = "securitycloud-testing-data";
     private static final Logger log = Logger.getLogger( ConsumerGroupExample.class.getName());
-    private  ConsumerConnector consumer;
+    protected transient ConsumerConnector consumer;
     
     protected int _bufSize;
     protected ConsumerIterator<byte[], byte[]> _iterator;
@@ -42,6 +42,7 @@ public class ConsumerGroupExample implements IRichSpout{
    
    
    public ConsumerGroupExample(String zookeeper,String topic, String groupId){
+       log.info("Consumer Group Example costructor");
        consumer=kafka.consumer.Consumer.createJavaConsumerConnector(createConsumerConfiguration(zookeeper, groupId));
        this.topic=topic;
        this.zookeeper=zookeeper;
@@ -59,6 +60,7 @@ public class ConsumerGroupExample implements IRichSpout{
      }
     
     protected boolean fillBuffer(){
+        log.info("fillBuffer method");
          if (!_inProgress.isEmpty() || !_queue.isEmpty()) {
             throw new IllegalStateException("cannot fill buffer when buffer or pending messages are non-empty");
         }
@@ -113,13 +115,14 @@ public class ConsumerGroupExample implements IRichSpout{
     }
 @Override
     public void open(final Map config, final TopologyContext topology, final SpoutOutputCollector collector) {
+        log.info("open method in spout");
         this.collector = collector;
 
         if (topic == null) {
             topic =topic;
         }
 
-        _bufSize = 1000001;
+        _bufSize = 10000;
 
         
         // ensure availability of kafka consumer

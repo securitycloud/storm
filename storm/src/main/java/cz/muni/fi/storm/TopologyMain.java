@@ -24,19 +24,19 @@ public class TopologyMain {
         //builder.setSpout("flows-reader", new FlowsReader(),1);
         
         //verification-topic len preto, ze u mna na locale som mal vytvoreny tento topic
-        builder.setSpout("flows-reader", new ConsumerGroupExample("verification-topic", "localhost:218","1"));
-        builder.setBolt("packet-counter", new PacketCounter(),3)
+        builder.setSpout("flows-reader", new ConsumerGroupExample("localhost:2181","verification-topic","1"));
+        builder.setBolt("packet-counter", new PacketCounter())
                 .fieldsGrouping("flows-reader", new Fields("flow"));
 
         
         /* Configuration */
         Config conf = new Config();
-        conf.setNumWorkers(4);
-        conf.put("flowsFile", "/root/megaOut");
-        conf.put("outputFile", "/root/stormisti/workdir/result");
+        //conf.setNumWorkers(4);
+        //conf.put("flowsFile", "/root/megaOut");
+        conf.put("outputFile", "/media/ideapad/Windows7_OS/Java/storm.txt");
         conf.setDebug(false);
        
-        conf.put("kafka.spout.topic", "securitycloud-testing-data");
+        conf.put("kafka.spout.topic", "verification-topic");
         conf.put("kafka.zookeeper.connect","localhost:2181");
         
         //SpoutConfig spoutConfig = new SpoutConfig();
