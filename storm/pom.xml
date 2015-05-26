@@ -40,6 +40,12 @@
             <version>0.9.4</version>
             <scope>provided</scope>
         </dependency>
+        <!--Kafka spout-->
+        <dependency>
+            <groupId>nl.minvenj.nfi.storm</groupId>
+            <artifactId>kafka-spout</artifactId>
+            <version>0.2</version>
+        </dependency>
         
         <!-- Json -->
         <dependency>
@@ -53,6 +59,18 @@
             <artifactId>junit</artifactId>
             <version>3.8.1</version>
             <scope>test</scope>
+        </dependency>
+         <dependency>
+             
+	<groupId>org.apache.storm</groupId>
+	<artifactId>storm-kafka</artifactId>
+	<version>0.9.3</version>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.kafka</groupId>
+            <artifactId>kafka_2.10</artifactId>
+            <version>0.8.1.1</version>
+            <type>jar</type>
         </dependency>
     </dependencies>
 </project>
