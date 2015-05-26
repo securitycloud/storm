@@ -9,7 +9,7 @@
     <version>1.0-SNAPSHOT</version>
     <packaging>jar</packaging>
 
-    <name>storm</name>
+    <name>storm-testovanie</name>
     <url>http://maven.apache.org</url>
 
     <properties>
@@ -18,6 +18,46 @@
   
     <build>
         <plugins>
+                  <plugin>
+        <groupId>com.theoryinpractise</groupId>
+        <artifactId>clojure-maven-plugin</artifactId>
+        <extensions>true</extensions>
+        <configuration>
+          <sourceDirectories>
+            <sourceDirectory>src/clj</sourceDirectory>
+          </sourceDirectories>
+        </configuration>
+        <executions>
+          <execution>
+            <id>compile</id>
+            <phase>compile</phase>
+            <goals>
+              <goal>compile</goal>
+            </goals>
+          </execution>
+        </executions>
+      </plugin>
+ 
+      <plugin>
+        <groupId>org.codehaus.mojo</groupId>
+        <artifactId>exec-maven-plugin</artifactId>
+        <version>1.2.1</version>
+        <executions>
+          <execution>
+            <goals>
+              <goal>exec</goal>
+            </goals>
+          </execution>
+        </executions>
+        <configuration>
+          <executable>java</executable>
+          <includeProjectDependencies>true</includeProjectDependencies>
+          <includePluginDependencies>false</includePluginDependencies>
+          <classpathScope>compile</classpathScope>
+          <mainClass>cz.muni.fi.storm.TopologyMain</mainClass>
+        </configuration>
+      </plugin>
+
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-compiler-plugin</artifactId>
@@ -28,45 +68,44 @@
                     <compilerVersion>1.6</compilerVersion>
                 </configuration>
             </plugin>
+            <plugin>
+                <artifactId>maven-assembly-plugin</artifactId>
+                <configuration>
+                    <archive>
+                        <manifest>
+                            <mainClass>cz.muni.fi.kafka.KafkaProducerMain</mainClass>
+                        </manifest>
+                    </archive>
+                    <descriptorRefs>
+                        <descriptorRef>jar-with-dependencies</descriptorRef>
+                    </descriptorRefs>
+                </configuration>
+            </plugin>
         </plugins>
     </build>
 
     <dependencies>
-
-        <!-- Storm Dependency -->
-        <dependency>
-            <groupId>org.apache.storm</groupId>
-            <artifactId>storm-core</artifactId>
-            <version>0.9.4</version>
-            <scope>provided</scope>
-        </dependency>
-        <!--Kafka spout-->
-        <dependency>
-            <groupId>nl.minvenj.nfi.storm</groupId>
-            <artifactId>kafka-spout</artifactId>
-            <version>0.2</version>
-        </dependency>
-        
-        <!-- Json -->
+        <!--dependency>
+            <groupId>org.scala-lang</groupId>
+            <artifactId>scala-library</artifactId>
+            <version>2.9.3</version>
+        </dependency-->
         <dependency>
             <groupId>com.googlecode.json-simple</groupId>
             <artifactId>json-simple</artifactId>
             <version>1.1</version>
         </dependency>
-
         <dependency>
-            <groupId>junit</groupId>
-            <artifactId>junit</artifactId>
-            <version>3.8.1</version>
-            <scope>test</scope>
+            <groupId>org.apache.logging.log4j</groupId>
+            <artifactId>log4j-slf4j-impl</artifactId>
+            <version>2.0-beta9</version>
         </dependency>
-         <dependency>
-             
-	<groupId>org.apache.storm</groupId>
-	<artifactId>storm-kafka</artifactId>
-	<version>0.9.3</version>
+        <dependency>
+            <groupId>org.apache.logging.log4j</groupId>
+            <artifactId>log4j-1.2-api</artifactId>
+            <version>2.0-beta9</version>
         </dependency>
-       <dependency>
+        <dependency>
             <groupId>org.apache.kafka</groupId>
             <artifactId>kafka_2.10</artifactId>
             <version>0.8.1.1</version>
@@ -86,5 +125,34 @@
                 </exclusion>
             </exclusions>
         </dependency>
+
+        <!-- Storm Dependency -->
+        <dependency>
+            <groupId>org.apache.storm</groupId>
+            <artifactId>storm-core</artifactId>
+            <version>0.9.4</version>
+            <scope>provided</scope>
+        </dependency>
+        
+        <!-- Json -->
+        <dependency>
+            <groupId>com.googlecode.json-simple</groupId>
+            <artifactId>json-simple</artifactId>
+            <version>1.1</version>
+        </dependency>
+
+        <dependency>
+            <groupId>junit</groupId>
+            <artifactId>junit</artifactId>
+            <version>3.8.1</version>
+            <scope>test</scope>
+        </dependency>
+        
+        <dependency>
+	<groupId>org.apache.storm</groupId>
+	<artifactId>storm-kafka</artifactId>
+	<version>0.9.3</version>
+        </dependency>
+
     </dependencies>
 </project>
