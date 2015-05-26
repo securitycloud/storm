@@ -1,8 +1,3 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
 package cz.muni.fi.storm.spouts;
 
 import backtype.storm.Config;
@@ -88,19 +83,18 @@ public class ConsumerGroupExample implements IRichSpout{
         }
         catch (final ConsumerTimeoutException e) {
             e.printStackTrace();
-            // ignore, storm will call nextTuple again at some point in the near future
-            // timeout does *not* mean that no messages were read (state is checked below)
+            
+            
         }
          
          if (_inProgress.size() > 0) {
-            // set _queue to all currently pending kafka message ids
             _queue.addAll(_inProgress.keySet());
            
-            // message(s) appended to buffer
+           
             return true;
         }
         else {
-            // no messages appended to buffer
+            
             return false;
         }
     
