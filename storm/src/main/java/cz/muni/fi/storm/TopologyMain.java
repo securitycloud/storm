@@ -1,51 +1,62 @@
 package cz.muni.fi.storm;
 
-
 import backtype.storm.Config;
-import backtype.storm.LocalCluster;
 import backtype.storm.StormSubmitter;
-import backtype.storm.generated.AlreadyAliveException;
-import backtype.storm.generated.InvalidTopologyException;
+import backtype.storm.spout.SchemeAsMultiScheme;
 import backtype.storm.topology.TopologyBuilder;
-import backtype.storm.tuple.Fields;
-import cz.muni.fi.storm.bolts.PacketCounter;
-import cz.muni.fi.storm.spouts.*;
-
+import cz.muni.fi.storm.bolts.Printer;
+import java.util.Arrays;
+import storm.kafka.KafkaSpout;
+import storm.kafka.SpoutConfig;
+import storm.kafka.StringScheme;
+import storm.kafka.ZkHosts;
 
 public class TopologyMain {
-    public static void main(String[] args) throws InterruptedException, AlreadyAliveException, InvalidTopologyException {
-        
-       // String topicName = "securitycloud-testing-data";
-       // String zK = "localhost:2181";
-        
 
-        /* Topology definition */
+    public static void main(String[] args) {
+        if (args.length < 1) {
+            throw new IllegalArgumentException("Missing argument: zookeeper_ip [name_of_topic]");
+        }
+        String zkIp = args[0];
+        String nimbusHost = args[0];
+        String zookeeperHost = zkIp + ":2181";
+        ZkHosts zkHosts = new ZkHosts(zookeeperHost);
+
+        String topic;
+        if (args.length >= 2) {
+            topic = args[1];
+        } else {
+            topic = "securitycloud-testing-data";
+        }
+
+        SpoutConfig kafkaConfig = new SpoutConfig(zkHosts, topic, "", "storm");
+        kafkaConfig.scheme = new SchemeAsMultiScheme(new StringScheme());
+        /*
+         kafkaConfig.scheme = new SchemeAsMultiScheme(new JsonScheme() {
+         @Override
+         public Fields getOutputFields() {
+         return new Fields("events");
+         }
+         });*/
+        KafkaSpout kafkaSpout = new KafkaSpout(kafkaConfig);
         TopologyBuilder builder = new TopologyBuilder();
-        //builder.setSpout("flows-reader", new FlowsReader(),1);
-        
-        //verification-topic len preto, ze u mna na locale som mal vytvoreny tento topic
-        builder.setSpout("flows-reader", new ConsumerGroupExample("localhost:2181","verification-topic","1"));
-        builder.setBolt("packet-counter", new PacketCounter())
-                .fieldsGrouping("flows-reader", new Fields("flow"));
+        builder.setSpout("flows-reader", kafkaSpout);
+        builder.setBolt("printer", new Printer())
+                .shuffleGrouping("flows-reader");
 
-        
-        /* Configuration */
-        Config conf = new Config();
-        //conf.setNumWorkers(4);
-        //conf.put("flowsFile", "/root/megaOut");
-        conf.put("outputFile", "/media/ideapad/Windows7_OS/Java/storm.txt");
-        conf.setDebug(false);
-       
-        conf.put("kafka.spout.topic", "verification-topic");
-        conf.put("kafka.zookeeper.connect","localhost:2181");
-        
-        //SpoutConfig spoutConfig = new SpoutConfig();
-        
-        
-        /* Topology run */
-        conf.put(Config.TOPOLOGY_MAX_SPOUT_PENDING, 1);
-        LocalCluster cluster = new LocalCluster();
-        cluster.submitTopology("Flows-Topology", conf, builder.createTopology());
-        //StormSubmitter.submitTopology("Flows-Topology", conf, builder.createTopology());
+        Config config = new Config();
+        config.setMaxTaskParallelism(5);
+        config.put(Config.TOPOLOGY_TICK_TUPLE_FREQ_SECS, 2);
+        config.put(Config.NIMBUS_HOST, nimbusHost);
+        config.put(Config.NIMBUS_THRIFT_PORT, 6627);
+        config.put(Config.STORM_ZOOKEEPER_PORT, 2181);
+        config.put(Config.STORM_ZOOKEEPER_SERVERS, Arrays.asList(zkIp));
+        config.put("outputFile", "/home/radozaj/storm.txt");
+
+        try {
+            StormSubmitter.submitTopology("Flows-Topology", config, builder.createTopology());
+        } catch (Exception e) {
+            throw new IllegalStateException("Couldn't initialize the topology", e);
+        }
     }
 }
