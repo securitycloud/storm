@@ -16,8 +16,8 @@ then
     exit 1;
 fi
 
-# DEPLOY
-scp target/storm-1.0-SNAPSHOT.jar root@$SRV_NIMBUS:/$WRK
+# COPY
+scp target/storm-1.0-SNAPSHOT-jar-with-dependencies.jar root@$SRV_NIMBUS:/$WRK
 
 # RUN
 ssh root@$SRV_NIMBUS "
