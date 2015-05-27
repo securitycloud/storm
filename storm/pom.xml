@@ -90,11 +90,8 @@
             <artifactId>scala-library</artifactId>
             <version>2.9.3</version>
         </dependency-->
-        <dependency>
-            <groupId>com.googlecode.json-simple</groupId>
-            <artifactId>json-simple</artifactId>
-            <version>1.1</version>
-        </dependency>
+        
+        <!-- logging -->
         <dependency>
             <groupId>org.apache.logging.log4j</groupId>
             <artifactId>log4j-slf4j-impl</artifactId>
@@ -104,6 +101,13 @@
             <groupId>org.apache.logging.log4j</groupId>
             <artifactId>log4j-1.2-api</artifactId>
             <version>2.0-beta9</version>
+        </dependency>
+        
+        <!-- Kafka -->
+        <dependency>
+            <groupId>org.apache.storm</groupId>
+            <artifactId>storm-kafka</artifactId>
+            <version>0.9.3</version>
         </dependency>
         <dependency>
             <groupId>org.apache.kafka</groupId>
@@ -147,12 +151,5 @@
             <version>3.8.1</version>
             <scope>test</scope>
         </dependency>
-        
-        <dependency>
-            <groupId>org.apache.storm</groupId>
-            <artifactId>storm-kafka</artifactId>
-            <version>0.9.3</version>
-        </dependency>
-
     </dependencies>
 </project>
