@@ -22,7 +22,7 @@ public class TopologyMain{
         /*
         First argument = zookeeper & nibmus host Ip
         Second argument = topic name, String
-        Third argument = kafka consumer Ip adress;
+        Third argument = kafka consumer Ip address;
         */
         
         String zkIp = "10.16.31.211";
@@ -58,9 +58,11 @@ public class TopologyMain{
         KafkaSpout kafkaSpout = new KafkaSpout(kafkaConfig);
         TopologyBuilder builder = new TopologyBuilder();
         builder.setSpout("flows-reader", kafkaSpout);
-        builder.setBolt("printer", new Printer())
+        /*builder.setBolt("printer", new Printer())
+                .shuffleGrouping("flows-reader");*/
+        builder.setBolt("printer", new KafkaProducerBolt(kafkaConsumerIp))
                 .shuffleGrouping("flows-reader");
-
+        
         Config config = new Config();
         config.setMaxTaskParallelism(5);
         config.put(Config.TOPOLOGY_TICK_TUPLE_FREQ_SECS, 2);
@@ -68,7 +70,7 @@ public class TopologyMain{
         config.put(Config.NIMBUS_THRIFT_PORT, 6627);
         config.put(Config.STORM_ZOOKEEPER_PORT, 2181);
         config.put(Config.STORM_ZOOKEEPER_SERVERS, Arrays.asList(zkIp));
-        config.put("outputFile", "/root/stormisti/result.txt");
+        //config.put("outputFile", "/root/stormisti/result.txt");
 
         try {
             StormSubmitter.submitTopology("Flows-Topology", config, builder.createTopology());
