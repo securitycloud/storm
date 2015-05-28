@@ -58,7 +58,7 @@ public class TopologyMain{
         KafkaSpout kafkaSpout = new KafkaSpout(kafkaConfig);
         TopologyBuilder builder = new TopologyBuilder();
         builder.setSpout("flows-reader", kafkaSpout);
-        builder.setBolt("kafka-konsumer", new KafkaProducerBolt(kafkaConsumerIp))
+        builder.setBolt("printer", new Printer())
                 .shuffleGrouping("flows-reader");
 
         Config config = new Config();
