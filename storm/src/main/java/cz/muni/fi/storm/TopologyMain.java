@@ -15,9 +15,9 @@ import storm.kafka.ZkHosts;
 public class TopologyMain{
 
     public static void main(String[] args) {
-        if (args.length < 1) {
+      /*  if (args.length < 1) {
             throw new IllegalArgumentException("Missing argument: zookeeper_ip [name_of_topic]");
-        }
+        }*/
         
         /*
         First argument = zookeeper & nibmus host Ip

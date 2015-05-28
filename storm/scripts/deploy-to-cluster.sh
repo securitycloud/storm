@@ -21,5 +21,5 @@ scp target/storm-1.0-SNAPSHOT-jar-with-dependencies.jar root@$SRV_NIMBUS:/$WRK
 
 # RUN
 ssh root@$SRV_NIMBUS "
-    $WRK/storm/bin/storm jar $WRK/storm-1.0-SNAPSHOT.jar $MAIN_CLASS
+    $WRK/storm/bin/storm jar $WRK/storm-1.0-SNAPSHOT-jar-with-dependencies.jar $MAIN_CLASS
 "
