@@ -25,7 +25,7 @@ public class TopologyMain{
         Third argument = kafka consumer Ip address;
         */
         
-        String zkIp = "10.16.31.211";
+        String zkIp = "10.16.31.201";
         String nimbusHost = "10.16.31.211";
         String kafkaConsumerIp="10.16.31.200";
         String zookeeperHost = zkIp + ":2181";
@@ -60,7 +60,7 @@ public class TopologyMain{
         builder.setSpout("flows-reader", kafkaSpout);
         /*builder.setBolt("printer", new Printer())
                 .shuffleGrouping("flows-reader");*/
-        builder.setBolt("printer", new KafkaProducerBolt(kafkaConsumerIp))
+        builder.setBolt("printer", new Printer())
                 .shuffleGrouping("flows-reader");
         
         Config config = new Config();
