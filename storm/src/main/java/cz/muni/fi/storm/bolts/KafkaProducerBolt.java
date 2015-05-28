@@ -24,6 +24,7 @@ public class KafkaProducerBolt extends BaseBasicBolt {
         Properties props = new Properties();
         // TODO: zmen localhost na kafka-consumer-ip z prikazovej riadky
         props.put("metadata.broker.list", kafkaConsumerIp+":9092");
+        props.put("broker.id","1");
         props.put("serializer.class", "kafka.serializer.StringEncoder");
         props.put("request.required.acks", "1");
         ProducerConfig config = new ProducerConfig(props);
