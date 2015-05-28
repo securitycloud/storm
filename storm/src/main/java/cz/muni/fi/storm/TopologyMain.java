@@ -27,7 +27,7 @@ public class TopologyMain{
         
         String zkIp = "10.16.31.211";
         String nimbusHost = "10.16.31.211";
-        String kafkaConsumerIp="10.16.31.201";
+        String kafkaConsumerIp="10.16.31.200";
         String zookeeperHost = zkIp + ":2181";
         ZkHosts zkHosts = new ZkHosts(zookeeperHost);
         
