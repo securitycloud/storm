@@ -7,6 +7,7 @@ import backtype.storm.topology.TopologyBuilder;
 import cz.muni.fi.storm.bolts.KafkaProducerBolt;
 import cz.muni.fi.storm.bolts.Printer;
 import java.util.Arrays;
+import java.util.logging.Logger;
 import storm.kafka.KafkaSpout;
 import storm.kafka.SpoutConfig;
 import storm.kafka.StringScheme;
@@ -14,7 +15,11 @@ import storm.kafka.ZkHosts;
 
 public class TopologyMain{
 
+    
+    private static final Logger log = Logger.getLogger( TopologyMain.class.getName() );
+
     public static void main(String[] args) {
+        log.fine("Topology Main class");
       /*  if (args.length < 1) {
             throw new IllegalArgumentException("Missing argument: zookeeper_ip [name_of_topic]");
         }*/
@@ -25,7 +30,7 @@ public class TopologyMain{
         Third argument = kafka consumer Ip address;
         */
         
-        String zkIp = "10.16.31.201";
+        String zkIp = "10.16.31.200";
         String nimbusHost = "10.16.31.211";
         String kafkaConsumerIp="10.16.31.200";
         String zookeeperHost = zkIp + ":2181";
@@ -58,10 +63,9 @@ public class TopologyMain{
         KafkaSpout kafkaSpout = new KafkaSpout(kafkaConfig);
         TopologyBuilder builder = new TopologyBuilder();
         builder.setSpout("flows-reader", kafkaSpout);
-        /*builder.setBolt("printer", new Printer())
-                .shuffleGrouping("flows-reader");*/
-        builder.setBolt("printer", new Printer())
+        builder.setBolt("printer", new KafkaProducerBolt("10.16.31.201"))
                 .shuffleGrouping("flows-reader");
+        
         
         Config config = new Config();
         config.setMaxTaskParallelism(5);
@@ -70,7 +74,7 @@ public class TopologyMain{
         config.put(Config.NIMBUS_THRIFT_PORT, 6627);
         config.put(Config.STORM_ZOOKEEPER_PORT, 2181);
         config.put(Config.STORM_ZOOKEEPER_SERVERS, Arrays.asList(zkIp));
-        //config.put("outputFile", "/root/stormisti/result.txt");
+        config.put("outputFile", "/root/stormisti/result.txt");
 
         try {
             StormSubmitter.submitTopology("Flows-Topology", config, builder.createTopology());

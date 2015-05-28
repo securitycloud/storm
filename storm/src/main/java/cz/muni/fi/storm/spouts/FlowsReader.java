@@ -8,16 +8,19 @@ import backtype.storm.tuple.Fields;
 import backtype.storm.tuple.Values;
 import cz.muni.fi.storm.FileFlowSource;
 import cz.muni.fi.storm.FlowSource;
+import cz.muni.fi.storm.TopologyMain;
 import java.io.File;
 import java.math.BigInteger;
 import java.util.Map;
+import java.util.logging.Logger;
 
 /**
  *
  * @author radozaj
  */
 public class FlowsReader extends BaseRichSpout {
-
+     private static final Logger log = Logger.getLogger( FlowsReader.class.getName() );
+     
     private FlowSource flowSource;
     private SpoutOutputCollector collector;
     private BigInteger counter = new BigInteger("0");
@@ -38,6 +41,7 @@ public class FlowsReader extends BaseRichSpout {
     @Override
     public void nextTuple() {
         String flow = flowSource.nextFlow();
+        log.fine("Creating new tuple ");
         if (flow != null) {
             System.out.println("Generating new tuple");
             counter = counter.add(BigInteger.ONE);
