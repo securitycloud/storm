@@ -11,15 +11,19 @@ import kafka.javaapi.producer.Producer;
 import kafka.producer.KeyedMessage;
 import kafka.producer.ProducerConfig;
 
-public class KafkaProducer extends BaseBasicBolt {
+public class KafkaProducerBolt extends BaseBasicBolt {
 
     private Producer<String, String> producer;
-
-    @Override
+    private String kafkaConsumerIp;
+    
+    public KafkaProducerBolt(String kafkaConsumerIp){
+        this.kafkaConsumerIp=kafkaConsumerIp;
+    
+    }
     public void prepare(Map stormConf, TopologyContext context) {
         Properties props = new Properties();
         // TODO: zmen localhost na kafka-consumer-ip z prikazovej riadky
-        props.put("metadata.broker.list", "localhost:9092");
+        props.put("metadata.broker.list", kafkaConsumerIp+":9092");
         props.put("serializer.class", "kafka.serializer.StringEncoder");
         props.put("request.required.acks", "1");
         ProducerConfig config = new ProducerConfig(props);
