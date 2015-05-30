@@ -1,24 +1,24 @@
-This following script run in folder <b>storm</b> (where .pom exist) one by one.
+All scripts run in folder <b>storm</b> (where <b>.pom</b> exist).
 
 Prepare Storm on cluster
 ============================
 
-1.) Clean all PCs in cluster: kill all java programs and clean word directory.
+1.) <i>Clean all PCs in cluster:</i> kill all java programs and clean word directory.
 
         scripts/clean-cluster.sh
 
-2.) Install all PCs in cluster: copy zookeeper, storm and configured them.
+2.) <i>Install all PCs in cluster:</i> copy zookeeper, storm and configured them.
 
         scripts/install-cluster.sh
 
-3.) Start all PCs in cluster: start zookeeper, nimbus, ui and supervisors.
+3.) <i>Start all PCs in cluster:</i> start zookeeper, nimbus, ui and supervisors.
 
         scripts/start-cluster.sh
 
 Run Storm on cluster
 ============================
 
-Deploy to cluster: Compile, deploy and run project on storm with arguments.
+<i>Deploy to cluster:</i> compile, deploy and run project on storm with arguments.
 
 a) For topology kafka-producer to kafka-consumer:
 
