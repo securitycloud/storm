@@ -16,7 +16,7 @@ public class PrinterBolt extends BaseBasicBolt {
     private String fileName;
     private FileOutput fileOut = null;
 
-    public void Printer(String fileName) {
+    public PrinterBolt(String fileName) {
         this.fileName = fileName;
     }
     
