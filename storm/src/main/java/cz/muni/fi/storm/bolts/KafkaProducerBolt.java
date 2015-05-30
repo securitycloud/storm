@@ -46,7 +46,7 @@ public class KafkaProducerBolt extends BaseBasicBolt {
     @Override
     public void execute(Tuple tuple, BasicOutputCollector collector) {
         log.fine("Executing and sending data to topic");
-        KeyedMessage<String, String> data = new KeyedMessage<String, String>(kafkaConsumerTopic, tuple.toString());
+        KeyedMessage<String, String> data = new KeyedMessage<String, String>(kafkaConsumerTopic, tuple.getString(0));
         producer.send(data);
     }
 

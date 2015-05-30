@@ -56,7 +56,7 @@ public class TopologyKafkaToKafka {
                 .fieldsGrouping("kafka-consumer-spout", new Fields("flow"));
 
         Config config = new Config();
-        config.put(Config.TOPOLOGY_TICK_TUPLE_FREQ_SECS, 2);
+        //config.put(Config.TOPOLOGY_TICK_TUPLE_FREQ_SECS, 2);
 
         try {
             StormSubmitter.submitTopology("Topology-kafka-to-kafka", config, builder.createTopology());
