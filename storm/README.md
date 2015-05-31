@@ -1,4 +1,4 @@
-All scripts run in folder <b>storm</b> (where <b>.pom</b> exist).
+All scripts run in folder <b>storm</b> (where <b>pom.xml</b> exist).
 
 Prepare Storm on cluster
 ============================
