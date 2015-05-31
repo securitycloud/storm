@@ -26,4 +26,4 @@ a) For topology kafka-producer to kafka-consumer:
 
 b) For topology kafka-producer to kafka-consumer with filtering:
 
-        scripts/deploy-to-cluster.sh cz.muni.fi.storm.TopologyKafkaToKafka 10.16.31.200 10.16.31.201
+        scripts/deploy-to-cluster.sh cz.muni.fi.storm.TopologyKafkaToKafkaWithFilter 10.16.31.200 10.16.31.201
