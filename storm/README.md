@@ -1,5 +1,21 @@
 All scripts run in folder <b>storm</b> (where <b>pom.xml</b> exist).
 
+Configuration
+============================
+
+Default configuration zookeeper:
+
+        config/zoo.cfg
+
+Default configuration storm:
+
+        config/storm.yaml
+
+Default configuration scripts:
+
+        scripts/setenv.sh
+
+
 Prepare Storm on cluster
 ============================
 
