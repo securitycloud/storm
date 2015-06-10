@@ -23,8 +23,8 @@ nimbus.host: "10.16.31.211"
 storm.local.dir: "/root/stormisti/workdir/tmp-storm"
 supervisor.slots.ports:
      - 6700
-     - 6701
-     - 6702
+#     - 6701
+#     - 6702
 # 
 # 
 # ##### These may optionally be filled in:
