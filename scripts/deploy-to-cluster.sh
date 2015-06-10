@@ -19,5 +19,5 @@ ssh root@$SRV_NIMBUS "
     then
         exit 1;
     fi
-    $WRK/storm/bin/storm jar $WRK/project/target/storm-1.0-SNAPSHOT-jar-with-dependencies.jar $@
+    $WRK/storm/bin/storm jar $WRK/project/target/storm-1.0-SNAPSHOT-jar-with-dependencies.jar $@ $KAFKA_PRODUCER $KAFKA_CONSUMER
 "

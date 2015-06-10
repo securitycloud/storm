@@ -14,6 +14,9 @@ SRV_SUPERVISOR[4]=${ALL_SERVERS[5]}
 SRV_NIMBUS=${ALL_SERVERS[1]}
 SRV_ZK=${ALL_SERVERS[1]}
 
+KAFKA_PRODUCER=10.16.31.200
+KAFKA_CONSUMER=10.16.31.201
+
 URL_STORM=http://mirror.hosting90.cz/apache/storm/apache-storm-0.9.4/apache-storm-0.9.4.tar.gz
 URL_ZK=http://mirror.hosting90.cz/apache/zookeeper/stable/zookeeper-3.4.6.tar.gz
 WRK=/root/stormisti/workdir
