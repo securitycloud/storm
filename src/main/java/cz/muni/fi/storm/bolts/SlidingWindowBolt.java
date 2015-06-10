@@ -9,6 +9,7 @@ import backtype.storm.tuple.Fields;
 import backtype.storm.tuple.Tuple;
 import backtype.storm.tuple.Values;
 import cz.muni.fi.storm.tools.SlottedSlidingWindow;
+import java.math.BigInteger;
 import java.util.Map;
 
 public class SlidingWindowBolt extends BaseRichBolt {
@@ -17,17 +18,20 @@ public class SlidingWindowBolt extends BaseRichBolt {
     private SlottedSlidingWindow<String> slidingWindow;
     private int windowLengthInTicks;
     private int emitFrequencyInTicks;
+    private int tickDivisor;
     private int actualTick;
 
     public SlidingWindowBolt(int windowLengthInTicks, int emitFrequencyInTicks) {
         this.windowLengthInTicks = windowLengthInTicks;
         this.emitFrequencyInTicks = emitFrequencyInTicks;
+        this.tickDivisor = BigInteger.valueOf(windowLengthInTicks).
+                gcd(BigInteger.valueOf(emitFrequencyInTicks)).intValue();
     }
 
     @Override
     public void prepare(Map stormConf, TopologyContext context, OutputCollector collector) {
         this.collector = collector;
-        this.slidingWindow = new SlottedSlidingWindow<String>(windowLengthInTicks);
+        this.slidingWindow = new SlottedSlidingWindow<String>(windowLengthInTicks / tickDivisor);
     }
 
     @Override
@@ -40,7 +44,9 @@ public class SlidingWindowBolt extends BaseRichBolt {
                     this.collector.emit(new Values(flow));
                 }
             }
-            slidingWindow.nextSlot();
+            if (actualTick % tickDivisor == 0) {
+                slidingWindow.nextSlot();
+            }
         } else {
             String flow = tuple.getString(0);
             slidingWindow.addToHead(flow);
