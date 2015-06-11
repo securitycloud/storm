@@ -5,6 +5,7 @@ import backtype.storm.topology.BasicOutputCollector;
 import backtype.storm.topology.OutputFieldsDeclarer;
 import backtype.storm.topology.base.BaseBasicBolt;
 import backtype.storm.tuple.Tuple;
+import cz.muni.fi.storm.tools.TupleUtils;
 import java.util.Map;
 import java.util.Properties;
 import java.util.logging.Logger;
@@ -45,9 +46,11 @@ public class KafkaProducerBolt extends BaseBasicBolt {
 
     @Override
     public void execute(Tuple tuple, BasicOutputCollector collector) {
-        log.fine("Executing and sending data to topic");
-        KeyedMessage<String, String> data = new KeyedMessage<String, String>(kafkaConsumerTopic, tuple.getString(0));
-        producer.send(data);
+        if (TupleUtils.isTickTuple(tuple) == false) {
+            log.fine("Executing and sending data to topic");
+            KeyedMessage<String, String> data = new KeyedMessage<String, String>(kafkaConsumerTopic, tuple.getValue(0).toString());
+            producer.send(data);
+        }
     }
 
     @Override
