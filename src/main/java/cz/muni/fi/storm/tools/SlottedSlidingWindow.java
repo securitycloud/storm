@@ -16,21 +16,23 @@ public class SlottedSlidingWindow<T> {
         }
         numberOfSlots = windowLengthInSlots;
         slots = new ArrayList(numberOfSlots);
+        
+        for (int i = 0; i < numberOfSlots; i++) {
+            slots.add(new ArrayList<T>());
+        }
 
         headSlot = 0;
         tailSlot = slotAfter(headSlot);
-        clearHead();
     }
 
     public void addToHead(T obj) {
-        List headList = slots.get(headSlot);
-        headList.add(obj);
-        slots.set(headSlot, headList);
+        slots.get(headSlot).add(obj);
     }
     
     public void nextSlot() {
-        advanceHead();
-        clearHead();
+        headSlot = tailSlot;
+        tailSlot = slotAfter(tailSlot);
+        slots.get(headSlot).clear();
     }
 
     public List<T> getWindow() {
@@ -43,16 +45,7 @@ public class SlottedSlidingWindow<T> {
         return window;
     }
 
-    private void advanceHead() {
-        headSlot = tailSlot;
-        tailSlot = slotAfter(tailSlot);
-    }
-
     private int slotAfter(int slot) {
         return (slot + 1) % numberOfSlots;
-    }
-    
-    private void clearHead() {
-        slots.set(headSlot, new ArrayList<T>());
     }
 }
