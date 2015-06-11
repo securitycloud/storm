@@ -1,6 +1,5 @@
 package cz.muni.fi.storm.bolts;
 
-import backtype.storm.Constants;
 import backtype.storm.task.OutputCollector;
 import backtype.storm.task.TopologyContext;
 import backtype.storm.topology.OutputFieldsDeclarer;
@@ -9,6 +8,7 @@ import backtype.storm.tuple.Fields;
 import backtype.storm.tuple.Tuple;
 import backtype.storm.tuple.Values;
 import cz.muni.fi.storm.tools.SlottedSlidingWindow;
+import cz.muni.fi.storm.tools.TupleUtils;
 import java.math.BigInteger;
 import java.util.Map;
 
@@ -36,7 +36,7 @@ public class SlidingWindowBolt extends BaseRichBolt {
 
     @Override
     public void execute(Tuple tuple) {
-        if (isTickTuple(tuple)) {
+        if (TupleUtils.isTickTuple(tuple)) {
             actualTick++;
             if (actualTick == emitFrequencyInTicks) {
                 actualTick = 0;
@@ -56,10 +56,5 @@ public class SlidingWindowBolt extends BaseRichBolt {
     @Override
     public void declareOutputFields(OutputFieldsDeclarer declarer) {
         declarer.declare(new Fields("flow"));
-    }
-
-    private static boolean isTickTuple(Tuple tuple) {
-        return tuple.getSourceComponent().equals(Constants.SYSTEM_COMPONENT_ID)
-                && tuple.getSourceStreamId().equals(Constants.SYSTEM_TICK_STREAM_ID);
     }
 }
