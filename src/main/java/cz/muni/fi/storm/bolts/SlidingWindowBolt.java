@@ -50,6 +50,7 @@ public class SlidingWindowBolt extends BaseRichBolt {
         } else {
             String flow = tuple.getString(0);
             slidingWindow.addToHead(flow);
+            collector.ack(tuple);
         }
     }
 
