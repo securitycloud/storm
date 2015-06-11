@@ -55,6 +55,6 @@ public class FilterBolt extends BaseRichBolt {
             // nothing
         }
 
-        //collector.ack(tuple);
+        collector.ack(tuple);
     }
 }
