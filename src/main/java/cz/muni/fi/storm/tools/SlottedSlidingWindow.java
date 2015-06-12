@@ -42,6 +42,7 @@ public class SlottedSlidingWindow<T> {
             window.addAll(slots.get(actualSlot));
             actualSlot = slotAfter(actualSlot);
         }
+        window.addAll(slots.get(headSlot));
         return window;
     }
 
