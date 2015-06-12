@@ -41,8 +41,9 @@ public class SlidingWindowBolt extends BaseRichBolt {
             if (actualTick == emitFrequencyInTicks) {
                 actualTick = 0;
                 for (String flow : slidingWindow.getWindow()) {
-                    this.collector.emit(new Values(flow));
+                    collector.emit(new Values(flow));
                 }
+                TupleUtils.emitEndOfWindow(collector);
             }
             if (actualTick % tickDivisor == 0) {
                 slidingWindow.nextSlot();
