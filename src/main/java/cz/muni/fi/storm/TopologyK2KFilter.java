@@ -13,9 +13,9 @@ import storm.kafka.SpoutConfig;
 import storm.kafka.StringScheme;
 import storm.kafka.ZkHosts;
 
-public class TopologyKafkaToKafkaWithFilter {
+public class TopologyK2KFilter {
 
-    private static final Logger log = Logger.getLogger(TopologyKafkaToKafkaWithFilter.class.getName());
+    private static final Logger log = Logger.getLogger(TopologyK2KFilter.class.getName());
 
     public static void main(String[] args) {
         log.fine("Starting: Topology-kafka-to-kafka-with-filter");

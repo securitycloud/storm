@@ -37,10 +37,11 @@ Run Storm on cluster
 <i>Deploy to cluster:</i> compile, deploy and run project on storm with arguments.
 
 a) For topology kafka-producer to kafka-consumer:
+
     <b>number_of_computers</b> on which parallel run all this topology
 
-        scripts/deploy-to-cluster.sh cz.muni.fi.storm.TopologyKafkaToKafka <b>number_of_computers</b>
+        scripts/deploy-to-cluster.sh cz.muni.fi.storm.TopologyKafkaToKafka number_of_computers
 
 b) For topology kafka-producer to kafka-consumer with filtering:
 
-        scripts/deploy-to-cluster.sh cz.muni.fi.storm.TopologyKafkaToKafkaWithFilter
+        scripts/deploy-to-cluster.sh cz.muni.fi.storm.TopologyK2KFilter
