@@ -37,6 +37,7 @@ public class KafkaProducerBolt extends BaseBasicBolt {
         props.put("broker.id", "0");
         props.put("serializer.class", "kafka.serializer.StringEncoder");
         props.put("request.required.acks", "1");
+        props.put("producer.type", "async");
         ProducerConfig config = new ProducerConfig(props);
         producer = new Producer<String, String>(config);
     }
