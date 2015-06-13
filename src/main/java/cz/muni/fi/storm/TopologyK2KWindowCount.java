@@ -62,6 +62,7 @@ public class TopologyK2KWindowCount {
                 .fieldsGrouping("counter-bolt", new Fields("count"));
 
         Config config = new Config();
+        config.put(Config.TOPOLOGY_TICK_TUPLE_FREQ_SECS, 1);
 
         try {
             StormSubmitter.submitTopology("Topology-kafka-to-kafka-with-window-count", config, builder.createTopology());
