@@ -38,10 +38,14 @@ Run Storm on cluster
 
 a) For topology kafka-producer to kafka-consumer:
 
-    <b>number_of_computers</b> on which parallel run all this topology
+<b>number_of_computers</b> on which parallel run all this topology
 
         scripts/deploy-to-cluster.sh cz.muni.fi.storm.TopologyKafkaToKafka number_of_computers
 
 b) For topology kafka-producer to kafka-consumer with filtering:
 
         scripts/deploy-to-cluster.sh cz.muni.fi.storm.TopologyK2KFilter
+
+c) For topology kafka-producer to kafka-consumer with sliding window and counter:
+
+        scripts/deploy-to-cluster.sh cz.muni.fi.storm.TopologyK2KWindowCount
