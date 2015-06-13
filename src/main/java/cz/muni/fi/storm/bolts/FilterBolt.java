@@ -25,19 +25,11 @@ public class FilterBolt extends BaseRichBolt {
         this.key = key;
         this.value = value;
     }
-    
-    @Override
-    public void cleanup() {}
 
     @Override
     public void prepare(Map stormConf, TopologyContext context, OutputCollector collector) {
         this.collector = collector;
         jsonParser = new JSONParser();
-    }
-
-    @Override
-    public void declareOutputFields(OutputFieldsDeclarer declarer) {
-        declarer.declare(new Fields("filtered-flow"));
     }
 
     @Override
@@ -56,5 +48,10 @@ public class FilterBolt extends BaseRichBolt {
         }
 
         collector.ack(tuple);
+    }
+    
+    @Override
+    public void declareOutputFields(OutputFieldsDeclarer declarer) {
+        declarer.declare(new Fields("flow"));
     }
 }

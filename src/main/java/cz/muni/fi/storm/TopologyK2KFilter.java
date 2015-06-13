@@ -56,7 +56,7 @@ public class TopologyK2KFilter {
         builder.setBolt("filter-bolt", new FilterBolt("dst_port", "80"))
                 .fieldsGrouping("kafka-consumer-spout", new Fields("flow"));
         builder.setBolt("kafka-producer-bolt", kafkaProducerBolt)
-                .fieldsGrouping("filter-bolt", new Fields("filtered-flow"));
+                .fieldsGrouping("filter-bolt", new Fields("flow"));
 
         Config config = new Config();
 
