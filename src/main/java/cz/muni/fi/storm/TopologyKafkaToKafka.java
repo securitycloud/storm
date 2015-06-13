@@ -19,12 +19,14 @@ public class TopologyKafkaToKafka {
     public static void main(String[] args) {
         log.fine("Starting: Topology-kafka-to-kafka");
         
-        if (args.length < 2) {
-            throw new IllegalArgumentException("Missing argument: kafka_producer_ip kafka_consumer_ip");
+        if (args.length < 3) {
+            throw new IllegalArgumentException("Missing argument: number_of_computers kafka_producer_ip kafka_consumer_ip");
         }
+        
+        int numberOfComputers = Integer.parseInt(args[0]);
 
-        String kafkaProducerIp = args[0];
-        String kafkaConsumerIp = args[1];
+        String kafkaProducerIp = args[1];
+        String kafkaConsumerIp = args[2];
         
         String kafkaProducerPort = "2181";
         String kafkaConsumerPort = "9092";
@@ -51,11 +53,12 @@ public class TopologyKafkaToKafka {
         KafkaProducerBolt kafkaProducerBolt = new KafkaProducerBolt(kafkaConsumerIp, kafkaConsumerPort, kafkaConsumerTopic);
         
         TopologyBuilder builder = new TopologyBuilder();
-        builder.setSpout("kafka-consumer-spout", kafkaSpout);
-        builder.setBolt("kafka-producer-bolt", kafkaProducerBolt)
+        builder.setSpout("kafka-consumer-spout", kafkaSpout, numberOfComputers);
+        builder.setBolt("kafka-producer-bolt", kafkaProducerBolt, numberOfComputers)
                 .fieldsGrouping("kafka-consumer-spout", new Fields("flow"));
 
         Config config = new Config();
+        config.setNumWorkers(numberOfComputers);
         //config.put(Config.TOPOLOGY_TICK_TUPLE_FREQ_SECS, 2);
 
         try {
