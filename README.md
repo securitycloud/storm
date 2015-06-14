@@ -38,7 +38,7 @@ Run Storm on cluster
 
 a) For topology kafka-producer to kafka-consumer:
 
-<b>number_of_computers</b> on which parallel run all this topology
+ <b>number_of_computers</b> on which parallel run all this topology
 
         scripts/deploy-to-cluster.sh cz.muni.fi.storm.TopologyKafkaToKafka number_of_computers
 
@@ -49,3 +49,11 @@ b) For topology kafka-producer to kafka-consumer with filtering:
 c) For topology kafka-producer to kafka-consumer with sliding window and counter:
 
         scripts/deploy-to-cluster.sh cz.muni.fi.storm.TopologyK2KWindowCount
+
+d) For topology source-file to target-file:
+
+ <b>source-file</b> read file must have read attribute
+
+ <b>target-file</b> append file must have write attribute
+
+        scripts/deploy-to-cluster.sh cz.muni.fi.storm.TopologyFileToFile source-file target-file
