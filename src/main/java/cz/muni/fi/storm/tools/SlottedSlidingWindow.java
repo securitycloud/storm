@@ -1,52 +1,43 @@
 package cz.muni.fi.storm.tools;
 
 import java.util.ArrayList;
+import java.util.LinkedList;
 import java.util.List;
+import java.util.Queue;
 
 public class SlottedSlidingWindow<T> {
 
-    private List<List<T>> slots;
-    private int headSlot;
-    private int tailSlot;
+    private Queue<List<T>> queue;
+    private List<T> head;
     private int numberOfSlots;
 
     public SlottedSlidingWindow(int windowLengthInSlots) {
-        if (windowLengthInSlots < 2) {
-            throw new IllegalArgumentException("Window length in slots must be at least 2");
-        }
         numberOfSlots = windowLengthInSlots;
-        slots = new ArrayList(numberOfSlots);
+        queue = new LinkedList<List<T>>();
         
-        for (int i = 0; i < numberOfSlots; i++) {
-            slots.add(new ArrayList<T>());
+        for (int i = 1; i < numberOfSlots; i++) {
+            queue.add(new ArrayList<T>());
         }
-
-        headSlot = 0;
-        tailSlot = slotAfter(headSlot);
+        
+        head = new ArrayList<T>();
     }
 
     public void addToHead(T obj) {
-        slots.get(headSlot).add(obj);
+        head.add(obj);
     }
     
     public void nextSlot() {
-        headSlot = tailSlot;
-        tailSlot = slotAfter(tailSlot);
-        slots.get(headSlot).clear();
+        queue.add(head);
+        queue.remove();
+        head = new ArrayList<T>();
     }
 
     public List<T> getWindow() {
         List<T> window = new ArrayList<T>();
-        int actualSlot = tailSlot;
-        while (actualSlot != headSlot) {
-            window.addAll(slots.get(actualSlot));
-            actualSlot = slotAfter(actualSlot);
+        for (List<T> actualSlot : queue) {
+            window.addAll(actualSlot);
         }
-        window.addAll(slots.get(headSlot));
+        window.addAll(head);
         return window;
-    }
-
-    private int slotAfter(int slot) {
-        return (slot + 1) % numberOfSlots;
     }
 }
