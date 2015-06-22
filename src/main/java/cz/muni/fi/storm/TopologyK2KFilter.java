@@ -30,8 +30,8 @@ public class TopologyK2KFilter {
         String kafkaProducerPort = "2181";
         String kafkaConsumerPort = "9092";
         
-        String kafkaProducerTopic = "securitycloud-testing-data";
-        String kafkaConsumerTopic = "securitycloud-testing-data";
+        String kafkaProducerTopic = "storm-test";
+        String kafkaConsumerTopic = "storm-test";
 
         if (kafkaProducerTopic.equals(kafkaConsumerTopic)
                 && kafkaProducerIp.equals(kafkaConsumerIp)) {
