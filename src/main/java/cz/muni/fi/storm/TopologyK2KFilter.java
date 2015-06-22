@@ -59,6 +59,7 @@ public class TopologyK2KFilter {
                 .fieldsGrouping("filter-bolt", new Fields("flow"));
 
         Config config = new Config();
+        config.put(Config.TOPOLOGY_ACKER_EXECUTORS, 0);
 
         try {
             StormSubmitter.submitTopology("Topology-kafka-to-kafka-with-filter", config, builder.createTopology());
