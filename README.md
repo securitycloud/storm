@@ -40,7 +40,7 @@ a) For topology kafka-producer to kafka-consumer:
 
  <b>number_of_computers</b> on which parallel run all this topology
 
-        scripts/deploy-to-cluster.sh cz.muni.fi.storm.TopologyKafkaToKafka number_of_computers
+        scripts/deploy-to-cluster.sh cz.muni.fi.storm.TopologyKafkaToKafkaAcking number_of_computers
 
 b) For topology kafka-producer to kafka-consumer with filtering:
 
