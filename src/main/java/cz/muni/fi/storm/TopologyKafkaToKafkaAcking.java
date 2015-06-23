@@ -12,9 +12,9 @@ import storm.kafka.SpoutConfig;
 import storm.kafka.StringScheme;
 import storm.kafka.ZkHosts;
 
-public class TopologyKafkaToKafka {
+public class TopologyKafkaToKafkaAcking {
 
-    private static final Logger log = Logger.getLogger(TopologyKafkaToKafka.class.getName());
+    private static final Logger log = Logger.getLogger(TopologyKafkaToKafkaAcking.class.getName());
 
     public static void main(String[] args) {
         log.fine("Starting: Topology-kafka-to-kafka");
