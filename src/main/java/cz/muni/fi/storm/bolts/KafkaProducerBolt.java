@@ -27,7 +27,6 @@ public class KafkaProducerBolt extends BaseRichBolt {
         this.kafkaConsumerIp = kafkaConsumerIp;
         this.kafkaConsumerPort = kafkaConsumerPort;
         this.kafkaConsumerTopic = kafkaConsumerTopic;
-        this.collector = collector;
     }
 
     @Override
@@ -42,6 +41,7 @@ public class KafkaProducerBolt extends BaseRichBolt {
         props.put("producer.type", "async");
         ProducerConfig config = new ProducerConfig(props);
         producer = new Producer<String, String>(config);
+        this.collector = collector;
     }
 
     @Override
@@ -53,6 +53,7 @@ public class KafkaProducerBolt extends BaseRichBolt {
             log.fine("Executing and sending data to topic");
             KeyedMessage<String, String> data = new KeyedMessage<String, String>(kafkaConsumerTopic, tuple.getValue(0).toString());
             producer.send(data);
+            collector.ack(tuple);
         }
     }
 
