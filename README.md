@@ -36,21 +36,25 @@ Run Storm on cluster
 
 <i>Deploy to cluster:</i> compile, deploy and run project on storm with arguments.
 
-a) For topology kafka-producer to kafka-consumer:
+a) For topology KafkaSpout -> KafkaOnlyCounterBolt
+
+        scripts/deploy-to-cluster.sh cz.muni.fi.storm.TopologyKafkaCounter number_of_computers
+
+b) For topology kafka-producer to kafka-consumer:
 
  <b>number_of_computers</b> on which parallel run all this topology
 
         scripts/deploy-to-cluster.sh cz.muni.fi.storm.TopologyKafkaToKafkaAcking number_of_computers
 
-b) For topology kafka-producer to kafka-consumer with filtering:
+c) For topology kafka-producer to kafka-consumer with filtering:
 
         scripts/deploy-to-cluster.sh cz.muni.fi.storm.TopologyK2KFilter
 
-c) For topology kafka-producer to kafka-consumer with sliding window and counter:
+d) For topology kafka-producer to kafka-consumer with sliding window and counter:
 
         scripts/deploy-to-cluster.sh cz.muni.fi.storm.TopologyK2KWindowCount
 
-d) For topology source-file to target-file:
+e) For topology source-file to target-file:
 
  <b>source-file</b> read file must have read attribute
 
