@@ -11,19 +11,15 @@ import kafka.javaapi.producer.Producer;
 import kafka.producer.KeyedMessage;
 import kafka.producer.ProducerConfig;
 
-public class KafkaDataAndCounterBolt extends BaseRichBolt {
+public class ServiceBolt extends BaseRichBolt {
 
     private Producer<String, String> producer;
     private String kafkaConsumerIp;
     private String kafkaConsumerPort;
-    private String kafkaConsumerTopic;
-    private int counter = 0;
-    private long lastTime;
-
-    public KafkaDataAndCounterBolt(String kafkaConsumerIp, String kafkaConsumerPort, String kafkaConsumerTopic) {
+    
+    public ServiceBolt(String kafkaConsumerIp, String kafkaConsumerPort) {
         this.kafkaConsumerIp = kafkaConsumerIp;
         this.kafkaConsumerPort = kafkaConsumerPort;
-        this.kafkaConsumerTopic = kafkaConsumerTopic;
     }
 
     @Override
@@ -41,16 +37,9 @@ public class KafkaDataAndCounterBolt extends BaseRichBolt {
 
     @Override
     public void execute(Tuple tuple) {
-        KeyedMessage<String, String> data = new KeyedMessage<String, String>(kafkaConsumerTopic, tuple.getValue(0).toString());
+        String interval = tuple.getValue(0).toString();
+        KeyedMessage<String, String> data = new KeyedMessage<String, String>("storm-service", interval);
         producer.send(data);
-        counter++;
-        if (counter == 1000000) {
-            counter = 0;
-            long actualTime = System.currentTimeMillis();
-            KeyedMessage<String, String> interval = new KeyedMessage<String, String>("storm-service", (actualTime - lastTime) + "");
-            lastTime = actualTime;
-            producer.send(interval);
-        }
     }
     
     @Override

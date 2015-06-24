@@ -40,9 +40,9 @@ a) For topology KafkaSpout -> KafkaOnlyCounterBolt:
 
         scripts/deploy-to-cluster.sh cz.muni.fi.storm.TopologyKafkaCounter number_of_computers
 
-b) For topology KafkaSpout -> KafkaDataAndCounterBolt:
+b) For topology KafkaSpout -> KafkaProducerBolt:
 
-        scripts/deploy-to-cluster.sh cz.muni.fi.storm.TopologyKafkaKafkaCounter number_of_computers
+        scripts/deploy-to-cluster.sh cz.muni.fi.storm.TopologyKafkaKafka number_of_computers
 
 c) For topology kafka-producer to kafka-consumer with filtering:
 

@@ -5,13 +5,14 @@ import backtype.storm.StormSubmitter;
 import backtype.storm.spout.SchemeAsMultiScheme;
 import backtype.storm.topology.TopologyBuilder;
 import backtype.storm.tuple.Fields;
-import cz.muni.fi.storm.bolts.KafkaDataAndCounterBolt;
+import cz.muni.fi.storm.bolts.KafkaProducerBolt;
+import cz.muni.fi.storm.bolts.ServiceBolt;
 import storm.kafka.KafkaSpout;
 import storm.kafka.SpoutConfig;
 import storm.kafka.StringScheme;
 import storm.kafka.ZkHosts;
 
-public class TopologyKafkaKafkaCounter {
+public class TopologyKafkaKafka {
 
     public static void main(String[] args) {
         
@@ -46,12 +47,14 @@ public class TopologyKafkaKafkaCounter {
         });
 
         KafkaSpout kafkaSpout = new KafkaSpout(kafkaConfig);
-        KafkaDataAndCounterBolt kafkaDataAndCounterBolt = new KafkaDataAndCounterBolt(kafkaConsumerIp, kafkaConsumerPort, kafkaConsumerTopic);
+        KafkaProducerBolt kafkaProducerBolt = new KafkaProducerBolt(kafkaConsumerIp, kafkaConsumerPort, kafkaConsumerTopic, true);
         
         TopologyBuilder builder = new TopologyBuilder();
         builder.setSpout("kafka-consumer-spout", kafkaSpout, numberOfComputers);
-        builder.setBolt("kafka-producer-bolt", kafkaDataAndCounterBolt, numberOfComputers)
+        builder.setBolt("kafka-producer-bolt", kafkaProducerBolt, numberOfComputers)
                 .fieldsGrouping("kafka-consumer-spout", new Fields("flow"));
+        builder.setBolt("service-bolt", new ServiceBolt(kafkaConsumerIp, kafkaConsumerPort))
+                .globalGrouping("kafka-producer-bolt", "service");
 
         Config config = new Config();
         config.setNumWorkers(numberOfComputers);

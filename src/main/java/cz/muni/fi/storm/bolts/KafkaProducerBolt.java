@@ -4,24 +4,31 @@ import backtype.storm.task.OutputCollector;
 import backtype.storm.task.TopologyContext;
 import backtype.storm.topology.OutputFieldsDeclarer;
 import backtype.storm.topology.base.BaseRichBolt;
+import backtype.storm.tuple.Fields;
 import backtype.storm.tuple.Tuple;
+import backtype.storm.tuple.Values;
 import java.util.Map;
 import java.util.Properties;
 import kafka.javaapi.producer.Producer;
 import kafka.producer.KeyedMessage;
 import kafka.producer.ProducerConfig;
 
-public class KafkaOnlyCounterBolt extends BaseRichBolt {
+public class KafkaProducerBolt extends BaseRichBolt {
 
     private Producer<String, String> producer;
     private String kafkaConsumerIp;
     private String kafkaConsumerPort;
+    private String kafkaConsumerTopic;
+    private boolean isCountable;
     private int counter = 0;
     private long lastTime;
-    
-    public KafkaOnlyCounterBolt(String kafkaConsumerIp, String kafkaConsumerPort) {
+    private OutputCollector collector;
+
+    public KafkaProducerBolt(String kafkaConsumerIp, String kafkaConsumerPort, String kafkaConsumerTopic, boolean isCountable) {
         this.kafkaConsumerIp = kafkaConsumerIp;
         this.kafkaConsumerPort = kafkaConsumerPort;
+        this.kafkaConsumerTopic = kafkaConsumerTopic;
+        this.isCountable = isCountable;
     }
 
     @Override
@@ -35,22 +42,30 @@ public class KafkaOnlyCounterBolt extends BaseRichBolt {
         props.put("producer.type", "async");
         ProducerConfig config = new ProducerConfig(props);
         producer = new Producer<String, String>(config);
+        this.collector = collector;
     }
 
     @Override
     public void execute(Tuple tuple) {
-        counter++;
-        if (counter == 1000000) {
-            counter = 0;
-            long actualTime = System.currentTimeMillis();
-            KeyedMessage<String, String> interval = new KeyedMessage<String, String>("storm-service", (actualTime - lastTime) + "");
-            lastTime = actualTime;
-            producer.send(interval);
+        KeyedMessage<String, String> data = new KeyedMessage<String, String>(kafkaConsumerTopic, tuple.getValue(0).toString());
+        producer.send(data);
+        if (isCountable) {
+            counter++;
+            if (counter == 1000000) {
+                counter = 0;
+                long actualTime = System.currentTimeMillis();
+                collector.emit("service", new Values((actualTime - lastTime) + ""));
+                lastTime = actualTime;
+            }
         }
     }
     
     @Override
-    public void declareOutputFields(OutputFieldsDeclarer declarer) {}
+    public void declareOutputFields(OutputFieldsDeclarer declarer) {
+        if (isCountable) {
+            declarer.declareStream("service", new Fields("interval"));
+        }   
+    }
 
     @Override
     public void cleanup() {
