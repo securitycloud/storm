@@ -43,9 +43,9 @@ public class KafkaOnlyCounterBolt extends BaseRichBolt {
         if (counter == 1000000) {
             counter = 0;
             long actualTime = System.currentTimeMillis();
-            KeyedMessage<String, String> data = new KeyedMessage<String, String>("storm-service", (actualTime - lastTime) + "");
+            KeyedMessage<String, String> interval = new KeyedMessage<String, String>("storm-service", (actualTime - lastTime) + "");
             lastTime = actualTime;
-            producer.send(data);
+            producer.send(interval);
         }
     }
     
