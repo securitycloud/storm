@@ -6,7 +6,6 @@ import backtype.storm.spout.SchemeAsMultiScheme;
 import backtype.storm.topology.TopologyBuilder;
 import backtype.storm.tuple.Fields;
 import cz.muni.fi.storm.bolts.KafkaProducerBolt;
-import cz.muni.fi.storm.bolts.ServiceBolt;
 import storm.kafka.KafkaSpout;
 import storm.kafka.SpoutConfig;
 import storm.kafka.StringScheme;
@@ -53,8 +52,6 @@ public class TopologyKafkaKafka {
         builder.setSpout("kafka-consumer-spout", kafkaSpout, numberOfComputers);
         builder.setBolt("kafka-producer-bolt", kafkaProducerBolt, numberOfComputers)
                 .fieldsGrouping("kafka-consumer-spout", new Fields("flow"));
-        builder.setBolt("service-bolt", new ServiceBolt(kafkaConsumerIp, kafkaConsumerPort))
-                .globalGrouping("kafka-producer-bolt", "service");
 
         Config config = new Config();
         config.setNumWorkers(numberOfComputers);

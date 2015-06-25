@@ -4,9 +4,8 @@ import backtype.storm.task.OutputCollector;
 import backtype.storm.task.TopologyContext;
 import backtype.storm.topology.OutputFieldsDeclarer;
 import backtype.storm.topology.base.BaseRichBolt;
-import backtype.storm.tuple.Fields;
 import backtype.storm.tuple.Tuple;
-import backtype.storm.tuple.Values;
+import cz.muni.fi.storm.tools.ServiceCounter;
 import java.util.Map;
 import java.util.Properties;
 import kafka.javaapi.producer.Producer;
@@ -20,9 +19,7 @@ public class KafkaProducerBolt extends BaseRichBolt {
     private String kafkaConsumerPort;
     private String kafkaConsumerTopic;
     private boolean isCountable;
-    private int counter = 0;
-    private long lastTime;
-    private OutputCollector collector;
+    private ServiceCounter counter;
 
     public KafkaProducerBolt(String kafkaConsumerIp, String kafkaConsumerPort, String kafkaConsumerTopic, boolean isCountable) {
         this.kafkaConsumerIp = kafkaConsumerIp;
@@ -42,7 +39,9 @@ public class KafkaProducerBolt extends BaseRichBolt {
         props.put("producer.type", "async");
         ProducerConfig config = new ProducerConfig(props);
         producer = new Producer<String, String>(config);
-        this.collector = collector;
+        if (isCountable) {
+            counter = new ServiceCounter(producer);
+        }
     }
 
     @Override
@@ -50,22 +49,12 @@ public class KafkaProducerBolt extends BaseRichBolt {
         KeyedMessage<String, String> data = new KeyedMessage<String, String>(kafkaConsumerTopic, tuple.getValue(0).toString());
         producer.send(data);
         if (isCountable) {
-            counter++;
-            if (counter == 1000000) {
-                counter = 0;
-                long actualTime = System.currentTimeMillis();
-                collector.emit("service", new Values((actualTime - lastTime) + ""));
-                lastTime = actualTime;
-            }
+            counter.count();
         }
     }
     
     @Override
-    public void declareOutputFields(OutputFieldsDeclarer declarer) {
-        if (isCountable) {
-            declarer.declareStream("service", new Fields("interval"));
-        }   
-    }
+    public void declareOutputFields(OutputFieldsDeclarer declarer) { }
 
     @Override
     public void cleanup() {

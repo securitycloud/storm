@@ -5,7 +5,6 @@ import backtype.storm.StormSubmitter;
 import backtype.storm.spout.SchemeAsMultiScheme;
 import backtype.storm.topology.TopologyBuilder;
 import backtype.storm.tuple.Fields;
-import cz.muni.fi.storm.bolts.ServiceBolt;
 import storm.kafka.KafkaSpout;
 import storm.kafka.SpoutConfig;
 import storm.kafka.StringScheme;
@@ -40,12 +39,12 @@ public class TopologyKafkaCounter {
         });
 
         KafkaSpout kafkaSpout = new KafkaSpout(kafkaConfig);
-        ServiceBolt kafkaOnlyCounterBolt = new ServiceBolt(kafkaConsumerIp, kafkaConsumerPort);
+        //ServiceBolt kafkaOnlyCounterBolt = new ServiceBolt(kafkaConsumerIp, kafkaConsumerPort);
         
         TopologyBuilder builder = new TopologyBuilder();
         builder.setSpout("kafka-consumer-spout", kafkaSpout, numberOfComputers);
-        builder.setBolt("kafka-only-counter-bolt", kafkaOnlyCounterBolt, numberOfComputers)
-                .fieldsGrouping("kafka-consumer-spout", new Fields("flow"));
+        //builder.setBolt("kafka-only-counter-bolt", kafkaOnlyCounterBolt, numberOfComputers)
+          //      .fieldsGrouping("kafka-consumer-spout", new Fields("flow"));
 
         Config config = new Config();
         config.setNumWorkers(numberOfComputers);
