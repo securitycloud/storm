@@ -52,6 +52,6 @@ d) For topology kafka-producer to kafka-consumer with sliding window and counter
 
         scripts/deploy-to-cluster.sh cz.muni.fi.storm.TopologyK2KWindowCount
 
-z) For topology source-file to target-file:
+z) For topology FileReaderSpout -> FileWriterBolt:
 
-        scripts/deploy-to-cluster.sh cz.muni.fi.storm.TopologyFileToFile source_file target_file number_of_computers
+        scripts/deploy-to-cluster.sh cz.muni.fi.storm.TopologyFileFile source_file target_file number_of_computers

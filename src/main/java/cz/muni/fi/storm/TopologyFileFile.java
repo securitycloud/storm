@@ -7,7 +7,7 @@ import backtype.storm.tuple.Fields;
 import cz.muni.fi.storm.bolts.FileWriterBolt;
 import cz.muni.fi.storm.spouts.FileReaderSpout;
 
-public class TopologyFileToFile {
+public class TopologyFileFile {
 
     public static void main(String[] args) {        
         if (args.length < 5) {
@@ -33,7 +33,7 @@ public class TopologyFileToFile {
         config.setDebug(false);
 
         try {
-            StormSubmitter.submitTopology("Topology-file-to-file", config, builder.createTopology());
+            StormSubmitter.submitTopology("Topology-file-file", config, builder.createTopology());
         } catch (Exception e) {
             e.printStackTrace();
             throw new IllegalStateException("Couldn't initialize the topology", e);
