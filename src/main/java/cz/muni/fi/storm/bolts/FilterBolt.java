@@ -49,10 +49,11 @@ public class FilterBolt extends BaseRichBolt {
             String flow = tuple.getString(0); 
             
        /*
-            1. verzia Jackson prevodu            
+           // 1. verzia Jackson prevodu            
             
         
         try {
+            String flow = tuple.getString(0); 
             JsonNode rootNode = objectMapper.readTree(flow);
             JsonNode containValue= rootNode.path(this.key);
             if(containValue.toString().equals(this.value)){
@@ -61,18 +62,19 @@ public class FilterBolt extends BaseRichBolt {
             }
         } catch (IOException ex) {
             Logger.getLogger(FilterBolt.class.getName()).log(Level.SEVERE, null, ex);
-        }*/
-            
+        }
+            */
         
         //2. verzia
             
         JSONObject object = new JSONObject();
         try {
+             
             object = objectMapper.readValue(flow, JSONObject.class);
             Object containValue = object.get(this.key);
             if (containValue.toString().equals(this.value)) {
             counter = counter.add(BigInteger.ONE);
-            this.collector.emit(new Values(flow));
+            collector.emit(new Values(flow));
             }            
         } catch (IOException ex) {
             Logger.getLogger(FilterBolt.class.getName()).log(Level.SEVERE, null, ex);
