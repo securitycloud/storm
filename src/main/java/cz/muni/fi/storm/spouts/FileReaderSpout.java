@@ -11,18 +11,15 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
-import java.math.BigInteger;
 import java.util.Map;
-import java.util.logging.Logger;
 import jline.internal.InputStreamReader;
 
 public class FileReaderSpout extends BaseRichSpout {
 
-    private static final Logger log = Logger.getLogger(FileReaderSpout.class.getName());
     private SpoutOutputCollector collector;
     private File fileSource;
     private BufferedReader reader = null;
-    private BigInteger counter = new BigInteger("0");
+    private long count;
 
     public FileReaderSpout(String filePath) {
         fileSource = new File(filePath);
@@ -41,11 +38,10 @@ public class FileReaderSpout extends BaseRichSpout {
     @Override
     public void nextTuple() {
         String flow = nextLine();
-        //log.fine("Creating new tuple ");
         if (flow != null) {
-            counter = counter.add(BigInteger.ONE);
-            // TODO conter is weak because more instance this generated the same counter.
-            this.collector.emit(new Values(flow), counter.toString());
+            count++;
+            //this.collector.emit(new Values(flow), count); // anchoring
+            this.collector.emit(new Values(flow)); // without anchoring
         }
     }
 

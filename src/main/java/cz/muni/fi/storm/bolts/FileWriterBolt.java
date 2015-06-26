@@ -5,6 +5,7 @@ import backtype.storm.task.TopologyContext;
 import backtype.storm.topology.OutputFieldsDeclarer;
 import backtype.storm.topology.base.BaseRichBolt;
 import backtype.storm.tuple.Tuple;
+import cz.muni.fi.storm.tools.ServiceCounter;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
@@ -14,12 +15,14 @@ import java.util.Map;
 
 public class FileWriterBolt extends BaseRichBolt {
 
-    private OutputCollector collector;
     private File targetFile;
     private PrintWriter writer = null;
+    private boolean isCountable;
+    private ServiceCounter counter;
 
-    public FileWriterBolt(String filePath) {
+    public FileWriterBolt(String filePath, boolean isCountable) {
         this.targetFile = new File(filePath);
+        this.isCountable = isCountable;
     }
 
     @Override
@@ -29,14 +32,19 @@ public class FileWriterBolt extends BaseRichBolt {
         } catch (FileNotFoundException e) {
             throw new IllegalArgumentException("Target file for flows doesnt exist", e);
         }
-        this.collector = collector;
+        if (isCountable) {
+            this.counter = new ServiceCounter(stormConf.get("serviceCounter.ip").toString(),
+                                              stormConf.get("serviceCounter.port").toString());
+        }
     }
 
     @Override
     public void execute(Tuple tuple) {
         String flow = tuple.getValue(0).toString();
         append(flow);
-        collector.ack(tuple);
+        if (isCountable) {
+            counter.count();
+        }
     }
 
     @Override

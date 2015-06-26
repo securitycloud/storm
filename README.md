@@ -52,10 +52,6 @@ d) For topology kafka-producer to kafka-consumer with sliding window and counter
 
         scripts/deploy-to-cluster.sh cz.muni.fi.storm.TopologyK2KWindowCount
 
-e) For topology source-file to target-file:
+z) For topology source-file to target-file:
 
- <b>source-file</b> read file must have read attribute
-
- <b>target-file</b> append file must have write attribute
-
-        scripts/deploy-to-cluster.sh cz.muni.fi.storm.TopologyFileToFile source-file target-file
+        scripts/deploy-to-cluster.sh cz.muni.fi.storm.TopologyFileToFile source_file target_file number_of_computers

@@ -6,29 +6,31 @@ import backtype.storm.topology.TopologyBuilder;
 import backtype.storm.tuple.Fields;
 import cz.muni.fi.storm.bolts.FileWriterBolt;
 import cz.muni.fi.storm.spouts.FileReaderSpout;
-import java.util.logging.Logger;
 
 public class TopologyFileToFile {
 
-    private static final Logger log = Logger.getLogger(TopologyFileToFile.class.getName());
-
-    public static void main(String[] args) {
-        log.fine("Starting: Topology-file-to-file");
-        
-        if (args.length < 2) {
-            throw new IllegalArgumentException("Missing argument: source_file target_file");
+    public static void main(String[] args) {        
+        if (args.length < 5) {
+            throw new IllegalArgumentException("Missing argument: source_file target_file number_of_computers * kafka_consumer_ip");
         }
 
         String sourceFilePath = args[0];
         String targetFilePath = args[1];
+        int numberOfComputers = Integer.parseInt(args[2]);
+        // args[3] is ignored
+        String kafkaConsumerIp = args[4];
         
         TopologyBuilder builder = new TopologyBuilder();
-        builder.setSpout("file-reader-spout", new FileReaderSpout(sourceFilePath));
-        builder.setBolt("file-writer-bolt", new FileWriterBolt(targetFilePath))
+        builder.setSpout("file-reader-spout", new FileReaderSpout(sourceFilePath), numberOfComputers);
+        builder.setBolt("file-writer-bolt", new FileWriterBolt(targetFilePath, true), numberOfComputers)
                 .fieldsGrouping("file-reader-spout", new Fields("flow"));
 
         Config config = new Config();
-        config.setNumWorkers(2);
+        config.setNumWorkers(numberOfComputers);
+        config.put("serviceCounter.ip", kafkaConsumerIp);
+        config.put("serviceCounter.port", "9092");
+        config.put(Config.TOPOLOGY_ACKER_EXECUTORS, 0);
+        config.setDebug(false);
 
         try {
             StormSubmitter.submitTopology("Topology-file-to-file", config, builder.createTopology());
