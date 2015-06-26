@@ -8,7 +8,6 @@ import backtype.storm.topology.base.BaseRichBolt;
 import backtype.storm.tuple.Fields;
 import backtype.storm.tuple.Tuple;
 import backtype.storm.tuple.Values;
-import java.math.BigInteger;
 import java.util.Map;
 import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
@@ -36,14 +35,10 @@ public class FilterBolt extends BaseRichBolt {
     private String value;
     private transient ObjectMapper objectMapper;
     private ServiceCounter counter;
-    private String kafkaConsumerIp;
-    private String kafkaConsumerPort;
     
-    public FilterBolt(String key, String value, String kafkaConsumerIp, String kafkaConsumerPort) {
+    public FilterBolt(String key, String value) {
         this.key = key;
         this.value = value;
-        this.kafkaConsumerIp=kafkaConsumerIp;
-        this.kafkaConsumerPort=kafkaConsumerPort;
     }
 
     @Override
@@ -53,7 +48,8 @@ public class FilterBolt extends BaseRichBolt {
         objectMapper= new ObjectMapper ();
         
         
-        counter = new ServiceCounter(kafkaConsumerIp,kafkaConsumerPort);
+        counter = new ServiceCounter(stormConf.get("serviceCounter.ip").toString(),
+                                     stormConf.get("serviceCounter.port").toString());
         
     }
 
@@ -70,9 +66,9 @@ public class FilterBolt extends BaseRichBolt {
             
             JsonNode rootNode = objectMapper.readTree(flow);
             JsonNode containValue= rootNode.path(this.key);
-            if(containValue.toString().equals(this.value)){
-            this.collector.emit(new Values(flow));
             counter.count();
+            if(containValue.toString().equals(this.value)){
+                this.collector.emit(new Values(flow));
             }
         } catch (IOException ex) {
             Logger.getLogger(FilterBolt.class.getName()).log(Level.SEVERE, null, ex);
@@ -93,7 +89,6 @@ public class FilterBolt extends BaseRichBolt {
         } catch (IOException ex) {
             Logger.getLogger(FilterBolt.class.getName()).log(Level.SEVERE, null, ex);
         }*/
-    collector.ack(tuple);
     } 
    
     @Override
