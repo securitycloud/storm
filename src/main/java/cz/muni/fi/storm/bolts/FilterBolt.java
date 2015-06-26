@@ -1,5 +1,6 @@
 package cz.muni.fi.storm.bolts;
 
+import backtype.storm.generated.ComponentCommon;
 import backtype.storm.task.OutputCollector;
 import backtype.storm.task.TopologyContext;
 import backtype.storm.topology.OutputFieldsDeclarer;
@@ -30,7 +31,7 @@ public class FilterBolt extends BaseRichBolt {
     private BigInteger counter = new BigInteger("0");
     private String key;
     private String value;
-    private transient ObjectMapper objectMapper = new ObjectMapper();
+    private transient ObjectMapper objectMapper;
     
     public FilterBolt(String key, String value) {
         this.key = key;
@@ -41,6 +42,7 @@ public class FilterBolt extends BaseRichBolt {
     public void prepare(Map stormConf, TopologyContext context, OutputCollector collector) {
         this.collector = collector;
         jsonParser = new JSONParser();
+        objectMapper= new ObjectMapper ();
     }
 
     @Override
@@ -48,12 +50,12 @@ public class FilterBolt extends BaseRichBolt {
       
             String flow = tuple.getString(0); 
             
-       /*
+       
            // 1. verzia Jackson prevodu            
             
         
         try {
-            String flow = tuple.getString(0); 
+            
             JsonNode rootNode = objectMapper.readTree(flow);
             JsonNode containValue= rootNode.path(this.key);
             if(containValue.toString().equals(this.value)){
@@ -63,22 +65,22 @@ public class FilterBolt extends BaseRichBolt {
         } catch (IOException ex) {
             Logger.getLogger(FilterBolt.class.getName()).log(Level.SEVERE, null, ex);
         }
-            */
-        
+            
+        /*
         //2. verzia
             
-        JSONObject object = new JSONObject();
-        try {
-             
-            object = objectMapper.readValue(flow, JSONObject.class);
+        //JSONObject object ; //new JSONObject();
+        try {           
+            
+            JSONObject object =  objectMapper.readValue(flow, JSONObject.class);
             Object containValue = object.get(this.key);
             if (containValue.toString().equals(this.value)) {
-            counter = counter.add(BigInteger.ONE);
-            collector.emit(new Values(flow));
+            //counter = counter.add(BigInteger.ONE);
+            this.collector.emit(counter.toString(),new Values(flow));
             }            
         } catch (IOException ex) {
             Logger.getLogger(FilterBolt.class.getName()).log(Level.SEVERE, null, ex);
-        }
+        }*/
     collector.ack(tuple);
     } 
    
