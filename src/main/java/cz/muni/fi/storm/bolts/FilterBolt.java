@@ -16,7 +16,8 @@ import org.json.simple.parser.ParseException;
 // imports for Jackson
 import org.codehaus.jackson.JsonGenerationException;
 import org.codehaus.jackson.map.JsonMappingException;
-import org.codehaus.jackson.map.ObjectMapper;
+import org.codehaus.jackson.*;
+import org.codehaus.jackson.map.*;
 import com.fasterxml.jackson.core.JsonParser;
 import java.io.IOException;
 import java.util.logging.Level;
@@ -25,7 +26,7 @@ import java.util.logging.Logger;
 public class FilterBolt extends BaseRichBolt {
 
     private OutputCollector collector;
-    private JsonParser jsonParser;
+    private JSONParser jsonParser;
     private BigInteger counter = new BigInteger("0");
     private String key;
     private String value;
@@ -39,42 +40,46 @@ public class FilterBolt extends BaseRichBolt {
     @Override
     public void prepare(Map stormConf, TopologyContext context, OutputCollector collector) {
         this.collector = collector;
-        //jsonParser = new JsonParser();
+        jsonParser = new JSONParser();
     }
 
     @Override
     public void execute (Tuple tuple) {
-        try {
-            String flow = tuple.getString(0);
+      
+            String flow = tuple.getString(0); 
             
-            /* try {
-            JSONObject jFlow = (JSONObject) jsonParser.parse(flow);
-            Object containValue = jFlow.get(this.key);
-                    
-            if (containValue.toString().equals(this.value)) {
-            counter = counter.add(BigInteger.ONE);
+       /*
+            1. verzia Jackson prevodu            
+            
+        
+        try {
+            JsonNode rootNode = objectMapper.readTree(flow);
+            JsonNode containValue= rootNode.path(this.key);
+            if(containValue.toString().equals(this.value)){
+                counter = counter.add(BigInteger.ONE);
             this.collector.emit(new Values(flow));
             }
-            } catch () {
-            // nothing
-            }*/
+        } catch (IOException ex) {
+            Logger.getLogger(FilterBolt.class.getName()).log(Level.SEVERE, null, ex);
+        }*/
             
-            JSONObject jFlow= objectMapper.convertValue(flow, JSONObject.class);
-            //JSONObject jFlow= objectMapper.readValue(flow, JSONObject.class);
-            Object containValue=jFlow.get(this.key);
+        
+        //2. verzia
             
+        JSONObject object = new JSONObject();
+        try {
+            object = objectMapper.readValue(flow, JSONObject.class);
+            Object containValue = object.get(this.key);
             if (containValue.toString().equals(this.value)) {
             counter = counter.add(BigInteger.ONE);
             this.collector.emit(new Values(flow));
-            
-            
-        }
-        } catch (IllegalArgumentException ex) {
+            }            
+        } catch (IOException ex) {
             Logger.getLogger(FilterBolt.class.getName()).log(Level.SEVERE, null, ex);
         }
-        collector.ack(tuple);
-    }
-    
+    collector.ack(tuple);
+    } 
+   
     @Override
     public void declareOutputFields(OutputFieldsDeclarer declarer) {
         declarer.declare(new Fields("flow"));
