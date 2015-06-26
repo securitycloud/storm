@@ -20,22 +20,30 @@ import org.codehaus.jackson.map.JsonMappingException;
 import org.codehaus.jackson.*;
 import org.codehaus.jackson.map.*;
 import com.fasterxml.jackson.core.JsonParser;
+import cz.muni.fi.storm.tools.ServiceCounter;
 import java.io.IOException;
+import java.util.Properties;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import kafka.javaapi.producer.Producer;
+import kafka.producer.ProducerConfig;
 
 public class FilterBolt extends BaseRichBolt {
 
     private OutputCollector collector;
     private JSONParser jsonParser;
-    private BigInteger counter = new BigInteger("0");
     private String key;
     private String value;
     private transient ObjectMapper objectMapper;
+    private ServiceCounter counter;
+    private String kafkaConsumerIp;
+    private String kafkaConsumerPort;
     
-    public FilterBolt(String key, String value) {
+    public FilterBolt(String key, String value, String kafkaConsumerIp, String kafkaConsumerPort) {
         this.key = key;
         this.value = value;
+        this.kafkaConsumerIp=kafkaConsumerIp;
+        this.kafkaConsumerPort=kafkaConsumerPort;
     }
 
     @Override
@@ -43,6 +51,10 @@ public class FilterBolt extends BaseRichBolt {
         this.collector = collector;
         jsonParser = new JSONParser();
         objectMapper= new ObjectMapper ();
+        
+        
+        counter = new ServiceCounter(kafkaConsumerIp,kafkaConsumerPort);
+        
     }
 
     @Override
@@ -59,8 +71,8 @@ public class FilterBolt extends BaseRichBolt {
             JsonNode rootNode = objectMapper.readTree(flow);
             JsonNode containValue= rootNode.path(this.key);
             if(containValue.toString().equals(this.value)){
-                counter = counter.add(BigInteger.ONE);
             this.collector.emit(new Values(flow));
+            counter.count();
             }
         } catch (IOException ex) {
             Logger.getLogger(FilterBolt.class.getName()).log(Level.SEVERE, null, ex);
@@ -75,7 +87,7 @@ public class FilterBolt extends BaseRichBolt {
             JSONObject object =  objectMapper.readValue(flow, JSONObject.class);
             Object containValue = object.get(this.key);
             if (containValue.toString().equals(this.value)) {
-            //counter = counter.add(BigInteger.ONE);
+            
             this.collector.emit(counter.toString(),new Values(flow));
             }            
         } catch (IOException ex) {
