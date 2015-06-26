@@ -54,11 +54,9 @@ public class TopologyK2KFilter {
         
         TopologyBuilder builder = new TopologyBuilder();
         builder.setSpout("kafka-consumer-spout", kafkaSpout);
-        builder.setBolt("filter-bolt", new FilterBolt("dst_port", "80"))
+        builder.setBolt("filter-bolt", new FilterBolt("src_ip_addr", "63.190.148.47"))
                 .fieldsGrouping("kafka-consumer-spout", new Fields("flow"));
-        /*builder.setBolt("kafka-producer-bolt", kafkaProducerBolt)
-                .fieldsGrouping("filter-bolt", new Fields("flow"));*/
-        builder.setBolt("writer", new FileWriterBolt("/root/stormisti/result.txt",false))
+        builder.setBolt("kafka-producer-bolt", kafkaProducerBolt)
                 .fieldsGrouping("filter-bolt", new Fields("flow"));
 
         Config config = new Config();
