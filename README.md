@@ -44,9 +44,9 @@ b) For topology KafkaSpout -> KafkaProducerBolt:
 
         scripts/deploy-to-cluster.sh cz.muni.fi.storm.TopologyKafkaKafka number_of_computers
 
-c) For topology kafka-producer to kafka-consumer with filtering:
+c) For topology KafkaSpout -> FilterBolt -> KafkaProducerBolt:
 
-        scripts/deploy-to-cluster.sh cz.muni.fi.storm.TopologyK2KFilter
+        scripts/deploy-to-cluster.sh cz.muni.fi.storm.TopologyKafkaFilterKafka number_of_computers
 
 d) For topology kafka-producer to kafka-consumer with sliding window and counter:
 

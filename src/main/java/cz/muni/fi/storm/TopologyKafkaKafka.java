@@ -56,6 +56,7 @@ public class TopologyKafkaKafka {
         Config config = new Config();
         config.setNumWorkers(numberOfComputers);
         config.put(Config.TOPOLOGY_ACKER_EXECUTORS, 0);
+        config.setDebug(false);
 
         try {
             StormSubmitter.submitTopology("Topology-kafka-to-kafka", config, builder.createTopology());
