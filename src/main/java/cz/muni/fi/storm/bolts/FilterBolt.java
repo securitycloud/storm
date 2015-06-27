@@ -1,6 +1,5 @@
 package cz.muni.fi.storm.bolts;
 
-import backtype.storm.generated.ComponentCommon;
 import backtype.storm.task.OutputCollector;
 import backtype.storm.task.TopologyContext;
 import backtype.storm.topology.OutputFieldsDeclarer;
@@ -12,20 +11,16 @@ import java.util.Map;
 import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
 import org.json.simple.parser.ParseException;
-
-// imports for Jackson
-import org.codehaus.jackson.JsonGenerationException;
-import org.codehaus.jackson.map.JsonMappingException;
 import org.codehaus.jackson.*;
 import org.codehaus.jackson.map.*;
-import com.fasterxml.jackson.core.JsonParser;
 import cz.muni.fi.storm.tools.ServiceCounter;
 import java.io.IOException;
-import java.util.Properties;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import kafka.javaapi.producer.Producer;
-import kafka.producer.ProducerConfig;
+
+import com.fasterxml.jackson.core.JsonFactory;
+import com.fasterxml.jackson.core.JsonParser;
+import com.fasterxml.jackson.core.JsonToken;
 
 public class FilterBolt extends BaseRichBolt {
 
@@ -34,11 +29,13 @@ public class FilterBolt extends BaseRichBolt {
     private String key;
     private String value;
     private transient ObjectMapper objectMapper;
+    private boolean isCountable;
     private ServiceCounter counter;
     
-    public FilterBolt(String key, String value) {
+    public FilterBolt(String key, String value, boolean isCountable) {
         this.key = key;
         this.value = value;
+        this.isCountable = isCountable;
     }
 
     @Override
@@ -47,48 +44,64 @@ public class FilterBolt extends BaseRichBolt {
         jsonParser = new JSONParser();
         objectMapper= new ObjectMapper ();
         
-        
-        counter = new ServiceCounter(stormConf.get("serviceCounter.ip").toString(),
-                                     stormConf.get("serviceCounter.port").toString());
+        if (isCountable) {
+            counter = new ServiceCounter(stormConf.get("serviceCounter.ip").toString(),
+                                         stormConf.get("serviceCounter.port").toString());
+        }
         
     }
 
     @Override
     public void execute (Tuple tuple) {
-      
-            String flow = tuple.getString(0); 
-            
-       
-           // 1. verzia Jackson prevodu            
-            
-        
+
+        String flow = tuple.getString(0); 
+/*
+        // STREAMING JACKSON
         try {
-            
+            JsonFactory factory = new JsonFactory();
+            JsonParser parser = factory.createParser(flow);
+            while (parser.nextToken() != JsonToken.END_OBJECT) {
+                String parsedKey = parser.getCurrentName();
+                if (this.key.equals(parsedKey)) {
+                    parser.nextToken();
+                    String parsedValue = parser.getText();
+                    if (this.value.equals(parsedValue)) {
+                        this.collector.emit(new Values(flow));
+                        break;
+                    }
+                }
+            }
+            parser.close();
+        } catch (IOException e) {
+            // nothing
+        }
+        
+/*
+        // TREE MODEL JACKSON
+        try {
             JsonNode rootNode = objectMapper.readTree(flow);
-            JsonNode containValue= rootNode.path(this.key);
-            counter.count();
-            if(containValue.toString().equals(this.value)){
+            JsonNode containValue = rootNode.path(this.key);
+            if (isCountable) {
+                counter.count();
+            }
+            if (containValue.toString().equals(this.value)){
                 this.collector.emit(new Values(flow));
             }
         } catch (IOException ex) {
             Logger.getLogger(FilterBolt.class.getName()).log(Level.SEVERE, null, ex);
         }
-            
-        /*
-        //2. verzia
-            
-        //JSONObject object ; //new JSONObject();
-        try {           
-            
-            JSONObject object =  objectMapper.readValue(flow, JSONObject.class);
-            Object containValue = object.get(this.key);
-            if (containValue.toString().equals(this.value)) {
-            
-            this.collector.emit(counter.toString(),new Values(flow));
+            */
+
+        // SIMPLE JSON
+        try {
+            JSONObject jsonObject = (JSONObject) jsonParser.parse(flow);
+            String parsedValue = (String) jsonObject.get(this.key);
+            if (parsedValue.equals(this.value)) {
+                this.collector.emit(new Values(flow));
             }            
-        } catch (IOException ex) {
+        } catch (ParseException ex) {
             Logger.getLogger(FilterBolt.class.getName()).log(Level.SEVERE, null, ex);
-        }*/
+        }
     } 
    
     @Override
