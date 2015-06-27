@@ -36,7 +36,10 @@ Run Storm on cluster
 
 <i>Deploy to cluster:</i> compile, deploy and run project on storm with arguments.
 
-a) For topology KafkaSpout -> KafkaOnlyCounterBolt:
+All topologies are send delay between every millionth flow in ms to kafka-consumer topic <b>storm-service</b>.
+Default kafka topic is <b>storm-test</b>.
+
+a) For topology KafkaSpout -> ServiceCounterBolt:
 
         scripts/deploy-to-cluster.sh cz.muni.fi.storm.TopologyKafkaCounter number_of_computers
 

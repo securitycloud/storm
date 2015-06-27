@@ -29,7 +29,7 @@ public class ServiceCounter {
     
     public void count() {
         counter++;
-        if (counter == 1000) {
+        if (counter == 1000000) {
             counter = 0;
             long actualTime = System.currentTimeMillis();
             String interval = (actualTime - lastTime) + "";
