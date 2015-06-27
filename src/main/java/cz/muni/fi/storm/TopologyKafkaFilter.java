@@ -6,19 +6,18 @@ import backtype.storm.spout.SchemeAsMultiScheme;
 import backtype.storm.topology.TopologyBuilder;
 import backtype.storm.tuple.Fields;
 import cz.muni.fi.storm.bolts.FilterBolt;
-import cz.muni.fi.storm.bolts.KafkaProducerBolt;
 import java.util.logging.Logger;
 import storm.kafka.KafkaSpout;
 import storm.kafka.SpoutConfig;
 import storm.kafka.StringScheme;
 import storm.kafka.ZkHosts;
 
-public class TopologyKafkaFilterKafka {
+public class TopologyKafkaFilter {
 
-    private static final Logger log = Logger.getLogger(TopologyKafkaFilterKafka.class.getName());
+    private static final Logger log = Logger.getLogger(TopologyKafkaFilter.class.getName());
 
     public static void main(String[] args) {
-        log.fine("Starting: Topology-kafka-filter-kafka");
+        log.fine("Starting: Topology-kafka-filter");
         
         if (args.length < 3) {
             throw new IllegalArgumentException("Missing argument: number_of_computers kafka_producer_ip kafka_consumer_ip");
@@ -33,12 +32,6 @@ public class TopologyKafkaFilterKafka {
         String kafkaConsumerPort = "9092";
         
         String kafkaProducerTopic = "storm-test";
-        String kafkaConsumerTopic = "storm-test";
-
-        if (kafkaProducerTopic.equals(kafkaConsumerTopic)
-                && kafkaProducerIp.equals(kafkaConsumerIp)) {
-            throw new IllegalArgumentException("It creates loop! Please differnet kafkas or topics.");
-        }
 
         String zookeeperHost = kafkaProducerIp + ":" + kafkaProducerPort;
         ZkHosts zkHosts = new ZkHosts(zookeeperHost);
@@ -51,14 +44,11 @@ public class TopologyKafkaFilterKafka {
         });
 
         KafkaSpout kafkaSpout = new KafkaSpout(kafkaConfig);
-        KafkaProducerBolt kafkaProducerBolt = new KafkaProducerBolt(kafkaConsumerIp, kafkaConsumerPort, kafkaConsumerTopic, true);
         
         TopologyBuilder builder = new TopologyBuilder();
         builder.setSpout("kafka-consumer-spout", kafkaSpout, numberOfComputers);
-        builder.setBolt("filter-bolt", new FilterBolt("dst_ip_addr", "62.148.241.49", false), numberOfComputers)
+        builder.setBolt("filter-bolt", new FilterBolt("dst_ip_addr", "62.148.241.49", true), numberOfComputers)
                 .fieldsGrouping("kafka-consumer-spout", new Fields("flow"));
-        builder.setBolt("kafka-producer-bolt", kafkaProducerBolt, numberOfComputers)
-                .fieldsGrouping("filter-bolt", new Fields("flow"));
 
         Config config = new Config();
         config.setNumWorkers(numberOfComputers);
