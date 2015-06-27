@@ -10,16 +10,14 @@ rm project.tar
 # COMPILE & RUN
 ssh root@$SRV_NIMBUS "
     cd $WRK
-    diff project.tar project.new.tar > /dev/nul
-    if [ "$?" -gt 0 ]
+    if ! cmp project.tar project.new.tar > /dev/nul
     then
         rm -rf project
         mkdir project
         mv project.new.tar project.tar
         tar -xf project.tar -C project
         cd project
-        mvn clean package
-        if [ "$?" -gt 0 ]
+        if ! mvn clean package
         then
             exit 1;
         fi
