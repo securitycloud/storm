@@ -98,7 +98,10 @@ public class FilterBolt extends BaseRichBolt {
             String parsedValue = (String) jsonObject.get(this.key);
             if (parsedValue.equals(this.value)) {
                 this.collector.emit(new Values(flow));
-            }            
+            }
+            if (isCountable) {
+                counter.count();
+            }
         } catch (ParseException ex) {
             Logger.getLogger(FilterBolt.class.getName()).log(Level.SEVERE, null, ex);
         }
