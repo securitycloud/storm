@@ -55,9 +55,12 @@ public class FilterBolt extends BaseRichBolt {
     public void execute (Tuple tuple) {
 
         String flow = tuple.getString(0); 
-/*
+
         // STREAMING JACKSON
         try {
+            if (isCountable) {
+                counter.count();
+            }
             JsonFactory factory = new JsonFactory();
             JsonParser parser = factory.createParser(flow);
             while (parser.nextToken() != JsonToken.END_OBJECT) {
@@ -91,7 +94,7 @@ public class FilterBolt extends BaseRichBolt {
             Logger.getLogger(FilterBolt.class.getName()).log(Level.SEVERE, null, ex);
         }
             */
-
+/*
         // SIMPLE JSON
         try {
             JSONObject jsonObject = (JSONObject) jsonParser.parse(flow);
@@ -104,7 +107,7 @@ public class FilterBolt extends BaseRichBolt {
             }
         } catch (ParseException ex) {
             Logger.getLogger(FilterBolt.class.getName()).log(Level.SEVERE, null, ex);
-        }
+        }*/
     } 
    
     @Override
