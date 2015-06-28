@@ -58,7 +58,7 @@ public class TopologyKafkaFilter {
         config.setDebug(false);
 
         try {
-            StormSubmitter.submitTopology("Topology-kafka-filter-kafka", config, builder.createTopology());
+            StormSubmitter.submitTopology("Topology-kafka-filter", config, builder.createTopology());
         } catch (Exception e) {
             e.printStackTrace();
             throw new IllegalStateException("Couldn't initialize the topology", e);
