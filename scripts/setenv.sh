@@ -18,8 +18,16 @@ SRV_ZK=${ALL_SERVERS[1]}
 KAFKA_PRODUCER=10.16.31.200
 KAFKA_CONSUMER=10.16.31.201
 
+KAFKA_SERVERS[1]=$KAFKA_PRODUCER
+KAFKA_SERVERS[2]=$KAFKA_CONSUMER
+
 URL_STORM=http://mirror.hosting90.cz/apache/storm/apache-storm-0.9.4/apache-storm-0.9.4.tar.gz
 URL_ZK=http://mirror.hosting90.cz/apache/zookeeper/stable/zookeeper-3.4.6.tar.gz
+GIT_KAFKA=https://github.com/securitycloud/kafka.git
+
+KAFKA_INSTALL=/root/kafka/kafka_2.11-0.8.2.1
+FLOWS_FILE=/root/outOnlyTheSameIp
 WRK=/root/stormisti/workdir
 
-LOG_DIR=$WRK/logs
+TESTING_TOPIC=storm-test
+SERVICE_TOPIC=storm-service
