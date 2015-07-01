@@ -65,7 +65,7 @@ public class TopologyK2KWindowCount {
         config.put(Config.TOPOLOGY_TICK_TUPLE_FREQ_SECS, 1);
 
         try {
-            StormSubmitter.submitTopology("Topology-kafka-to-kafka-with-window-count", config, builder.createTopology());
+            StormSubmitter.submitTopology(TopologyK2KWindowCount.class.getName(), config, builder.createTopology());
         } catch (Exception e) {
             e.printStackTrace();
             throw new IllegalStateException("Couldn't initialize the topology", e);

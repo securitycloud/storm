@@ -59,7 +59,7 @@ public class TopologyKafkaKafka {
         config.setDebug(false);
 
         try {
-            StormSubmitter.submitTopology("Topology-kafka-kafka", config, builder.createTopology());
+            StormSubmitter.submitTopology(TopologyKafkaKafka.class.getName(), config, builder.createTopology());
         } catch (Exception e) {
             e.printStackTrace();
             throw new IllegalStateException("Couldn't initialize the topology", e);
