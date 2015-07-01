@@ -11,4 +11,11 @@ do
     scripts/install-storm.sh $i
 done
 
+for i in "${KAFKA_SERVERS[@]}"
+do
+    echo installing storm-kafka on $i
+    scripts/install-kafka.sh $i
+done
 
+echo installing project
+scripts/install-project.sh
