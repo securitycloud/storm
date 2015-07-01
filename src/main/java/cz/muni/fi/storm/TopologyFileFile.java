@@ -33,7 +33,7 @@ public class TopologyFileFile {
         config.setDebug(false);
 
         try {
-            StormSubmitter.submitTopology(TopologyFileFile.class.getName(), config, builder.createTopology());
+            StormSubmitter.submitTopology("TopologyFileFile", config, builder.createTopology());
         } catch (Exception e) {
             e.printStackTrace();
             throw new IllegalStateException("Couldn't initialize the topology", e);
