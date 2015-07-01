@@ -19,11 +19,13 @@ Default configuration scripts:
 Prepare Storm on cluster
 ============================
 
-1.) <i>Clean all PCs in cluster:</i> kill all java programs and clean word directory.
+1.) <i>Clean all PCs in cluster:</i> kill all java programs on work PCs.
+Clean work directory on all PCs in cluster.
 
         scripts/clean-cluster.sh
 
 2.) <i>Install all PCs in cluster:</i> copy zookeeper, storm and configured them.
+Download and compile kafka-storm on kafka PCs. Download and compile project to nimbus.
 
         scripts/install-cluster.sh
 
@@ -34,27 +36,20 @@ Prepare Storm on cluster
 Run Storm on cluster
 ============================
 
-<i>Deploy to cluster:</i> compile, deploy and run project on storm with arguments.
+<i>Run test on cluster:</i> open testing kafka topics, start topology for actual test
+and begin sent testing data to topology.
 
-All topologies are send delay between every millionth flow in ms to kafka-consumer topic <b>storm-service</b>.
+All topologies are sent delay between every millionth flow in ms to kafka-consumer topic <b>storm-service</b>.
 Default kafka topic is <b>storm-test</b>.
 
 a) For topology KafkaSpout -> ServiceCounterBolt:
 
-        scripts/deploy-to-cluster.sh cz.muni.fi.storm.TopologyKafkaCounter number_of_computers
+        scripts/run-test.sh TopologyKafkaCounter number_of_computers partitions batch_size
 
 b) For topology KafkaSpout -> KafkaProducerBolt:
 
-        scripts/deploy-to-cluster.sh cz.muni.fi.storm.TopologyKafkaKafka number_of_computers
+        scripts/run-test.sh TopologyKafkaKafka number_of_computers partitions batch_size
 
 c) For topology KafkaSpout -> FilterBolt -> KafkaProducerBolt:
 
-        scripts/deploy-to-cluster.sh cz.muni.fi.storm.TopologyKafkaFilterKafka number_of_computers
-
-d) For topology kafka-producer to kafka-consumer with sliding window and counter:
-
-        scripts/deploy-to-cluster.sh cz.muni.fi.storm.TopologyK2KWindowCount
-
-z) For topology FileReaderSpout -> FileWriterBolt:
-
-        scripts/deploy-to-cluster.sh cz.muni.fi.storm.TopologyFileFile source_file target_file number_of_computers
+        scripts/run-test.sh TopologyKafkaFilterKafka number_of_computers partitions batch_size
