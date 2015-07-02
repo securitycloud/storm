@@ -38,7 +38,7 @@ do
             for BS in "${BATCH_SIZE[@]}"
             do
                 echo -e $LOG Running test $ACT_TEST/$NUM_TESTS: $OFF
-                #scripts/run-test.sh $TP $PC $PTN $BS
+                scripts/run-test.sh $TP $PC $PTN $BS
                 ACT_TEST=$((ACT_TEST + 1))
             done
         done
