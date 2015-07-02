@@ -2,9 +2,9 @@
 
 . scripts/setenv.sh
 
-TOPOLOGIES[1]=TopologyKafkaCount
+TOPOLOGIES[1]=TopologyKafkaCounter
 TOPOLOGIES[2]=TopologyKafkaKafka
-TOPOLOGIES[3]=TapologyKafkaFilter
+TOPOLOGIES[3]=TopologyKafkaFilter
 TOPOLOGIES[4]=TopologyKafkaFilterKafka
 
 BATCH_SIZE[1]=1000
