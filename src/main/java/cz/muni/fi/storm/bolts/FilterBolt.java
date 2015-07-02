@@ -7,28 +7,19 @@ import backtype.storm.topology.base.BaseRichBolt;
 import backtype.storm.tuple.Fields;
 import backtype.storm.tuple.Tuple;
 import backtype.storm.tuple.Values;
-import java.util.Map;
-import org.json.simple.JSONObject;
-import org.json.simple.parser.JSONParser;
-import org.json.simple.parser.ParseException;
-import org.codehaus.jackson.*;
-import org.codehaus.jackson.map.*;
-import cz.muni.fi.storm.tools.ServiceCounter;
-import java.io.IOException;
-import java.util.logging.Level;
-import java.util.logging.Logger;
-
 import com.fasterxml.jackson.core.JsonFactory;
 import com.fasterxml.jackson.core.JsonParser;
 import com.fasterxml.jackson.core.JsonToken;
+import cz.muni.fi.storm.tools.ServiceCounter;
+import java.io.IOException;
+import java.util.Map;
 
 public class FilterBolt extends BaseRichBolt {
 
     private OutputCollector collector;
-    private JSONParser jsonParser;
+    private JsonFactory factory;
     private String key;
     private String value;
-    private transient ObjectMapper objectMapper;
     private boolean isCountable;
     private ServiceCounter counter;
     
@@ -41,19 +32,15 @@ public class FilterBolt extends BaseRichBolt {
     @Override
     public void prepare(Map stormConf, TopologyContext context, OutputCollector collector) {
         this.collector = collector;
-        jsonParser = new JSONParser();
-        objectMapper= new ObjectMapper ();
-        
+        this.factory = new JsonFactory();
         if (isCountable) {
             counter = new ServiceCounter(stormConf.get("serviceCounter.ip").toString(),
                                          stormConf.get("serviceCounter.port").toString());
         }
-        
     }
 
     @Override
     public void execute (Tuple tuple) {
-
         String flow = tuple.getString(0); 
 
         // STREAMING JACKSON
@@ -61,7 +48,6 @@ public class FilterBolt extends BaseRichBolt {
             if (isCountable) {
                 counter.count();
             }
-            JsonFactory factory = new JsonFactory();
             JsonParser parser = factory.createParser(flow);
             while (parser.nextToken() != JsonToken.END_OBJECT) {
                 String parsedKey = parser.getCurrentName();
@@ -69,7 +55,9 @@ public class FilterBolt extends BaseRichBolt {
                     parser.nextToken();
                     String parsedValue = parser.getText();
                     if (this.value.equals(parsedValue)) {
-                        this.collector.emit(new Values(flow));
+                        if (!isCountable) {
+                            this.collector.emit(new Values(flow));
+                        }
                         break;
                     }
                 }
@@ -78,40 +66,12 @@ public class FilterBolt extends BaseRichBolt {
         } catch (IOException e) {
             // nothing
         }
-        
-/*
-        // TREE MODEL JACKSON
-        try {
-            JsonNode rootNode = objectMapper.readTree(flow);
-            JsonNode containValue = rootNode.path(this.key);
-            if (isCountable) {
-                counter.count();
-            }
-            if (containValue.toString().equals(this.value)){
-                this.collector.emit(new Values(flow));
-            }
-        } catch (IOException ex) {
-            Logger.getLogger(FilterBolt.class.getName()).log(Level.SEVERE, null, ex);
-        }
-            */
-/*
-        // SIMPLE JSON
-        try {
-            JSONObject jsonObject = (JSONObject) jsonParser.parse(flow);
-            String parsedValue = (String) jsonObject.get(this.key);
-            if (parsedValue.equals(this.value)) {
-                this.collector.emit(new Values(flow));
-            }
-            if (isCountable) {
-                counter.count();
-            }
-        } catch (ParseException ex) {
-            Logger.getLogger(FilterBolt.class.getName()).log(Level.SEVERE, null, ex);
-        }*/
     } 
    
     @Override
     public void declareOutputFields(OutputFieldsDeclarer declarer) {
-        declarer.declare(new Fields("flow"));
+        if (!isCountable) {
+            declarer.declare(new Fields("flow"));
+        }
     }
 }
