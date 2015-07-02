@@ -26,6 +26,9 @@ NUM_TESTS=$((NUM_TESTS * ${#PARTITIONS[@]}))
 NUM_TESTS=$((NUM_TESTS * ${#COMPUTERS[@]}))
 ACT_TEST=1
 
+echo -e $LOG Recreating input topic $SERVICE_TOPIC on $KAFKA_CONSUMER $OFF
+scripts/run-topic.sh $SERVICE_TOPIC 1 $KAFKA_CONSUMER
+
 for TP in "${TOPOLOGIES[@]}"
 do
     for PC in "${COMPUTERS[@]}"
@@ -35,7 +38,7 @@ do
             for BS in "${BATCH_SIZE[@]}"
             do
                 echo -e $LOG Running test $ACT_TEST/$NUM_TESTS: $OFF
-                scripts/run-test.sh $TP $PC $PTN $BS
+                #scripts/run-test.sh $TP $PC $PTN $BS
                 ACT_TEST=$((ACT_TEST + 1))
             done
         done
