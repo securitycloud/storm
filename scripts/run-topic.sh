@@ -4,21 +4,21 @@
 
 if [ -z "$1" ] 
 then
-    echo "You must specify topic"
+    echo -e $ERR You must specify topic $OFF
     exit 1;
 fi
 TOPIC=$1
 
 if [ -z "$2" ] 
 then
-    echo "You must specify number of partitions"
+    echo -e $ERR You must specify number of partitions $OFF
     exit 2;
 fi
 PARTITIONS=$2
 
 if [ -z "$3" ] 
 then
-    echo "You must specify server"
+    echo -e $ERR You must specify server $OFF
     exit 3;
 fi
 SERVER=$3

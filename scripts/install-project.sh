@@ -17,6 +17,6 @@ ssh root@$SRV_NIMBUS "
         mv project.new.tar project.tar
         tar -xf project.tar -C project
         cd project
-        mvn clean package
+        mvn -q clean package
     fi
 "

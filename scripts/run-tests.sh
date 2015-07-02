@@ -20,6 +20,12 @@ COMPUTERS[3]=3
 COMPUTERS[4]=4
 COMPUTERS[5]=5
 
+NUM_TESTS=${#TOPOLOGIES[@]}
+NUM_TESTS=$((NUM_TESTS * ${#BATCH_SIZE[@]}))
+NUM_TESTS=$((NUM_TESTS * ${#PARTITIONS[@]}))
+NUM_TESTS=$((NUM_TESTS * ${#COMPUTERS[@]}))
+ACT_TEST=1
+
 for TP in "${TOPOLOGIES[@]}"
 do
     for PC in "${COMPUTERS[@]}"
@@ -28,7 +34,9 @@ do
         do
             for BS in "${BATCH_SIZE[@]}"
             do
+                echo -e $LOG Running test $ACT_TEST/$NUM_TESTS: $OFF
                 scripts/run-test.sh $TP $PC $PTN $BS
+                ACT_TEST=$((ACT_TEST + 1))
             done
         done
     done

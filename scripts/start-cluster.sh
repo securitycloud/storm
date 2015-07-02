@@ -2,17 +2,17 @@
 
 . scripts/setenv.sh
 
-echo starting zookeeper on $SRV_ZK
+echo -e $LOG Starting zookeeper on $SRV_ZK $OFF
 scripts/start-zk.sh $SRV_ZK
 
 sleep 5
-echo starting nimbus and ui on $SRV_NIMBUS
+echo -e $LOG Starting nimbus and ui on $SRV_NIMBUS $OFF
 scripts/start-nimbus.sh $SRV_NIMBUS
 
 
 for i in "${SRV_SUPERVISOR[@]}"
 do
-    echo starting supervisor on $i
+    echo -e $LOG Starting supervisor on $i $OFF
     scripts/start-supervisor.sh $i
 done
 

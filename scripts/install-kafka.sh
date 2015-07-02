@@ -4,7 +4,7 @@
 
 if [ -z "$1" ] 
 then
-    echo "You must specify server"
+    echo -e $ERR You must specify server $OFF
     exit 1;
 fi
 
@@ -15,5 +15,5 @@ ssh root@$SERVER "
     cd $WRK
     git clone $GIT_KAFKA
     cd kafka/kafka-storm
-    mvn clean package
+    mvn -q clean package
 "

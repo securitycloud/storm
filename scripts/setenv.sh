@@ -31,3 +31,8 @@ WRK=/root/stormisti/workdir
 
 TESTING_TOPIC=storm-test
 SERVICE_TOPIC=storm-service
+
+ERR="\033[1;31m"
+OK="\033[1;32m"
+LOG="\033[1;34m"
+OFF="\033[0m"
