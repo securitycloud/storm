@@ -60,4 +60,5 @@ ssh root@$KAFKA_PRODUCER "
 echo -e $LOG Killing topology $TOPOLOGY $OFF
 ssh root@$SRV_NIMBUS "
     $STORM_EXE kill $TOPOLOGY 1
+    sleep 1
 "
