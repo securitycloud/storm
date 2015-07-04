@@ -21,7 +21,7 @@ do
         else
             if [ $COUNT -gt 0 ]
             then
-                RESULT=$(($COMPUTERS * 1000000 / (($SUM / $COUNT) / 1000)))
+                RESULT=$(($COMPUTERS * $COUNT * 1000000000 / $SUM))
                 echo RESULT = $RESULT flows/s
             fi
         fi
