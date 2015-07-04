@@ -41,24 +41,26 @@ STORM_EXE=$WRK/storm/bin/storm
 STORM_JAR=$WRK/project/target/storm-1.0-SNAPSHOT-jar-with-dependencies.jar
 KAFKA_JAR=$WRK/kafka/kafka-storm/target/kafka-storm-1.0-SNAPSHOT-jar-with-dependencies.jar
 
-echo -e $LOG Running topology $TOPOLOGY on $COMPUTERS computers $OFF
-ssh root@$SRV_NIMBUS "
-    $STORM_EXE jar $STORM_JAR cz.muni.fi.storm.$TOPOLOGY $COMPUTERS $KAFKA_PRODUCER $KAFKA_CONSUMER
-"
-
-echo -e $LOG Logging info to service topic: $SERVICE_TOPIC $OFF
-ssh root@$KAFKA_CONSUMER "
-    echo Topology=$TOPOLOGY, Computers=$COMPUTERS, Partitions=$PARTITIONS, BatchSize=$BATCH_SIZE |
-        $KAFKA_INSTALL/bin/kafka-console-producer.sh --topic $SERVICE_TOPIC --broker-list localhost:9092
-"
-
 echo -e $LOG Start producing flows on $KAFKA_PRODUCER $OFF
 ssh root@$KAFKA_PRODUCER "
     java -jar $KAFKA_JAR $FLOWS_FILE $BATCH_SIZE
 "
 
+echo -e $LOG Logging info to service topic: $SERVICE_TOPIC $OFF
+ssh root@$KAFKA_CONSUMER "
+    echo Type=read, Topology=$TOPOLOGY, Computers=$COMPUTERS, Partitions=$PARTITIONS, BatchSize=$BATCH_SIZE |
+        $KAFKA_INSTALL/bin/kafka-console-producer.sh --topic $SERVICE_TOPIC --broker-list localhost:9092
+"
+
+echo -e $LOG Running topology $TOPOLOGY on $COMPUTERS computers $OFF
+ssh root@$SRV_NIMBUS "
+    $STORM_EXE jar $STORM_JAR cz.muni.fi.storm.$TOPOLOGY $COMPUTERS $KAFKA_PRODUCER $KAFKA_CONSUMER
+"
+
+sleep 300
+
 echo -e $LOG Killing topology $TOPOLOGY $OFF
 ssh root@$SRV_NIMBUS "
     $STORM_EXE kill $TOPOLOGY 1
-    sleep 1
+    sleep 20
 "

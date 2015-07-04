@@ -36,20 +36,20 @@ Download and compile kafka-storm on kafka PCs. Download and compile project to n
 Run Storm on cluster
 ============================
 
-<i>Run test on cluster:</i> open testing kafka topics, start topology for actual test
-and begin sent testing data to topology.
+<i>Run test on cluster:</i> <b>ReadWrite test</b> open testing kafka topics, start topology for actual test
+and begin sent testing data to topology. If readWrite test finish producing data, then it kill topology.
+<b>Read test</b> open testing kafka topics and begin sent testing data, which they saved on kafka-producer.
+If read test finish producing data, then it start topology for actual test, wait 5 minutes and kill topology.
 
 All topologies are sent delay between every millionth flow in ms to kafka-consumer topic <b>storm-service</b>.
 Default kafka topic is <b>storm-test</b>.
 
-a) For topology KafkaSpout -> ServiceCounterBolt:
+a) For topology KafkaSpout -> KafkaProducerBolt:
 
-        scripts/run-test.sh TopologyKafkaCounter number_of_computers partitions batch_size
+        scripts/run-test-read.sh TopologyKafkaKafka number_of_computers partitions batch_size
+        scripts/run-test-readwrite.sh TopologyKafkaKafka number_of_computers partitions batch_size
 
-b) For topology KafkaSpout -> KafkaProducerBolt:
+b) For topology KafkaSpout -> FilterBolt -> KafkaProducerBolt:
 
-        scripts/run-test.sh TopologyKafkaKafka number_of_computers partitions batch_size
-
-c) For topology KafkaSpout -> FilterBolt -> KafkaProducerBolt:
-
-        scripts/run-test.sh TopologyKafkaFilterKafka number_of_computers partitions batch_size
+        scripts/run-test-read.sh TopologyKafkaFilterKafka number_of_computers partitions batch_size
+        scripts/run-test-readwrite.sh TopologyKafkaFilterKafka number_of_computers partitions batch_size

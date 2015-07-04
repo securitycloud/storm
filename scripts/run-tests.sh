@@ -2,10 +2,8 @@
 
 . scripts/setenv.sh
 
-TOPOLOGIES[1]=TopologyKafkaCounter
-TOPOLOGIES[2]=TopologyKafkaKafka
-TOPOLOGIES[3]=TopologyKafkaFilter
-TOPOLOGIES[4]=TopologyKafkaFilterKafka
+TOPOLOGIES[1]=TopologyKafkaKafka
+TOPOLOGIES[2]=TopologyKafkaFilterKafka
 
 BATCH_SIZE[1]=1000
 BATCH_SIZE[2]=5000
@@ -38,7 +36,8 @@ do
             for BS in "${BATCH_SIZE[@]}"
             do
                 echo -e $LOG Running test $ACT_TEST/$NUM_TESTS: $OFF
-                scripts/run-test.sh $TP $PC $PTN $BS
+                scripts/run-test-read.sh $TP $PC $PTN $BS
+                scripts/run-test-readwrite.sh $TP $PC $PTN $BS
                 ACT_TEST=$((ACT_TEST + 1))
             done
         done
