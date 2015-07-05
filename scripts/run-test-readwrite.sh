@@ -43,7 +43,7 @@ KAFKA_JAR=$WRK/kafka/kafka-storm/target/kafka-storm-1.0-SNAPSHOT-jar-with-depend
 
 echo -e $LOG Running topology $TOPOLOGY on $COMPUTERS computers $OFF
 ssh root@$SRV_NIMBUS "
-    $STORM_EXE jar $STORM_JAR cz.muni.fi.storm.$TOPOLOGY $COMPUTERS $KAFKA_PRODUCER $KAFKA_CONSUMER
+    $STORM_EXE jar $STORM_JAR cz.muni.fi.storm.$TOPOLOGY $COMPUTERS $KAFKA_PRODUCER $KAFKA_CONSUMER false
 "
 
 echo -e $LOG Logging info to service topic: $SERVICE_TOPIC $OFF

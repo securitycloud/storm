@@ -31,20 +31,12 @@ fi
 BATCH_SIZE=$4
 
 
-echo -e $LOG Recreating input topic $TESTING_TOPIC with $PARTITIONS partitions on $KAFKA_PRODUCER $OFF
-scripts/run-topic.sh $TESTING_TOPIC $PARTITIONS $KAFKA_PRODUCER
-
 echo -e $LOG Recreating output topic $TESTING_TOPIC with 1 partitions on $KAFKA_CONSUMER $OFF
 scripts/run-topic.sh $TESTING_TOPIC 1 $KAFKA_CONSUMER
 
 STORM_EXE=$WRK/storm/bin/storm
 STORM_JAR=$WRK/project/target/storm-1.0-SNAPSHOT-jar-with-dependencies.jar
 KAFKA_JAR=$WRK/kafka/kafka-storm/target/kafka-storm-1.0-SNAPSHOT-jar-with-dependencies.jar
-
-echo -e $LOG Start producing flows on $KAFKA_PRODUCER $OFF
-ssh root@$KAFKA_PRODUCER "
-    java -jar $KAFKA_JAR $FLOWS_FILE $BATCH_SIZE
-"
 
 echo -e $LOG Logging info to service topic: $SERVICE_TOPIC $OFF
 ssh root@$KAFKA_CONSUMER "
@@ -54,10 +46,10 @@ ssh root@$KAFKA_CONSUMER "
 
 echo -e $LOG Running topology $TOPOLOGY on $COMPUTERS computers $OFF
 ssh root@$SRV_NIMBUS "
-    $STORM_EXE jar $STORM_JAR cz.muni.fi.storm.$TOPOLOGY $COMPUTERS $KAFKA_PRODUCER $KAFKA_CONSUMER
+    $STORM_EXE jar $STORM_JAR cz.muni.fi.storm.$TOPOLOGY $COMPUTERS $KAFKA_PRODUCER $KAFKA_CONSUMER true
 "
 
-sleep 300
+sleep 420
 
 echo -e $LOG Killing topology $TOPOLOGY $OFF
 ssh root@$SRV_NIMBUS "

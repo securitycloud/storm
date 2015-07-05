@@ -15,8 +15,8 @@ public class TopologyKafkaKafka {
 
     public static void main(String[] args) {
         
-        if (args.length < 3) {
-            throw new IllegalArgumentException("Missing argument: number_of_computers kafka_producer_ip kafka_consumer_ip");
+        if (args.length < 4) {
+            throw new IllegalArgumentException("Missing argument: number_of_computers kafka_producer_ip kafka_consumer_ip read_only");
         }
         
         int numberOfComputers = Integer.parseInt(args[0]);
@@ -24,10 +24,12 @@ public class TopologyKafkaKafka {
         String kafkaProducerIp = args[1];
         String kafkaConsumerIp = args[2];
         
+        boolean readOnly = ("true".equals(args[3])) ? true : false;
+        
         String kafkaProducerPort = "2181";
         String kafkaConsumerPort = "9092";
         
-        String kafkaProducerTopic = "storm-test";
+        String kafkaProducerTopic = (readOnly) ? "read-test" : "storm-test";
         String kafkaConsumerTopic = "storm-test";
 
         if (kafkaProducerTopic.equals(kafkaConsumerTopic)
@@ -44,6 +46,9 @@ public class TopologyKafkaKafka {
                 return new Fields("flow");
             }
         });
+        if (readOnly) {
+            kafkaConfig.startOffsetTime = kafka.api.OffsetRequest.EarliestTime();
+        }
 
         KafkaSpout kafkaSpout = new KafkaSpout(kafkaConfig);
         KafkaProducerBolt kafkaProducerBolt = new KafkaProducerBolt(kafkaConsumerIp, kafkaConsumerPort, kafkaConsumerTopic);
