@@ -46,7 +46,7 @@ public class TopologyKafkaKafka {
         });
 
         KafkaSpout kafkaSpout = new KafkaSpout(kafkaConfig);
-        KafkaProducerBolt kafkaProducerBolt = new KafkaProducerBolt(kafkaConsumerIp, kafkaConsumerPort, kafkaConsumerTopic, true);
+        KafkaProducerBolt kafkaProducerBolt = new KafkaProducerBolt(kafkaConsumerIp, kafkaConsumerPort, kafkaConsumerTopic);
         
         TopologyBuilder builder = new TopologyBuilder();
         builder.setSpout("kafka-consumer-spout", kafkaSpout, numberOfComputers);

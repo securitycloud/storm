@@ -50,7 +50,7 @@ public class TopologyK2KWindowCount {
         });
 
         KafkaSpout kafkaSpout = new KafkaSpout(kafkaConfig);
-        KafkaProducerBolt kafkaProducerBolt = new KafkaProducerBolt(kafkaConsumerIp, kafkaConsumerPort, kafkaConsumerTopic, false);
+        KafkaProducerBolt kafkaProducerBolt = new KafkaProducerBolt(kafkaConsumerIp, kafkaConsumerPort, kafkaConsumerTopic);
         
         TopologyBuilder builder = new TopologyBuilder();
         builder.setSpout("kafka-consumer-spout", kafkaSpout);

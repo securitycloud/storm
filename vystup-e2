@@ -1,0 +1,289 @@
+Type=read, Topology=TopologyKafkaKafka, Computers=1, Partitions=1, BatchSize=1000
+1436016846725
+20776
+17656
+18565
+17960
+17701
+18231
+19102
+20311
+21017
+19133
+18044
+17916
+17801
+18536
+RESULT = 53282 flows/s
+Type=read, Topology=TopologyKafkaKafka, Computers=1, Partitions=1, BatchSize=5000
+1436017398209
+21177
+18266
+18885
+19247
+18939
+RESULT = 51805 flows/s
+Type=read, Topology=TopologyKafkaKafka, Computers=1, Partitions=3, BatchSize=1000
+Type=read, Topology=TopologyKafkaKafka, Computers=1, Partitions=3, BatchSize=5000
+Type=read, Topology=TopologyKafkaKafka, Computers=1, Partitions=5, BatchSize=1000
+Type=read, Topology=TopologyKafkaKafka, Computers=1, Partitions=5, BatchSize=5000
+Type=read, Topology=TopologyKafkaKafka, Computers=2, Partitions=1, BatchSize=1000
+1436020284575
+1436020199461
+26235
+26295
+25806
+25797
+27880
+27789
+30210
+30179
+25257
+25266
+25061
+25053
+27185
+27252
+27802
+27738
+30176
+30206
+25675
+25667
+RESULT = 73728 flows/s
+Type=read, Topology=TopologyKafkaKafka, Computers=2, Partitions=1, BatchSize=5000
+1436020837069
+1436020751940
+20293
+20352
+RESULT = 98413 flows/s
+Type=read, Topology=TopologyKafkaKafka, Computers=2, Partitions=3, BatchSize=1000
+Type=read, Topology=TopologyKafkaKafka, Computers=2, Partitions=3, BatchSize=5000
+Type=read, Topology=TopologyKafkaKafka, Computers=2, Partitions=5, BatchSize=1000
+Type=read, Topology=TopologyKafkaKafka, Computers=2, Partitions=5, BatchSize=5000
+1436023127169
+1436023042062
+28808
+28805
+29032
+29094
+30460
+30355
+31052
+31017
+30195
+30194
+29961
+30025
+34566
+34628
+33824
+33712
+RESULT = 64551 flows/s
+Type=read, Topology=TopologyKafkaKafka, Computers=3, Partitions=1, BatchSize=1000
+1436023739514
+1436023666274
+1436023654435
+44343
+44282
+44610
+RESULT = 67549 flows/s
+Type=read, Topology=TopologyKafkaKafka, Computers=3, Partitions=1, BatchSize=5000
+Type=read, Topology=TopologyKafkaKafka, Computers=3, Partitions=3, BatchSize=1000
+Type=read, Topology=TopologyKafkaKafka, Computers=3, Partitions=3, BatchSize=5000
+Type=read, Topology=TopologyKafkaKafka, Computers=3, Partitions=5, BatchSize=1000
+Type=read, Topology=TopologyKafkaKafka, Computers=3, Partitions=5, BatchSize=5000
+Type=read, Topology=TopologyKafkaKafka, Computers=4, Partitions=1, BatchSize=1000
+1436027210456
+1436027267479
+1436027125374
+1436027137274
+55113
+55116
+55209
+55082
+56647
+56590
+56687
+56745
+56976
+57012
+56908
+57037
+54922
+54907
+54990
+54898
+RESULT = 71521 flows/s
+Type=read, Topology=TopologyKafkaKafka, Computers=4, Partitions=1, BatchSize=5000
+1436027788358
+1436027703254
+1436027845423
+1436027715127
+Type=read, Topology=TopologyKafkaKafka, Computers=4, Partitions=3, BatchSize=1000
+Type=read, Topology=TopologyKafkaKafka, Computers=4, Partitions=3, BatchSize=5000
+Type=read, Topology=TopologyKafkaKafka, Computers=4, Partitions=5, BatchSize=1000
+Type=read, Topology=TopologyKafkaKafka, Computers=4, Partitions=5, BatchSize=5000
+Type=read, Topology=TopologyKafkaKafka, Computers=5, Partitions=1, BatchSize=1000
+1436030575288
+1436030648625
+1436030705705
+1436030563527
+1436030705995
+60134
+60142
+60220
+60205
+60003
+61184
+61229
+61257
+61219
+61190
+63072
+63142
+63194
+63300
+63367
+RESULT = 81269 flows/s
+Type=read, Topology=TopologyKafkaKafka, Computers=5, Partitions=1, BatchSize=5000
+Type=read, Topology=TopologyKafkaKafka, Computers=5, Partitions=3, BatchSize=1000
+Type=read, Topology=TopologyKafkaKafka, Computers=5, Partitions=3, BatchSize=5000
+Type=read, Topology=TopologyKafkaKafka, Computers=5, Partitions=5, BatchSize=1000
+Type=read, Topology=TopologyKafkaKafka, Computers=5, Partitions=5, BatchSize=5000
+Type=read, Topology=TopologyKafkaFilterKafka, Computers=1, Partitions=1, BatchSize=1000
+1436033978817
+37096
+36469
+36176
+38200
+37080
+36938
+RESULT = 27032 flows/s
+Type=read, Topology=TopologyKafkaFilterKafka, Computers=1, Partitions=1, BatchSize=5000
+1436034533072
+37793
+38244
+36475
+38544
+37587
+37542
+38294
+RESULT = 26467 flows/s
+Type=read, Topology=TopologyKafkaFilterKafka, Computers=1, Partitions=3, BatchSize=1000
+Type=read, Topology=TopologyKafkaFilterKafka, Computers=1, Partitions=3, BatchSize=5000
+Type=read, Topology=TopologyKafkaFilterKafka, Computers=1, Partitions=5, BatchSize=1000
+Type=read, Topology=TopologyKafkaFilterKafka, Computers=1, Partitions=5, BatchSize=5000
+Type=read, Topology=TopologyKafkaFilterKafka, Computers=2, Partitions=1, BatchSize=1000
+1436037400511
+1436037315491
+60163
+60144
+58472
+58633
+54291
+54072
+54575
+54779
+RESULT = 35154 flows/s
+Type=read, Topology=TopologyKafkaFilterKafka, Computers=2, Partitions=1, BatchSize=5000
+1436037966039
+1436037880964
+60127
+60146
+57453
+57649
+59324
+59059
+RESULT = 33921 flows/s
+Type=read, Topology=TopologyKafkaFilterKafka, Computers=2, Partitions=3, BatchSize=1000
+Type=read, Topology=TopologyKafkaFilterKafka, Computers=2, Partitions=3, BatchSize=5000
+Type=read, Topology=TopologyKafkaFilterKafka, Computers=2, Partitions=5, BatchSize=1000
+Type=read, Topology=TopologyKafkaFilterKafka, Computers=2, Partitions=5, BatchSize=5000
+Type=read, Topology=TopologyKafkaFilterKafka, Computers=3, Partitions=1, BatchSize=1000
+1436040668961
+1436040754217
+1436040681033
+60816
+60603
+60741
+55474
+55541
+55530
+53027
+53005
+53029
+62745
+62740
+62731
+RESULT = 51725 flows/s
+Type=read, Topology=TopologyKafkaFilterKafka, Computers=3, Partitions=1, BatchSize=5000
+1436041206483
+1436041194659
+1436041279898
+58719
+58736
+58842
+56228
+56430
+56301
+RESULT = 52135 flows/s
+Type=read, Topology=TopologyKafkaFilterKafka, Computers=3, Partitions=3, BatchSize=1000
+Type=read, Topology=TopologyKafkaFilterKafka, Computers=3, Partitions=3, BatchSize=5000
+Type=read, Topology=TopologyKafkaFilterKafka, Computers=3, Partitions=5, BatchSize=1000
+Type=read, Topology=TopologyKafkaFilterKafka, Computers=3, Partitions=5, BatchSize=5000
+Type=read, Topology=TopologyKafkaFilterKafka, Computers=4, Partitions=1, BatchSize=1000
+1436044106658
+1436044164190
+1436044021748
+1436044033721
+77935
+77831
+78095
+77723
+73273
+73215
+73258
+73309
+RESULT = 52924 flows/s
+Type=read, Topology=TopologyKafkaFilterKafka, Computers=4, Partitions=1, BatchSize=5000
+1436044548083
+1436044559944
+1436044690762
+1436044633545
+68597
+68393
+68633
+68722
+RESULT = 58320 flows/s
+Type=read, Topology=TopologyKafkaFilterKafka, Computers=4, Partitions=3, BatchSize=1000
+Type=read, Topology=TopologyKafkaFilterKafka, Computers=4, Partitions=3, BatchSize=5000
+Type=read, Topology=TopologyKafkaFilterKafka, Computers=4, Partitions=5, BatchSize=1000
+Type=read, Topology=TopologyKafkaFilterKafka, Computers=4, Partitions=5, BatchSize=5000
+Type=read, Topology=TopologyKafkaFilterKafka, Computers=5, Partitions=1, BatchSize=1000
+1436047330158
+1436047403500
+1436047461027
+1436047318411
+1436047461240
+75037
+75078
+75170
+75151
+75044
+74914
+74922
+74913
+74943
+74869
+RESULT = 66663 flows/s
+Type=read, Topology=TopologyKafkaFilterKafka, Computers=5, Partitions=1, BatchSize=5000
+1436047982888
+1436047925349
+1436047852049
+1436047982907
+1436047840305
+Type=read, Topology=TopologyKafkaFilterKafka, Computers=5, Partitions=3, BatchSize=1000
+Type=read, Topology=TopologyKafkaFilterKafka, Computers=5, Partitions=3, BatchSize=5000
+Type=read, Topology=TopologyKafkaFilterKafka, Computers=5, Partitions=5, BatchSize=1000
+Type=read, Topology=TopologyKafkaFilterKafka, Computers=5, Partitions=5, BatchSize=5000

@@ -51,19 +51,17 @@ public class TopologyKafkaFilterKafka {
         });
 
         KafkaSpout kafkaSpout = new KafkaSpout(kafkaConfig);
-        KafkaProducerBolt kafkaProducerBolt = new KafkaProducerBolt(kafkaConsumerIp, kafkaConsumerPort, kafkaConsumerTopic, true);
+        KafkaProducerBolt kafkaProducerBolt = new KafkaProducerBolt(kafkaConsumerIp, kafkaConsumerPort, kafkaConsumerTopic);
         
         TopologyBuilder builder = new TopologyBuilder();
         builder.setSpout("kafka-consumer-spout", kafkaSpout, numberOfComputers);
-        builder.setBolt("filter-bolt", new FilterBolt("dst_ip_addr", "62.148.241.49", false), numberOfComputers)
+        builder.setBolt("filter-bolt", new FilterBolt("dst_ip_addr", "62.148.241.49"), numberOfComputers)
                 .fieldsGrouping("kafka-consumer-spout", new Fields("flow"));
         builder.setBolt("kafka-producer-bolt", kafkaProducerBolt, numberOfComputers)
                 .fieldsGrouping("filter-bolt", new Fields("flow"));
 
         Config config = new Config();
         config.setNumWorkers(numberOfComputers);
-        config.put("serviceCounter.ip", kafkaConsumerIp);
-        config.put("serviceCounter.port", kafkaConsumerPort);
         config.put(Config.TOPOLOGY_ACKER_EXECUTORS, 0);
         config.setDebug(false);
 

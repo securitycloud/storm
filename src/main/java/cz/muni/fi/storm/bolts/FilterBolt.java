@@ -10,7 +10,6 @@ import backtype.storm.tuple.Values;
 import com.fasterxml.jackson.core.JsonFactory;
 import com.fasterxml.jackson.core.JsonParser;
 import com.fasterxml.jackson.core.JsonToken;
-import cz.muni.fi.storm.tools.ServiceCounter;
 import java.io.IOException;
 import java.util.Map;
 
@@ -20,23 +19,16 @@ public class FilterBolt extends BaseRichBolt {
     private JsonFactory factory;
     private String key;
     private String value;
-    private boolean isCountable;
-    private ServiceCounter counter;
     
-    public FilterBolt(String key, String value, boolean isCountable) {
+    public FilterBolt(String key, String value) {
         this.key = key;
         this.value = value;
-        this.isCountable = isCountable;
     }
 
     @Override
     public void prepare(Map stormConf, TopologyContext context, OutputCollector collector) {
         this.collector = collector;
         this.factory = new JsonFactory();
-        if (isCountable) {
-            counter = new ServiceCounter(stormConf.get("serviceCounter.ip").toString(),
-                                         stormConf.get("serviceCounter.port").toString());
-        }
     }
 
     @Override
@@ -45,9 +37,6 @@ public class FilterBolt extends BaseRichBolt {
 
         // STREAMING JACKSON
         try {
-            if (isCountable) {
-                counter.count();
-            }
             JsonParser parser = factory.createParser(flow);
             while (parser.nextToken() != JsonToken.END_OBJECT) {
                 String parsedKey = parser.getCurrentName();
@@ -55,9 +44,7 @@ public class FilterBolt extends BaseRichBolt {
                     parser.nextToken();
                     String parsedValue = parser.getText();
                     if (this.value.equals(parsedValue)) {
-                        if (!isCountable) {
-                            this.collector.emit(new Values(flow));
-                        }
+                        this.collector.emit(new Values(flow));
                         break;
                     }
                 }
@@ -70,8 +57,6 @@ public class FilterBolt extends BaseRichBolt {
    
     @Override
     public void declareOutputFields(OutputFieldsDeclarer declarer) {
-        if (!isCountable) {
-            declarer.declare(new Fields("flow"));
-        }
+        declarer.declare(new Fields("flow"));
     }
 }

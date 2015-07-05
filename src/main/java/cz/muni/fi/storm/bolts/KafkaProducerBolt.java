@@ -18,14 +18,12 @@ public class KafkaProducerBolt extends BaseRichBolt {
     private String kafkaConsumerIp;
     private String kafkaConsumerPort;
     private String kafkaConsumerTopic;
-    private boolean isCountable;
     private ServiceCounter counter;
 
-    public KafkaProducerBolt(String kafkaConsumerIp, String kafkaConsumerPort, String kafkaConsumerTopic, boolean isCountable) {
+    public KafkaProducerBolt(String kafkaConsumerIp, String kafkaConsumerPort, String kafkaConsumerTopic) {
         this.kafkaConsumerIp = kafkaConsumerIp;
         this.kafkaConsumerPort = kafkaConsumerPort;
         this.kafkaConsumerTopic = kafkaConsumerTopic;
-        this.isCountable = isCountable;
     }
 
     @Override
@@ -39,18 +37,14 @@ public class KafkaProducerBolt extends BaseRichBolt {
         props.put("producer.type", "async");
         ProducerConfig config = new ProducerConfig(props);
         producer = new Producer<String, String>(config);
-        if (isCountable) {
-            counter = new ServiceCounter(producer);
-        }
+        counter = new ServiceCounter(producer);
     }
 
     @Override
     public void execute(Tuple tuple) {
         KeyedMessage<String, String> data = new KeyedMessage<String, String>(kafkaConsumerTopic, tuple.getValue(0).toString());
         producer.send(data);
-        if (isCountable) {
-            counter.count();
-        }
+        counter.count();
     }
     
     @Override
