@@ -21,7 +21,7 @@ public class TopologyKafkaFilterKafka {
         log.fine("Starting: Topology-kafka-filter-kafka");
         
         if (args.length < 4) {
-            throw new IllegalArgumentException("Missing argument: number_of_computers kafka_producer_ip kafka_consumer_ip read_only");
+            throw new IllegalArgumentException("Missing argument: number_of_computers kafka_producer_ip kafka_consumer_ip from_beginning");
         }
         
         int numberOfComputers = Integer.parseInt(args[0]);
@@ -29,12 +29,12 @@ public class TopologyKafkaFilterKafka {
         String kafkaProducerIp = args[1];
         String kafkaConsumerIp = args[2];
         
-        boolean readOnly = ("true".equals(args[3])) ? true : false;
+        boolean fromBeginning = ("true".equals(args[3])) ? true : false;
         
         String kafkaProducerPort = "2181";
         String kafkaConsumerPort = "9092";
         
-        String kafkaProducerTopic = (readOnly) ? "read-test" : "storm-test";
+        String kafkaProducerTopic = "storm-test";
         String kafkaConsumerTopic = "storm-test";
 
         if (kafkaProducerTopic.equals(kafkaConsumerTopic)
@@ -51,7 +51,7 @@ public class TopologyKafkaFilterKafka {
                 return new Fields("flow");
             }
         });
-        if (readOnly) {
+        if (fromBeginning) {
             kafkaConfig.startOffsetTime = kafka.api.OffsetRequest.EarliestTime();
         }
 

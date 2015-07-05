@@ -29,14 +29,14 @@ scripts/run-topic.sh $SERVICE_TOPIC 1 $KAFKA_CONSUMER
 
 for TP in "${TOPOLOGIES[@]}"
 do
-    for PC in "${COMPUTERS[@]}"
+    for BS in "${BATCH_SIZE[@]}"
     do
         for PTN in "${PARTITIONS[@]}"
         do
-            for BS in "${BATCH_SIZE[@]}"
+            for PC in "${COMPUTERS[@]}"
             do
                 echo -e $LOG Running test $ACT_TEST/$NUM_TESTS: $OFF
-                scripts/run-test-read.sh $TP $PC $PTN $BS
+                #scripts/run-test-read.sh $TP $PC $PTN $BS
                 scripts/run-test-readwrite.sh $TP $PC $PTN $BS
                 ACT_TEST=$((ACT_TEST + 1))
             done

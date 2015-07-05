@@ -51,6 +51,15 @@ ssh root@$KAFKA_CONSUMER "
     echo Type=readwrite, Topology=$TOPOLOGY, Computers=$COMPUTERS, Partitions=$PARTITIONS, BatchSize=$BATCH_SIZE |
         $KAFKA_INSTALL/bin/kafka-console-producer.sh --topic $SERVICE_TOPIC --broker-list localhost:9092
 "
+ssh root@$KAFKA_PRODUCER "
+    if [ `ls -la /tmp/kafka-logs/ | grep storm-test | wc -l` -ne $PARTITIONS ]
+    then
+        ssh root@$KAFKA_CONSUMER echo
+            ERROR: exist `ls -la /tmp/kafka-logs/ | grep storm-test | wc -l` partitions |
+            $KAFKA_INSTALL/bin/kafka-console-producer.sh --topic $SERVICE_TOPIC --broker-list localhost:9092
+        "
+    else
+"
 
 echo -e $LOG Start producing flows on $KAFKA_PRODUCER $OFF
 ssh root@$KAFKA_PRODUCER "
