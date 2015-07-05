@@ -57,8 +57,7 @@ ssh root@$KAFKA_PRODUCER "
         ssh root@$KAFKA_CONSUMER echo
             ERROR: exist `ls -la /tmp/kafka-logs/ | grep storm-test | wc -l` partitions |
             $KAFKA_INSTALL/bin/kafka-console-producer.sh --topic $SERVICE_TOPIC --broker-list localhost:9092
-        "
-    else
+    fi
 "
 
 echo -e $LOG Start producing flows on $KAFKA_PRODUCER $OFF
