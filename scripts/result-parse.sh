@@ -4,11 +4,12 @@
 
 if [ -z "$1" ] 
 then
-    echo -e $ERR You must specify input file $OFF
-    exit 1;
+    SOURCE=/dev/stdin
+else
+    SOURCE=$1
 fi
 
-SOURCE=$1
+
 FIRST=true
 
 while read LINE
