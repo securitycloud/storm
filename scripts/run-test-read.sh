@@ -53,5 +53,7 @@ sleep 420
 echo -e $LOG Killing topology $TOPOLOGY $OFF
 ssh root@$SRV_NIMBUS "
     $STORM_EXE kill $TOPOLOGY 1
-    sleep 20
+    sleep 5
+    $STORM_EXE kill $TOPOLOGY 1
+    sleep 5
 "
