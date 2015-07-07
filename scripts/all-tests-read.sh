@@ -27,7 +27,6 @@ ACT_TEST=1
 scripts/clean-cluster.sh
 scripts/install-cluster.sh
 scripts/start-cluster.sh
-sleep 20
 
 echo -e $LOG Recreating input topic $SERVICE_TOPIC on $KAFKA_CONSUMER $OFF
 scripts/run-topic.sh $SERVICE_TOPIC 1 $KAFKA_CONSUMER
@@ -38,10 +37,10 @@ do
     do
         for PTN in "${PARTITIONS[@]}"
         do
-            echo -e $LOG Recreating input topic $TESTING_TOPIC with $PARTITIONS partitions on $KAFKA_PRODUCER $OFF
-            scripts/run-topic.sh $TESTING_TOPIC $PARTITIONS $KAFKA_PRODUCER
+            echo -e $LOG Recreating input topic $TESTING_TOPIC with $PTN partitions on $KAFKA_PRODUCER $OFF
+            scripts/run-topic.sh $TESTING_TOPIC $PTN $KAFKA_PRODUCER
 
-            scripts/run-input.sh $BATCH_SIZE
+            scripts/run-input.sh $BS
 
             for PC in "${COMPUTERS[@]}"
             do
