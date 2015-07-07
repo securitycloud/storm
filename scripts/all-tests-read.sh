@@ -38,11 +38,15 @@ do
     do
         for PTN in "${PARTITIONS[@]}"
         do
+            echo -e $LOG Recreating input topic $TESTING_TOPIC with $PARTITIONS partitions on $KAFKA_PRODUCER $OFF
+            scripts/run-topic.sh $TESTING_TOPIC $PARTITIONS $KAFKA_PRODUCER
+
+            scripts/run-input.sh $BATCH_SIZE
+
             for PC in "${COMPUTERS[@]}"
             do
                 echo -e $LOG Running test $ACT_TEST/$NUM_TESTS: $OFF
-                #scripts/run-test-read.sh $TP $PC $PTN $BS
-                scripts/run-test-readwrite.sh $TP $PC $PTN $BS
+                scripts/run-test-read.sh $TP $PC $PTN $BS
                 ACT_TEST=$((ACT_TEST + 1))
             done
         done

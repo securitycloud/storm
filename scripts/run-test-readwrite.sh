@@ -39,7 +39,6 @@ scripts/run-topic.sh $TESTING_TOPIC 1 $KAFKA_CONSUMER
 
 STORM_EXE=$WRK/storm/bin/storm
 STORM_JAR=$WRK/project/target/storm-1.0-SNAPSHOT-jar-with-dependencies.jar
-KAFKA_JAR=$WRK/kafka/kafka-storm/target/kafka-storm-1.0-SNAPSHOT-jar-with-dependencies.jar
 
 echo -e $LOG Running topology $TOPOLOGY on $COMPUTERS computers $OFF
 ssh root@$SRV_NIMBUS "
@@ -66,10 +65,7 @@ then
     "
 fi
 
-echo -e $LOG Start producing flows on $KAFKA_PRODUCER $OFF
-ssh root@$KAFKA_PRODUCER "
-    java -jar $KAFKA_JAR $FLOWS_FILE $BATCH_SIZE
-"
+scripts/run-input.sh $BATCH_SIZE
 
 echo -e $LOG Killing topology $TOPOLOGY $OFF
 ssh root@$SRV_NIMBUS "

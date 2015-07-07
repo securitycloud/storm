@@ -36,7 +36,6 @@ scripts/run-topic.sh $TESTING_TOPIC 1 $KAFKA_CONSUMER
 
 STORM_EXE=$WRK/storm/bin/storm
 STORM_JAR=$WRK/project/target/storm-1.0-SNAPSHOT-jar-with-dependencies.jar
-KAFKA_JAR=$WRK/kafka/kafka-storm/target/kafka-storm-1.0-SNAPSHOT-jar-with-dependencies.jar
 
 echo -e $LOG Logging info to service topic: $SERVICE_TOPIC $OFF
 ssh root@$KAFKA_CONSUMER "
