@@ -67,8 +67,4 @@ fi
 
 scripts/run-input.sh $BATCH_SIZE
 
-echo -e $LOG Killing topology $TOPOLOGY $OFF
-ssh root@$SRV_NIMBUS "
-    $STORM_EXE kill $TOPOLOGY 1
-    sleep 20
-"
+scripts/kill-topology.sh $TOPOLOGY

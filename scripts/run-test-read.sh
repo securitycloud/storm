@@ -50,10 +50,4 @@ ssh root@$SRV_NIMBUS "
 
 sleep 420
 
-echo -e $LOG Killing topology $TOPOLOGY $OFF
-ssh root@$SRV_NIMBUS "
-    while $STORM_EXE kill $TOPOLOGY 1
-    do
-        sleep 5
-    done
-"
+scripts/kill-topology.sh $TOPOLOGY
