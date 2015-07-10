@@ -61,6 +61,11 @@ public class TopologyKafkaKafka {
         Config config = new Config();
         config.setNumWorkers(numberOfComputers);
         config.put(Config.TOPOLOGY_ACKER_EXECUTORS, 0);
+        config.put(Config.TOPOLOGY_RECEIVER_BUFFER_SIZE,             8);
+        config.put(Config.TOPOLOGY_TRANSFER_BUFFER_SIZE,            32);
+        config.put(Config.TOPOLOGY_EXECUTOR_RECEIVE_BUFFER_SIZE, 16384);
+        config.put(Config.TOPOLOGY_EXECUTOR_SEND_BUFFER_SIZE,    16384);
+
         config.setDebug(false);
 
         try {

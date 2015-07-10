@@ -62,7 +62,12 @@ public class TopologyK2KWindowCount {
                 .fieldsGrouping("counter-bolt", new Fields("count"));
 
         Config config = new Config();
-        config.put(Config.TOPOLOGY_TICK_TUPLE_FREQ_SECS, 1);
+        config.put(Config.TOPOLOGY_TICK_TUPLE_FREQ_SECS, 1);        
+        
+        config.put(Config.TOPOLOGY_RECEIVER_BUFFER_SIZE,             8);
+        config.put(Config.TOPOLOGY_TRANSFER_BUFFER_SIZE,            32);
+        config.put(Config.TOPOLOGY_EXECUTOR_RECEIVE_BUFFER_SIZE, 16384);
+        config.put(Config.TOPOLOGY_EXECUTOR_SEND_BUFFER_SIZE,    16384);
 
         try {
             StormSubmitter.submitTopology("TopologyK2KWindowCount", config, builder.createTopology());
