@@ -53,6 +53,7 @@ public class TopologyK2KWindowCount {
 
         Config config = new Config();
         config.setNumWorkers(numberOfComputers);
+        config.put(Config.TOPOLOGY_ACKER_EXECUTORS, 0);
         config.put(Config.TOPOLOGY_TICK_TUPLE_FREQ_SECS, 1);
         config.put(Config.TOPOLOGY_RECEIVER_BUFFER_SIZE,             8);
         config.put(Config.TOPOLOGY_TRANSFER_BUFFER_SIZE,            32);
