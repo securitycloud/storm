@@ -35,13 +35,19 @@ do
     do
         for PTN in "${PARTITIONS[@]}"
         do
+            echo -e $LOG Logging info to service topic: $SERVICE_TOPIC $OFF
+            ssh root@$KAFKA_CONSUMER "
+                echo Input topic for read tests: Partitions=$PARTITIONS, BatchSize=$BATCH_SIZE |
+                    $KAFKA_INSTALL/bin/kafka-console-producer.sh --topic $SERVICE_TOPIC --broker-list localhost:9092
+            "
+
             scripts/recreate-topic.sh $TESTING_TOPIC $PTN $KAFKA_PRODUCER
             scripts/run-input.sh $BS
 
             for PC in "${COMPUTERS[@]}"
             do
                 echo -e $LOG Running test $ACT_TEST/$NUM_TESTS: $OFF
-                scripts/run-test-read.sh $TP $PC $PTN $BS
+                scripts/run-test-read.sh $TP $PC
                 ACT_TEST=$((ACT_TEST + 1))
             done
         done

@@ -36,4 +36,3 @@ ssh root@$SRV_NIMBUS "
 sleep 420
 
 scripts/kill-topology.sh $TOPOLOGY
-scripts/kill-topology.sh $TOPOLOGY
