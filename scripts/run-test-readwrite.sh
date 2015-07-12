@@ -31,11 +31,8 @@ fi
 BATCH_SIZE=$4
 
 
-echo -e $LOG Recreating input topic $TESTING_TOPIC with $PARTITIONS partitions on $KAFKA_PRODUCER $OFF
-scripts/run-topic.sh $TESTING_TOPIC $PARTITIONS $KAFKA_PRODUCER
-
-echo -e $LOG Recreating output topic $TESTING_TOPIC with 1 partitions on $KAFKA_CONSUMER $OFF
-scripts/run-topic.sh $TESTING_TOPIC 1 $KAFKA_CONSUMER
+scripts/recreate-topic.sh $TESTING_TOPIC $PARTITIONS $KAFKA_PRODUCER
+scripts/recreate-topic.sh $TESTING_TOPIC 1 $KAFKA_CONSUMER
 
 STORM_EXE=$WRK/storm/bin/storm
 STORM_JAR=$WRK/project/target/storm-1.0-SNAPSHOT-jar-with-dependencies.jar

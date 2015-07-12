@@ -23,6 +23,9 @@ then
 fi
 SERVER=$3
 
+# LOG
+echo -e $LOG Recreating topic $TOPIC with $PARTITION partitions on $SERVER $OFF
+
 # DELETE AND CREATE TOPIC
 ssh root@$SERVER "
     $KAFKA_INSTALL/bin/kafka-topics.sh --delete --zookeeper localhost:2181 --topic $TOPIC

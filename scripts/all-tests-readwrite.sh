@@ -28,9 +28,7 @@ scripts/clean-cluster.sh
 scripts/install-cluster.sh
 scripts/start-cluster.sh
 sleep 20
-
-echo -e $LOG Recreating input topic $SERVICE_TOPIC on $KAFKA_CONSUMER $OFF
-scripts/run-topic.sh $SERVICE_TOPIC 1 $KAFKA_CONSUMER
+scripts/recreate-topic.sh $SERVICE_TOPIC 1 $KAFKA_CONSUMER
 
 for TP in "${TOPOLOGIES[@]}"
 do
@@ -48,4 +46,4 @@ do
     done
 done
 
-scripts/result-download.sh | scripts/result-parse.sh > out
+scripts/result-download.sh | scripts/result-parse.sh > out.`date +%s`.txt
