@@ -2,16 +2,12 @@ package cz.muni.fi.storm;
 
 import backtype.storm.Config;
 import backtype.storm.StormSubmitter;
-import backtype.storm.spout.SchemeAsMultiScheme;
 import backtype.storm.topology.TopologyBuilder;
 import backtype.storm.tuple.Fields;
 import cz.muni.fi.storm.bolts.FilterBolt;
 import cz.muni.fi.storm.bolts.KafkaProducerBolt;
+import cz.muni.fi.storm.spouts.KafkaConsumerSpout;
 import java.util.logging.Logger;
-import storm.kafka.KafkaSpout;
-import storm.kafka.SpoutConfig;
-import storm.kafka.StringScheme;
-import storm.kafka.ZkHosts;
 
 public class TopologyKafkaFilterKafka {
 
@@ -31,7 +27,7 @@ public class TopologyKafkaFilterKafka {
         
         boolean fromBeginning = ("true".equals(args[3])) ? true : false;
         
-        String kafkaProducerPort = "2181";
+        int kafkaProducerPort = 9092;
         String kafkaConsumerPort = "9092";
         
         String kafkaProducerTopic = "storm-test";
@@ -42,24 +38,11 @@ public class TopologyKafkaFilterKafka {
             throw new IllegalArgumentException("It creates loop! Please differnet kafkas or topics.");
         }
 
-        String zookeeperHost = kafkaProducerIp + ":" + kafkaProducerPort;
-        ZkHosts zkHosts = new ZkHosts(zookeeperHost);
-        SpoutConfig kafkaConfig = new SpoutConfig(zkHosts, kafkaProducerTopic, "", "storm");
-        kafkaConfig.scheme = new SchemeAsMultiScheme(new StringScheme() {
-            @Override
-            public Fields getOutputFields() {
-                return new Fields("flow");
-            }
-        });
-        if (fromBeginning) {
-            kafkaConfig.startOffsetTime = kafka.api.OffsetRequest.EarliestTime();
-        }
-
-        KafkaSpout kafkaSpout = new KafkaSpout(kafkaConfig);
+        KafkaConsumerSpout kafkaConsumerSpout = new KafkaConsumerSpout(kafkaProducerIp, kafkaProducerPort, kafkaProducerTopic, fromBeginning);
         KafkaProducerBolt kafkaProducerBolt = new KafkaProducerBolt(kafkaConsumerIp, kafkaConsumerPort, kafkaConsumerTopic);
         
         TopologyBuilder builder = new TopologyBuilder();
-        builder.setSpout("kafka-consumer-spout", kafkaSpout, numberOfComputers);
+        builder.setSpout("kafka-consumer-spout", kafkaConsumerSpout, numberOfComputers);
         builder.setBolt("filter-bolt", new FilterBolt("dst_ip_addr", "62.148.241.49"), numberOfComputers)
                 .fieldsGrouping("kafka-consumer-spout", new Fields("flow"));
         builder.setBolt("kafka-producer-bolt", kafkaProducerBolt, numberOfComputers)
@@ -68,7 +51,6 @@ public class TopologyKafkaFilterKafka {
         Config config = new Config();
         config.setNumWorkers(numberOfComputers);
         config.put(Config.TOPOLOGY_ACKER_EXECUTORS, 0);
-        
         config.put(Config.TOPOLOGY_RECEIVER_BUFFER_SIZE,             8);
         config.put(Config.TOPOLOGY_TRANSFER_BUFFER_SIZE,            32);
         config.put(Config.TOPOLOGY_EXECUTOR_RECEIVE_BUFFER_SIZE, 16384);
