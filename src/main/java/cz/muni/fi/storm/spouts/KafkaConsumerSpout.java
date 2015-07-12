@@ -131,7 +131,7 @@ public class KafkaConsumerSpout extends BaseRichSpout {
         if (iteratorMessageAndOffsets.hasNext() == false) {
             if (iteratorByteBufferMessageSets.hasNext() == false) {
                 refresh();
-                return next();
+                return null;
             }
             iteratorMessageAndOffsets = iteratorByteBufferMessageSets.next().iterator();
             currentPartition = iteratorPartitions.next();
@@ -154,7 +154,7 @@ public class KafkaConsumerSpout extends BaseRichSpout {
         byte[] bytes = new byte[payload.limit()];
         payload.get(bytes);
         try {
-            return String.valueOf(currentPartition + "-" + messageAndOffset.offset()) + ": " + new String(bytes, "UTF-8");
+            return new String(bytes, "UTF-8");
         } catch (UnsupportedEncodingException e) {
             return null; // throw exception?
         }
