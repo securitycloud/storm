@@ -1,6 +1,7 @@
 #!/bin/bash
 
-. scripts/setenv.sh
+CUR_DIR=`dirname $0`
+. $CUR_DIR/setenv.sh
 
 TOPOLOGIES[1]=TopologyKafkaKafka
 TOPOLOGIES[2]=TopologyKafkaFilterKafka
@@ -24,10 +25,10 @@ NUM_TESTS=$((NUM_TESTS * ${#PARTITIONS[@]}))
 NUM_TESTS=$((NUM_TESTS * ${#COMPUTERS[@]}))
 ACT_TEST=1
 
-scripts/clean-cluster.sh
-scripts/install-cluster.sh
-scripts/start-cluster.sh
-scripts/recreate-topic.sh $SERVICE_TOPIC 1 $KAFKA_CONSUMER
+$CUR_DIR/clean/clean-cluster.sh
+$CUR_DIR/install/install-cluster.sh
+$CUR_DIR/start/start-cluster.sh
+$CUR_DIR/run/recreate-topic.sh $SERVICE_TOPIC 1 $KAFKA_CONSUMER
 
 for TP in "${TOPOLOGIES[@]}"
 do
@@ -41,17 +42,17 @@ do
                     $KAFKA_INSTALL/bin/kafka-console-producer.sh --topic $SERVICE_TOPIC --broker-list localhost:9092
             "
 
-            scripts/recreate-topic.sh $TESTING_TOPIC $PTN $KAFKA_PRODUCER
-            scripts/run-input.sh $BS
+            $CUR_DIR/run/recreate-topic.sh $TESTING_TOPIC $PTN $KAFKA_PRODUCER
+            $CUR_DIR/run/run-input.sh $BS
 
             for PC in "${COMPUTERS[@]}"
             do
                 echo -e $LOG Running test $ACT_TEST/$NUM_TESTS: $OFF
-                scripts/run-test-read.sh $TP $PC
+                $CUR_DIR/run/run-test-read.sh $TP $PC
                 ACT_TEST=$((ACT_TEST + 1))
             done
         done
     done
 done
 
-scripts/result-download.sh | scripts/result-parse.sh > out.`date +%s`.txt
+$CUR_DIR/result/result-download.sh | $CUR_DIR/result/result-parse.sh > out.`date +%s`.txt

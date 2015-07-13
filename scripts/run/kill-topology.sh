@@ -1,6 +1,7 @@
 #!/bin/bash
 
-. scripts/setenv.sh
+CUR_DIR=`dirname $0`
+. $CUR_DIR/../setenv.sh
 
 if [ -z "$1" ]
 then

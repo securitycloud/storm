@@ -1,6 +1,7 @@
 #!/bin/bash
 
-. scripts/setenv.sh
+CUR_DIR=`dirname $0`
+. $CUR_DIR/../setenv.sh
 
 if [ -z "$1" ] 
 then
@@ -18,4 +19,4 @@ ssh root@$SERVER "
     tar -xzf storm.tar.gz -C storm --strip 1
 "
 # CONFIGURE
-scp config/storm.yaml root@$SERVER:$WRK/storm/conf/storm.yaml
+scp $CUR_DIR/../../config/storm.yaml root@$SERVER:$WRK/storm/conf/storm.yaml

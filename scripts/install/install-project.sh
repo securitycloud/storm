@@ -1,9 +1,10 @@
 #!/bin/bash
 
-. scripts/setenv.sh
+CUR_DIR=`dirname $0`
+. $CUR_DIR/../setenv.sh
 
 # COPY
-tar -cf project.tar src pom.xml
+tar -cf project.tar $CUR_DIR/../../src $CUR_DIR/../../pom.xml
 scp project.tar root@$SRV_NIMBUS:/$WRK/project.new.tar
 rm project.tar
 

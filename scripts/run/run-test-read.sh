@@ -1,6 +1,7 @@
 #!/bin/bash
 
-. scripts/setenv.sh
+CUR_DIR=`dirname $0`
+. $CUR_DIR/../setenv.sh
 
 if [ -z "$1" ] 
 then
@@ -17,7 +18,7 @@ fi
 COMPUTERS=$2
 
 
-scripts/recreate-topic.sh $TESTING_TOPIC 1 $KAFKA_CONSUMER
+$CUR_DIR/recreate-topic.sh $TESTING_TOPIC 1 $KAFKA_CONSUMER
 
 STORM_EXE=$WRK/storm/bin/storm
 STORM_JAR=$WRK/project/target/storm-1.0-SNAPSHOT-jar-with-dependencies.jar
@@ -35,4 +36,4 @@ ssh root@$SRV_NIMBUS "
 
 sleep 420
 
-scripts/kill-topology.sh $TOPOLOGY
+$CUR_DIR/kill-topology.sh $TOPOLOGY
