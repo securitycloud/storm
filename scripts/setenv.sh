@@ -21,8 +21,8 @@ KAFKA_CONSUMER=10.16.31.201
 KAFKA_SERVERS[1]=$KAFKA_PRODUCER
 KAFKA_SERVERS[2]=$KAFKA_CONSUMER
 
-URL_STORM=http://mirror.hosting90.cz/apache/storm/apache-storm-0.9.4/apache-storm-0.9.4.tar.gz
-URL_ZK=http://mirror.hosting90.cz/apache/zookeeper/stable/zookeeper-3.4.6.tar.gz
+URL_STORM=http://apache.miloslavbrada.cz/storm/apache-storm-0.9.4/apache-storm-0.9.4.tar.gz
+URL_ZK=http://apache.miloslavbrada.cz/zookeeper/zookeeper-3.4.6/zookeeper-3.4.6.tar.gz
 GIT_KAFKA=https://github.com/securitycloud/kafka.git
 
 KAFKA_INSTALL=/root/kafka/kafka_2.11-0.8.2.1
