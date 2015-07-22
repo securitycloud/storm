@@ -25,7 +25,6 @@ import kafka.javaapi.TopicMetadataRequest;
 import kafka.javaapi.consumer.SimpleConsumer;
 import kafka.javaapi.message.ByteBufferMessageSet;
 import kafka.message.MessageAndOffset;
-import org.apache.commons.math3.util.ArithmeticUtils;
 
 public class KafkaConsumerSpout extends BaseRichSpout {
     
@@ -35,14 +34,12 @@ public class KafkaConsumerSpout extends BaseRichSpout {
     private int port;
     private String topic;
     private boolean fromBeginning;
-    private int slotsPerPartition;
     private SimpleConsumer consumer;
-    private long[] readOffsets;
-    private Map<Integer, List<Integer>> mySlots; // <Partition, List<Slot>>
+    private Map<Integer, Long> readOffsets;
     private Iterator<ByteBufferMessageSet> iteratorByteBufferMessageSets;
     private Iterator<MessageAndOffset> iteratorMessageAndOffsets;
-    private Iterator<Integer> iteratorPartitions;
-    private int currentPartition;
+    private Iterator<Map.Entry<Integer, Long>> iteratorReadOffsets;
+    private Map.Entry<Integer, Long> currentReadOffset;
     
     public KafkaConsumerSpout(String broker, int port, String topic, boolean fromBeginning) {
         this.broker = broker;
@@ -62,9 +59,17 @@ public class KafkaConsumerSpout extends BaseRichSpout {
         List<TopicMetadata> metaData = resp.topicsMetadata();
         TopicMetadata topicMetadata = metaData.get(0);
         int totalPartitions = topicMetadata.partitionsMetadata().size();
-          
+        
+        int totalTasks = context.getComponentTasks(context.getThisComponentId()).size();
+        int actualTask = context.getThisTaskIndex();
+        
+        if (totalPartitions % totalTasks != 0) {
+            throw new RuntimeException("One partition can not be read by two consumers.");
+        }
+        int partitionsPerTask = totalPartitions / totalTasks;
+        
         Map<TopicAndPartition, PartitionOffsetRequestInfo> requestInfo = new HashMap<TopicAndPartition, PartitionOffsetRequestInfo>();
-        for (int partition = 0; partition < totalPartitions; partition++) {
+        for (int partition = actualTask * partitionsPerTask; partition < (actualTask + 1) * partitionsPerTask; partition++) {
             TopicAndPartition topicAndPartition = new TopicAndPartition(topic, partition);
             PartitionOffsetRequestInfo partitionOffsetRequestInfo;
             if (fromBeginning) {
@@ -80,26 +85,12 @@ public class KafkaConsumerSpout extends BaseRichSpout {
         if (response.hasError()) {
             // throw exception?
         }
-        this.readOffsets = new long[totalPartitions];
-        for (int partition = 0; partition < totalPartitions; partition++) {
+        this.readOffsets = new HashMap<Integer, Long>();
+        for (int partition = actualTask * partitionsPerTask; partition < (actualTask + 1) * partitionsPerTask; partition++) {
             long[] offsets = response.offsets(topic, partition);
-            this.readOffsets[partition] = offsets[0];
+            this.readOffsets.put(partition, offsets[0]);
         }
         
-        int totalTasks = context.getComponentTasks(context.getThisComponentId()).size();
-        int actualTask = context.getThisTaskIndex();
-        int totalSlots =  ArithmeticUtils.lcm(totalPartitions, totalTasks);
-        this.slotsPerPartition = totalSlots / totalPartitions;
-        int slotsPerTask =  totalSlots / totalTasks;
-        this.mySlots = new HashMap<Integer, List<Integer>>();
-        for (int slot = actualTask * slotsPerTask; slot < (actualTask + 1) * slotsPerTask; slot++) {
-            int myPartition = (int) Math.floor(((double) slot) / slotsPerPartition);
-            int mySlot = slot % slotsPerPartition;
-            if (! this.mySlots.containsKey(myPartition)) {
-               this.mySlots.put(myPartition, new ArrayList<Integer>(slotsPerPartition));
-            }
-            this.mySlots.get(myPartition).add(mySlot);
-        }
         refresh();
     }
     
@@ -134,21 +125,15 @@ public class KafkaConsumerSpout extends BaseRichSpout {
                 return null;
             }
             iteratorMessageAndOffsets = iteratorByteBufferMessageSets.next().iterator();
-            currentPartition = iteratorPartitions.next();
+            currentReadOffset = iteratorReadOffsets.next();
             return null;
         }
         MessageAndOffset messageAndOffset = iteratorMessageAndOffsets.next();
         long currentOffset = messageAndOffset.offset();
-        int currentSlot = (int) (currentOffset % slotsPerPartition);
-        List<Integer> slots = mySlots.get(currentPartition);
-        if (slots.contains(currentSlot) == false) {
-            return next();
-        }
-
-        if (currentOffset < readOffsets[currentPartition]) {
+        if (currentOffset < currentReadOffset.getValue()) {
             // log error and next() ?
         }
-        readOffsets[currentPartition] = messageAndOffset.nextOffset();
+        currentReadOffset.setValue(messageAndOffset.nextOffset());
         ByteBuffer payload = messageAndOffset.message().payload();
 
         byte[] bytes = new byte[payload.limit()];
@@ -164,8 +149,8 @@ public class KafkaConsumerSpout extends BaseRichSpout {
         refreshConsumer();
 
         FetchRequestBuilder builder = new FetchRequestBuilder().clientId(clientName);
-        for (Integer partition: mySlots.keySet()) {
-            builder.addFetch(topic, partition, readOffsets[partition], 100000); // Note: this fetchSize of 100000 might need to be increased if large batches are written to Kafka
+        for (Map.Entry<Integer, Long> partitionAndOffset: readOffsets.entrySet()) {
+            builder.addFetch(topic, partitionAndOffset.getKey(), partitionAndOffset.getValue(), 100000);
         }
         FetchRequest req = builder.build();
         FetchResponse fetchResponse = consumer.fetch(req);
@@ -189,13 +174,13 @@ public class KafkaConsumerSpout extends BaseRichSpout {
         numErrors = 0;*/
         
         List<ByteBufferMessageSet> listByteBufferMessageSets = new ArrayList<ByteBufferMessageSet>();
-        for (Integer partition : mySlots.keySet()) {
+        for (Integer partition : readOffsets.keySet()) {
             ByteBufferMessageSet byteBufferMessageSet = fetchResponse.messageSet(topic, partition);
             listByteBufferMessageSets.add(byteBufferMessageSet);
         }
         this.iteratorByteBufferMessageSets = listByteBufferMessageSets.iterator();
         this.iteratorMessageAndOffsets = iteratorByteBufferMessageSets.next().iterator();
-        this.iteratorPartitions = mySlots.keySet().iterator();
-        this.currentPartition = iteratorPartitions.next();
+        this.iteratorReadOffsets = readOffsets.entrySet().iterator();
+        this.currentReadOffset = iteratorReadOffsets.next();
     }
 }
