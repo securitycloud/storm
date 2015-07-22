@@ -34,7 +34,7 @@ public class FileWriterBolt extends BaseRichBolt {
         }
         if (isCountable) {
             this.counter = new ServiceCounter(stormConf.get("serviceCounter.ip").toString(),
-                                              stormConf.get("serviceCounter.port").toString());
+                                              new Integer(stormConf.get("serviceCounter.port").toString()));
         }
     }
 
