@@ -1,11 +1,11 @@
-package cz.muni.fi.storm.tools;
+package cz.muni.fi.storm.tools.writers;
 
 import java.util.Properties;
 import kafka.javaapi.producer.Producer;
 import kafka.producer.KeyedMessage;
 import kafka.producer.ProducerConfig;
 
-public class KafkaProducer implements AutoCloseable {
+public class KafkaProducer implements Writer {
 
     private Producer<String, String> producer;
     private String topic;
@@ -31,6 +31,7 @@ public class KafkaProducer implements AutoCloseable {
         return producer;
     }
     
+    @Override
     public void send(String message) {
         KeyedMessage<String, String> keyedMessage = new KeyedMessage<String, String>(topic, message);
         producer.send(keyedMessage);

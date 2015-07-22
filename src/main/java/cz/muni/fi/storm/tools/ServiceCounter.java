@@ -1,5 +1,7 @@
 package cz.muni.fi.storm.tools;
 
+import cz.muni.fi.storm.tools.writers.KafkaProducer;
+
 public class ServiceCounter {
 
     private static final String topic = "storm-service";

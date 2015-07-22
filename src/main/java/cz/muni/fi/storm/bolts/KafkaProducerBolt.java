@@ -5,7 +5,7 @@ import backtype.storm.task.TopologyContext;
 import backtype.storm.topology.OutputFieldsDeclarer;
 import backtype.storm.topology.base.BaseRichBolt;
 import backtype.storm.tuple.Tuple;
-import cz.muni.fi.storm.tools.KafkaProducer;
+import cz.muni.fi.storm.tools.writers.KafkaProducer;
 import cz.muni.fi.storm.tools.ServiceCounter;
 import java.util.Map;
 
