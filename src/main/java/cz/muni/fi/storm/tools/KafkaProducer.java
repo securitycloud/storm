@@ -11,17 +11,15 @@ public class KafkaProducer implements AutoCloseable {
     private String topic;
 
     public KafkaProducer(String broker, int port, String topic) {
-        this.topic = topic;
-
         Properties props = new Properties();
-        //props.put("zookeeper.connect", kafkaConsumerIp + ":2181");
         props.put("metadata.broker.list", broker + ":" + port);
         props.put("broker.id", "0");
         props.put("serializer.class", "kafka.serializer.StringEncoder");
         props.put("request.required.acks", "0");
         props.put("producer.type", "async");
         ProducerConfig config = new ProducerConfig(props);
-        producer = new Producer<String, String>(config);
+        this.producer = new Producer<String, String>(config);
+        this.topic = topic;
     }
     
     public KafkaProducer(KafkaProducer otherFakfaProducer, String topic) {
