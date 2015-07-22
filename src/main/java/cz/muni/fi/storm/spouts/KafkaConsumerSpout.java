@@ -7,7 +7,8 @@ import backtype.storm.topology.base.BaseRichSpout;
 import backtype.storm.tuple.Fields;
 import backtype.storm.tuple.Values;
 import java.util.Map;
-import cz.muni.fi.storm.tools.KafkaConsumer;
+import cz.muni.fi.storm.tools.readers.KafkaConsumer;
+import cz.muni.fi.storm.tools.readers.Reader;
 
 public class KafkaConsumerSpout extends BaseRichSpout {
     
@@ -16,7 +17,7 @@ public class KafkaConsumerSpout extends BaseRichSpout {
     private int port;
     private String topic;
     private boolean fromBeginning;
-    private KafkaConsumer kafkaConsumer;
+    private Reader kafkaConsumer;
     
     public KafkaConsumerSpout(String broker, int port, String topic, boolean fromBeginning) {
         this.broker = broker;

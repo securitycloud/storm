@@ -1,4 +1,4 @@
-package cz.muni.fi.storm.tools;
+package cz.muni.fi.storm.tools.readers;
 
 import java.io.UnsupportedEncodingException;
 import java.nio.ByteBuffer;
@@ -20,7 +20,7 @@ import kafka.javaapi.consumer.SimpleConsumer;
 import kafka.javaapi.message.ByteBufferMessageSet;
 import kafka.message.MessageAndOffset;
 
-public class KafkaConsumer implements AutoCloseable {
+public class KafkaConsumer implements Reader {
     
     private static final String clientName = "storm";
     private String broker;
@@ -85,6 +85,7 @@ public class KafkaConsumer implements AutoCloseable {
         }
     }
     
+    @Override
     public String next() {
         if (iteratorMessageAndOffsets.hasNext() == false) {
             if (iteratorByteBufferMessageSets.hasNext() == false) {
