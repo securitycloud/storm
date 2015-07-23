@@ -43,10 +43,10 @@ public class TopologyKafkaCounterKafka {
         
         TopologyBuilder builder = new TopologyBuilder();
         builder.setSpout("kafka-consumer-spout", kafkaConsumerSpout, numberOfComputers);        
-        builder.setBolt("packet-counter-bolt", new PacketCounterBolt(), numberOfComputers)
+        builder.setBolt("packet-counter-bolt", new PacketCounterBolt("62.148.241.49"), numberOfComputers)
                 .fieldsGrouping("kafka-consumer-spout", new Fields("flow"));
         builder.setBolt("kafka-producer-bolt", kafkaProducerBolt, numberOfComputers)
-                .fieldsGrouping("packet-counter-bolt", new Fields("packets"));
+                .fieldsGrouping("packet-counter-bolt", new Fields("dstIp", "packets"));
 
         Config config = new Config();
         config.setNumWorkers(numberOfComputers);

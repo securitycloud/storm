@@ -65,6 +65,6 @@ public class PacketCounterBolt extends BaseRichBolt {
 
     @Override
     public void declareOutputFields(OutputFieldsDeclarer declarer) {
-        declarer.declare(new Fields("packets"));
+        declarer.declare(new Fields("dstIp", "packets"));
     }
 }
