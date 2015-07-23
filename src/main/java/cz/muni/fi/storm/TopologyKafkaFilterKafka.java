@@ -28,7 +28,7 @@ public class TopologyKafkaFilterKafka {
         boolean fromBeginning = ("true".equals(args[3])) ? true : false;
         
         int kafkaProducerPort = 9092;
-        String kafkaConsumerPort = "9092";
+        int kafkaConsumerPort = 9092;
         
         String kafkaProducerTopic = "storm-test";
         String kafkaConsumerTopic = "storm-test";

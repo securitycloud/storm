@@ -95,13 +95,6 @@
             <version>2.6.0-rc2</version>
         </dependency>
         
-        <!-- ArithmeticUtils -->
-        <dependency>
-            <groupId>org.apache.commons</groupId>
-            <artifactId>commons-math3</artifactId>
-            <version>3.5</version>
-        </dependency>
-        
         <dependency>
             <groupId>junit</groupId>
             <artifactId>junit</artifactId>
