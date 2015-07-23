@@ -4,15 +4,14 @@ import backtype.storm.Config;
 import backtype.storm.StormSubmitter;
 import backtype.storm.topology.TopologyBuilder;
 import backtype.storm.tuple.Fields;
-import cz.muni.fi.storm.bolts.CounterWithoutWindow;
-import cz.muni.fi.storm.bolts.FilterBolt;
+import cz.muni.fi.storm.bolts.PacketCounterBolt;
 import cz.muni.fi.storm.bolts.KafkaProducerBolt;
 import cz.muni.fi.storm.spouts.KafkaConsumerSpout;
 import java.util.logging.Logger;
 
-public class TopologyCounterWithoutWindow {
+public class TopologyKafkaCounterKafka {
 
-    private static final Logger log = Logger.getLogger(TopologyKafkaFilterKafka.class.getName());
+    private static final Logger log = Logger.getLogger(TopologyKafkaCounterKafka.class.getName());
 
     public static void main(String[] args) {
         log.fine("Starting: Topology-kafka-counter-kafka");
@@ -29,7 +28,7 @@ public class TopologyCounterWithoutWindow {
         boolean fromBeginning = ("true".equals(args[3])) ? true : false;
         
         int kafkaProducerPort = 9092;
-        String kafkaConsumerPort = "9092";
+        int kafkaConsumerPort = 9092;
         
         String kafkaProducerTopic = "storm-test";
         String kafkaConsumerTopic = "storm-test";
@@ -44,10 +43,10 @@ public class TopologyCounterWithoutWindow {
         
         TopologyBuilder builder = new TopologyBuilder();
         builder.setSpout("kafka-consumer-spout", kafkaConsumerSpout, numberOfComputers);        
-        builder.setBolt("counter-bolt", new CounterWithoutWindow(), numberOfComputers)
+        builder.setBolt("packet-counter-bolt", new PacketCounterBolt(), numberOfComputers)
                 .fieldsGrouping("kafka-consumer-spout", new Fields("flow"));
         builder.setBolt("kafka-producer-bolt", kafkaProducerBolt, numberOfComputers)
-                .fieldsGrouping("counter-bolt", new Fields("count"));
+                .fieldsGrouping("packet-counter-bolt", new Fields("packets"));
 
         Config config = new Config();
         config.setNumWorkers(numberOfComputers);
@@ -59,7 +58,7 @@ public class TopologyCounterWithoutWindow {
         config.setDebug(false);
 
         try {
-            StormSubmitter.submitTopology("TopologyCounterWithoutWindow", config, builder.createTopology());
+            StormSubmitter.submitTopology("TopologyKafkaCounterKafka", config, builder.createTopology());
         } catch (Exception e) {
             e.printStackTrace();
             throw new IllegalStateException("Couldn't initialize the topology", e);
