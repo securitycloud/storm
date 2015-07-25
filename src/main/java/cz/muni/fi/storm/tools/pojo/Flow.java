@@ -1,4 +1,4 @@
-package cz.muni.fi.storm.tools;
+package cz.muni.fi.storm.tools.pojo;
 
 import scala.Serializable;
 

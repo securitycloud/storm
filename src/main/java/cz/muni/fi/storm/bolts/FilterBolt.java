@@ -8,7 +8,7 @@ import backtype.storm.tuple.Fields;
 import backtype.storm.tuple.Tuple;
 import backtype.storm.tuple.Values;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import cz.muni.fi.storm.tools.Flow;
+import cz.muni.fi.storm.tools.pojo.Flow;
 import java.io.IOException;
 import java.util.Map;
 
