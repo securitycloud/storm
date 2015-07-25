@@ -7,49 +7,36 @@ import backtype.storm.topology.base.BaseRichBolt;
 import backtype.storm.tuple.Fields;
 import backtype.storm.tuple.Tuple;
 import backtype.storm.tuple.Values;
-import com.fasterxml.jackson.core.JsonFactory;
-import com.fasterxml.jackson.core.JsonParser;
-import com.fasterxml.jackson.core.JsonToken;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import cz.muni.fi.storm.tools.Flow;
 import java.io.IOException;
 import java.util.Map;
 
 public class FilterBolt extends BaseRichBolt {
 
     private OutputCollector collector;
-    private JsonFactory factory;
-    private String key;
-    private String value;
+    private ObjectMapper mapper;
+    private String destIp;
     
-    public FilterBolt(String key, String value) {
-        this.key = key;
-        this.value = value;
+    public FilterBolt(String destIp) {
+        this.destIp = destIp;
     }
 
     @Override
     public void prepare(Map stormConf, TopologyContext context, OutputCollector collector) {
         this.collector = collector;
-        this.factory = new JsonFactory();
+        this.mapper = new ObjectMapper();
     }
 
     @Override
     public void execute (Tuple tuple) {
-        String flow = tuple.getString(0); 
-
-        // STREAMING JACKSON
+        String flowJson = tuple.getString(0);
+        
         try {
-            JsonParser parser = factory.createParser(flow);
-            while (parser.nextToken() != JsonToken.END_OBJECT) {
-                String parsedKey = parser.getCurrentName();
-                if (this.key.equals(parsedKey)) {
-                    parser.nextToken();
-                    String parsedValue = parser.getText();
-                    if (this.value.equals(parsedValue)) {
-                        this.collector.emit(new Values(flow));
-                        break;
-                    }
-                }
+            Flow flow = mapper.readValue(flowJson, Flow.class);
+            if (destIp.equals(flow.getDst_ip_addr())) {
+                this.collector.emit(new Values(flowJson));
             }
-            parser.close();
         } catch (IOException e) {
             // nothing
         }

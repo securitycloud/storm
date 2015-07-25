@@ -42,7 +42,7 @@ public class TopologyKafkaFilterKafka {
         
         TopologyBuilder builder = new TopologyBuilder();
         builder.setSpout("kafka-consumer-spout", kafkaConsumerSpout, numberOfComputers);
-        builder.setBolt("filter-bolt", new FilterBolt("dst_ip_addr", "62.148.241.49"), numberOfComputers)
+        builder.setBolt("filter-bolt", new FilterBolt("62.148.241.49"), numberOfComputers)
                 .localOrShuffleGrouping("kafka-consumer-spout");
         builder.setBolt("kafka-producer-bolt", kafkaProducerBolt, numberOfComputers)
                 .localOrShuffleGrouping("filter-bolt");
