@@ -3,7 +3,6 @@ package cz.muni.fi.storm;
 import backtype.storm.Config;
 import backtype.storm.StormSubmitter;
 import backtype.storm.topology.TopologyBuilder;
-import backtype.storm.tuple.Fields;
 import cz.muni.fi.storm.bolts.FileWriterBolt;
 import cz.muni.fi.storm.spouts.FileReaderSpout;
 
@@ -23,7 +22,7 @@ public class TopologyFileFile {
         TopologyBuilder builder = new TopologyBuilder();
         builder.setSpout("file-reader-spout", new FileReaderSpout(sourceFilePath), numberOfComputers);
         builder.setBolt("file-writer-bolt", new FileWriterBolt(targetFilePath, true), numberOfComputers)
-                .fieldsGrouping("file-reader-spout", new Fields("flow"));
+                .localOrShuffleGrouping("file-reader-spout");
 
         Config config = new Config();
         config.setNumWorkers(numberOfComputers);

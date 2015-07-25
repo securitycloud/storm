@@ -3,7 +3,6 @@ package cz.muni.fi.storm;
 import backtype.storm.Config;
 import backtype.storm.StormSubmitter;
 import backtype.storm.topology.TopologyBuilder;
-import backtype.storm.tuple.Fields;
 import cz.muni.fi.storm.bolts.KafkaProducerBolt;
 import cz.muni.fi.storm.spouts.KafkaConsumerSpout;
 
@@ -39,7 +38,7 @@ public class TopologyKafkaKafka {
         TopologyBuilder builder = new TopologyBuilder();
         builder.setSpout("kafka-consumer-spout", kafkaConsumerSpout, numberOfComputers);
         builder.setBolt("kafka-producer-bolt", kafkaProducerBolt, numberOfComputers)
-                .fieldsGrouping("kafka-consumer-spout", new Fields("flow"));
+                .localOrShuffleGrouping("kafka-consumer-spout");
 
         Config config = new Config();
         config.setNumWorkers(numberOfComputers);

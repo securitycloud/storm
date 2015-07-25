@@ -3,7 +3,6 @@ package cz.muni.fi.storm;
 import backtype.storm.Config;
 import backtype.storm.StormSubmitter;
 import backtype.storm.topology.TopologyBuilder;
-import backtype.storm.tuple.Fields;
 import cz.muni.fi.storm.bolts.FilterBolt;
 import cz.muni.fi.storm.bolts.KafkaProducerBolt;
 import cz.muni.fi.storm.spouts.KafkaConsumerSpout;
@@ -44,9 +43,9 @@ public class TopologyKafkaFilterKafka {
         TopologyBuilder builder = new TopologyBuilder();
         builder.setSpout("kafka-consumer-spout", kafkaConsumerSpout, numberOfComputers);
         builder.setBolt("filter-bolt", new FilterBolt("dst_ip_addr", "62.148.241.49"), numberOfComputers)
-                .fieldsGrouping("kafka-consumer-spout", new Fields("flow"));
+                .localOrShuffleGrouping("kafka-consumer-spout");
         builder.setBolt("kafka-producer-bolt", kafkaProducerBolt, numberOfComputers)
-                .fieldsGrouping("filter-bolt", new Fields("flow"));
+                .localOrShuffleGrouping("filter-bolt");
 
         Config config = new Config();
         config.setNumWorkers(numberOfComputers);
