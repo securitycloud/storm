@@ -6,6 +6,7 @@ import backtype.storm.topology.TopologyBuilder;
 import cz.muni.fi.storm.bolts.FilterBolt;
 import cz.muni.fi.storm.bolts.KafkaProducerBolt;
 import cz.muni.fi.storm.spouts.KafkaConsumerSpout;
+import cz.muni.fi.storm.tools.TopologyUtil;
 import java.util.logging.Logger;
 
 public class TopologyKafkaFilterKafka {
@@ -49,12 +50,7 @@ public class TopologyKafkaFilterKafka {
 
         Config config = new Config();
         config.setNumWorkers(numberOfComputers);
-        config.put(Config.TOPOLOGY_ACKER_EXECUTORS, 0);
-        config.put(Config.TOPOLOGY_RECEIVER_BUFFER_SIZE,             8);
-        config.put(Config.TOPOLOGY_TRANSFER_BUFFER_SIZE,            32);
-        config.put(Config.TOPOLOGY_EXECUTOR_RECEIVE_BUFFER_SIZE, 16384);
-        config.put(Config.TOPOLOGY_EXECUTOR_SEND_BUFFER_SIZE,    16384);
-        config.setDebug(false);
+        config.putAll(new TopologyUtil().loadProperties());
 
         try {
             StormSubmitter.submitTopology("TopologyKafkaFilterKafka", config, builder.createTopology());
