@@ -19,7 +19,12 @@ public class TopologyUtil {
                 try {
                     properties.put(property, Integer.valueOf(value));
                 } catch (NumberFormatException e) {
-                    // nothing
+                    if (value.equalsIgnoreCase("true")) {
+                        properties.put(property, true);
+                    }
+                    if (value.equalsIgnoreCase("false")) {
+                        properties.put(property, false);
+                    }
                 }
             }
             return (Map) properties;
