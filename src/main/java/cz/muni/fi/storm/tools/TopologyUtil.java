@@ -14,6 +14,14 @@ public class TopologyUtil {
             InputStream inputStream = getClass().getResourceAsStream(stormPropertiesFile);
             Properties properties = new Properties();
             properties.load(inputStream);
+            for (String property : properties.stringPropertyNames()) {
+                String value = properties.getProperty(property);
+                try {
+                    properties.put(property, Integer.valueOf(value));
+                } catch (NumberFormatException e) {
+                    // nothing
+                }
+            }
             return (Map) properties;
             
         } catch (IOException e) {
