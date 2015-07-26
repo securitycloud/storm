@@ -11,20 +11,14 @@ import java.util.Map;
 
 public class KafkaProducerBolt extends BaseRichBolt {
 
-    private String broker;
-    private int port;
-    private String topic;
     private KafkaProducer kafkaProducer;
     private ServiceCounter counter;
 
-    public KafkaProducerBolt(String broker, int port, String topic) {
-        this.broker = broker;
-        this.port = port;
-        this.topic = topic;
-    }
-
     @Override
     public void prepare(Map stormConf, TopologyContext context, OutputCollector collector) {
+        String broker = (String) stormConf.get("kafkaProducer.broker");
+        int port = new Integer(stormConf.get("kafkaProducer.port").toString());
+        String topic = (String) stormConf.get("kafkaProducer.topic");
         kafkaProducer = new KafkaProducer(broker, port, topic);
         counter = new ServiceCounter(kafkaProducer);
     }

@@ -31,7 +31,7 @@ ssh root@$KAFKA_CONSUMER "
 
 echo -e $LOG Running topology $TOPOLOGY on $COMPUTERS computers $OFF
 ssh root@$SRV_NIMBUS "
-    $STORM_EXE jar $STORM_JAR cz.muni.fi.storm.$TOPOLOGY $COMPUTERS $KAFKA_PRODUCER $KAFKA_CONSUMER true
+    $STORM_EXE jar $STORM_JAR cz.muni.fi.storm.$TOPOLOGY $COMPUTERS true
 "
 
 sleep 420

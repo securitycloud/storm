@@ -3,18 +3,21 @@ All scripts run in folder <b>storm</b> (where <b>pom.xml</b> exist).
 Configuration
 ============================
 
-Default configuration zookeeper:
+Default configuration for zookeeper:
 
         config/zoo.cfg
 
-Default configuration storm:
+Default configuration for storm:
 
         config/storm.yaml
 
-Default configuration scripts:
+Default configuration for scripts:
 
         scripts/setenv.sh
 
+Default configuration for this project:
+
+        src/main/resources/storm.properties
 
 Prepare Storm on cluster
 ============================

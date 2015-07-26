@@ -13,23 +13,21 @@ import cz.muni.fi.storm.tools.readers.Reader;
 public class KafkaConsumerSpout extends BaseRichSpout {
     
     private SpoutOutputCollector collector;
-    private String broker;
-    private int port;
-    private String topic;
     private boolean fromBeginning;
     private Reader kafkaConsumer;
     
-    public KafkaConsumerSpout(String broker, int port, String topic, boolean fromBeginning) {
-        this.broker = broker;
-        this.port = port;
-        this.topic = topic;
+    public KafkaConsumerSpout(boolean fromBeginning) {
         this.fromBeginning = fromBeginning;
     }
     
     @Override
-    public void open(Map conf, TopologyContext context, SpoutOutputCollector collector) {
+    public void open(Map stormConf, TopologyContext context, SpoutOutputCollector collector) {
         int totalTasks = context.getComponentTasks(context.getThisComponentId()).size();
-        int actualTask = context.getThisTaskIndex();       
+        int actualTask = context.getThisTaskIndex();
+        String broker = (String) stormConf.get("kafkaConsumer.broker");
+        int port = new Integer(stormConf.get("kafkaConsumer.port").toString());
+        String topic = (String) stormConf.get("kafkaConsumer.topic");
+        
         this.kafkaConsumer = new KafkaConsumer(broker, port, topic,
                 fromBeginning, totalTasks, actualTask);
         this.collector = collector;

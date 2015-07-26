@@ -26,8 +26,8 @@ public class FileWriterBolt extends BaseRichBolt {
     public void prepare(Map stormConf, TopologyContext context, OutputCollector collector) {
         this.fileWriter = new FileWriter(filePath);
         if (isCountable) {
-            String broker = stormConf.get("serviceCounter.ip").toString();
-            int port = new Integer(stormConf.get("serviceCounter.port").toString());
+            String broker = (String) stormConf.get("kafkaProducer.broker");
+            int port = new Integer(stormConf.get("kafkaProducer.port").toString());
             this.counter = new ServiceCounter(broker, port);
         }
     }

@@ -14,6 +14,15 @@ public class TopologyUtil {
             InputStream inputStream = getClass().getResourceAsStream(stormPropertiesFile);
             Properties properties = new Properties();
             properties.load(inputStream);
+            
+            if (properties.getProperty("kafkaProducer.topic")
+                        .equals(properties.getProperty("kafkaConsumer.topic"))
+                    && properties.getProperty("kafkaProducer.broker")
+                        .equals(properties.getProperty("kafkaConsumer.broker"))) {
+                throw new IllegalArgumentException(
+                        "It creates loop! Please differnet kafkas brokers or topics");
+            }
+            
             for (String property : properties.stringPropertyNames()) {
                 String value = properties.getProperty(property);
                 try {

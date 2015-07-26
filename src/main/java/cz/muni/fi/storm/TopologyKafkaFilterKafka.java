@@ -16,30 +16,15 @@ public class TopologyKafkaFilterKafka {
     public static void main(String[] args) {
         log.fine("Starting: Topology-kafka-filter-kafka");
         
-        if (args.length < 4) {
-            throw new IllegalArgumentException("Missing argument: number_of_computers kafka_producer_ip kafka_consumer_ip from_beginning");
+        if (args.length < 2) {
+            throw new IllegalArgumentException("Missing argument: number_of_computers from_beginning");
         }
         
         int numberOfComputers = Integer.parseInt(args[0]);
-
-        String kafkaProducerIp = args[1];
-        String kafkaConsumerIp = args[2];
-        
         boolean fromBeginning = ("true".equals(args[3])) ? true : false;
-        
-        int kafkaProducerPort = 9092;
-        int kafkaConsumerPort = 9092;
-        
-        String kafkaProducerTopic = "storm-test";
-        String kafkaConsumerTopic = "storm-test";
 
-        if (kafkaProducerTopic.equals(kafkaConsumerTopic)
-                && kafkaProducerIp.equals(kafkaConsumerIp)) {
-            throw new IllegalArgumentException("It creates loop! Please differnet kafkas or topics.");
-        }
-
-        KafkaConsumerSpout kafkaConsumerSpout = new KafkaConsumerSpout(kafkaProducerIp, kafkaProducerPort, kafkaProducerTopic, fromBeginning);
-        KafkaProducerBolt kafkaProducerBolt = new KafkaProducerBolt(kafkaConsumerIp, kafkaConsumerPort, kafkaConsumerTopic);
+        KafkaConsumerSpout kafkaConsumerSpout = new KafkaConsumerSpout(fromBeginning);
+        KafkaProducerBolt kafkaProducerBolt = new KafkaProducerBolt();
         
         TopologyBuilder builder = new TopologyBuilder();
         builder.setSpout("kafka-consumer-spout", kafkaConsumerSpout, numberOfComputers);

@@ -40,7 +40,7 @@ STORM_JAR=$WRK/project/target/storm-1.0-SNAPSHOT-jar-with-dependencies.jar
 
 echo -e $LOG Running topology $TOPOLOGY on $COMPUTERS computers $OFF
 ssh root@$SRV_NIMBUS "
-    $STORM_EXE jar $STORM_JAR cz.muni.fi.storm.$TOPOLOGY $COMPUTERS $KAFKA_PRODUCER $KAFKA_CONSUMER false
+    $STORM_EXE jar $STORM_JAR cz.muni.fi.storm.$TOPOLOGY $COMPUTERS false
 "
 
 echo -e $LOG Logging info to service topic: $SERVICE_TOPIC $OFF
