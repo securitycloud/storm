@@ -21,7 +21,7 @@ public class TopologyKafkaFilterKafka {
         }
         
         int numberOfComputers = Integer.parseInt(args[0]);
-        boolean fromBeginning = ("true".equals(args[3])) ? true : false;
+        boolean fromBeginning = ("true".equals(args[1])) ? true : false;
 
         KafkaConsumerSpout kafkaConsumerSpout = new KafkaConsumerSpout(fromBeginning);
         KafkaProducerBolt kafkaProducerBolt = new KafkaProducerBolt();
