@@ -47,12 +47,17 @@ and start topology for actual test. Read test wait 7 minutes and kill topology.
 All topologies are sent delay between every millionth flow in ms to kafka-consumer topic <b>storm-service</b>.
 Default kafka topic is <b>storm-test</b>.
 
-a) For topology KafkaSpout -> KafkaProducerBolt:
+a) For topology KafkaConsumerSpout -> KafkaProducerBolt:
 
         scripts/run/run-test-read.sh TopologyKafkaKafka number_of_computers partitions batch_size
         scripts/run/run-test-readwrite.sh TopologyKafkaKafka number_of_computers partitions batch_size
 
-b) For topology KafkaSpout -> FilterBolt -> KafkaProducerBolt:
+b) For topology KafkaConsumerSpout -> FilterBolt -> KafkaProducerBolt:
 
         scripts/run/run-test-read.sh TopologyKafkaFilterKafka number_of_computers partitions batch_size
         scripts/run/run-test-readwrite.sh TopologyKafkaFilterKafka number_of_computers partitions batch_size
+
+z) For topology FileReaderSpout -> FileWriterBolt:
+
+        scripts/run/run-test-read.sh TopologyFileFile number_of_computers partitions batch_size
+        scripts/run/run-test-readwrite.sh TopologyFileFile number_of_computers partitions batch_size

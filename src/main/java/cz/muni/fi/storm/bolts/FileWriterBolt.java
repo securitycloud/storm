@@ -12,33 +12,24 @@ import java.util.Map;
 
 public class FileWriterBolt extends BaseRichBolt {
 
-    private String filePath;
     private Writer fileWriter;
-    private boolean isCountable;
     private ServiceCounter counter;
-
-    public FileWriterBolt(String filePath, boolean isCountable) {
-        this.filePath = filePath;
-        this.isCountable = isCountable;
-    }
 
     @Override
     public void prepare(Map stormConf, TopologyContext context, OutputCollector collector) {
+        String filePath = (String) stormConf.get("fileWriter.filePath");
         this.fileWriter = new FileWriter(filePath);
-        if (isCountable) {
-            String broker = (String) stormConf.get("kafkaProducer.broker");
-            int port = new Integer(stormConf.get("kafkaProducer.port").toString());
-            this.counter = new ServiceCounter(broker, port);
-        }
+        
+        String broker = (String) stormConf.get("kafkaProducer.broker");
+        int port = new Integer(stormConf.get("kafkaProducer.port").toString());
+        this.counter = new ServiceCounter(broker, port);
     }
 
     @Override
     public void execute(Tuple tuple) {
         String flow = tuple.getValue(0).toString();
         fileWriter.send(flow);
-        if (isCountable) {
-            counter.count();
-        }
+        counter.count();
     }
     
     @Override
@@ -47,5 +38,6 @@ public class FileWriterBolt extends BaseRichBolt {
     @Override
     public void cleanup() {
         fileWriter.close();
+        counter.close();
     }
 }

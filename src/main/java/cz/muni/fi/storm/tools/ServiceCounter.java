@@ -27,4 +27,8 @@ public class ServiceCounter {
             lastTime = actualTime;
         }
     }
+    
+    public void close() {
+        kafkaProducer.close();
+    }
 }

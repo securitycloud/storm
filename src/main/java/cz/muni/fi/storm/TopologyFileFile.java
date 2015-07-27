@@ -10,17 +10,15 @@ import cz.muni.fi.storm.tools.TopologyUtil;
 public class TopologyFileFile {
 
     public static void main(String[] args) {        
-        if (args.length < 3) {
-            throw new IllegalArgumentException("Missing argument: source_file target_file number_of_computers");
+        if (args.length < 1) {
+            throw new IllegalArgumentException("Missing argument: number_of_computers");
         }
 
-        String sourceFilePath = args[0];
-        String targetFilePath = args[1];
-        int numberOfComputers = Integer.parseInt(args[2]);
+        int numberOfComputers = Integer.parseInt(args[0]);
         
         TopologyBuilder builder = new TopologyBuilder();
-        builder.setSpout("file-reader-spout", new FileReaderSpout(sourceFilePath), numberOfComputers);
-        builder.setBolt("file-writer-bolt", new FileWriterBolt(targetFilePath, true), numberOfComputers)
+        builder.setSpout("file-reader-spout", new FileReaderSpout(), numberOfComputers);
+        builder.setBolt("file-writer-bolt", new FileWriterBolt(), numberOfComputers)
                 .localOrShuffleGrouping("file-reader-spout");
 
         Config config = new Config();

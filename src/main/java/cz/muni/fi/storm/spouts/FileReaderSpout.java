@@ -13,15 +13,11 @@ import java.util.Map;
 public class FileReaderSpout extends BaseRichSpout {
 
     private SpoutOutputCollector collector;
-    private String filePath;
     private Reader fileReader;
-
-    public FileReaderSpout(String filePath) {
-        this.filePath = filePath;
-    }
     
     @Override
-    public void open(Map conf, TopologyContext context, SpoutOutputCollector collector) {
+    public void open(Map stormConf, TopologyContext context, SpoutOutputCollector collector) {
+        String filePath = (String) stormConf.get("fileReader.filePath");
         this.fileReader = new FileReader(filePath);
         this.collector = collector;
     }
