@@ -18,6 +18,7 @@ public class PacketCounterBolt extends BaseRichBolt {
     private OutputCollector collector;
     private ObjectMapper mapper;
     private String onlyIp;
+    private int allPackets;
     
     public PacketCounterBolt() { }
     
@@ -48,13 +49,23 @@ public class PacketCounterBolt extends BaseRichBolt {
                 packetCount.setDst_ip_addr(flow.getDst_ip_addr());
             }
             
-            packetCount.setPackets(flow.getPackets());
-            
+            packetCount.setPackets(flow.getPackets());    
+            allPackets += packetCount.getPackets();
+            packetCount.setPackets(allPackets);
+                 
             String packetCountJson = new ObjectMapper().writer().withDefaultPrettyPrinter()
                     .writeValueAsString(packetCount);
+            
             collector.emit(new Values(packetCountJson));
+            
+           
+            
+           
+            
+            
+          
         } catch (IOException e) {
-            // nothing
+           e.printStackTrace();
         }
     }
 
