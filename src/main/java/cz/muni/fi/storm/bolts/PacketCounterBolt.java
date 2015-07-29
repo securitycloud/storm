@@ -63,7 +63,6 @@ public class PacketCounterBolt extends BaseRichBolt {
             
           
         } catch (IOException e) {
-           e.printStackTrace();
         }
     }
 
