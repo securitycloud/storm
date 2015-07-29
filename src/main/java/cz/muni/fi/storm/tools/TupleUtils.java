@@ -1,6 +1,7 @@
 package cz.muni.fi.storm.tools;
 
 import backtype.storm.Constants;
+import backtype.storm.spout.SpoutOutputCollector;
 import backtype.storm.task.OutputCollector;
 import backtype.storm.tuple.Tuple;
 import backtype.storm.tuple.Values;
@@ -15,6 +16,10 @@ public class TupleUtils {
     private static String END_OF_WINDOW = "END_OF_WINDOW";
     
     public static void emitEndOfWindow(OutputCollector collector) {
+        collector.emit(new Values(END_OF_WINDOW));
+    }
+    
+    public static void emitEndOfWindow(SpoutOutputCollector collector) {
         collector.emit(new Values(END_OF_WINDOW));
     }
     

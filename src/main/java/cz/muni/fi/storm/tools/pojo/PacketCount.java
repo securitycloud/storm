@@ -8,7 +8,7 @@ import scala.Serializable;
 public class PacketCount implements Serializable {
 
     private String dst_ip_addr;
-    private int packets;
+    private long packets;
 
     public String getDst_ip_addr() {
         return dst_ip_addr;
@@ -18,11 +18,11 @@ public class PacketCount implements Serializable {
         this.dst_ip_addr = dst_ip_addr;
     }
 
-    public int getPackets() {
+    public long getPackets() {
         return packets;
     }
 
-    public void setPackets(int packets) {
+    public void setPackets(long packets) {
         this.packets = packets;
     }
 

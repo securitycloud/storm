@@ -7,6 +7,7 @@ import backtype.storm.topology.base.BaseRichSpout;
 import backtype.storm.tuple.Fields;
 import backtype.storm.tuple.Values;
 import java.util.Map;
+import cz.muni.fi.storm.tools.TupleUtils;
 import cz.muni.fi.storm.tools.readers.KafkaConsumer;
 import cz.muni.fi.storm.tools.readers.Reader;
 
@@ -14,10 +15,13 @@ public class KafkaConsumerSpout extends BaseRichSpout {
     
     private SpoutOutputCollector collector;
     private boolean fromBeginning;
+    private boolean emitTheEnd;
     private Reader kafkaConsumer;
+    private int nullCount;
     
-    public KafkaConsumerSpout(boolean fromBeginning) {
+    public KafkaConsumerSpout(boolean fromBeginning, boolean emitTheEnd) {
         this.fromBeginning = fromBeginning;
+        this.emitTheEnd = emitTheEnd;
     }
     
     @Override
@@ -31,6 +35,7 @@ public class KafkaConsumerSpout extends BaseRichSpout {
         this.kafkaConsumer = new KafkaConsumer(broker, port, topic,
                 fromBeginning, totalTasks, actualTask);
         this.collector = collector;
+        this.nullCount = 0;
     }
     
     @Override
@@ -38,6 +43,13 @@ public class KafkaConsumerSpout extends BaseRichSpout {
         String flow = kafkaConsumer.next();
         if (flow != null) {
             this.collector.emit(new Values(flow));
+            nullCount = 0;
+        } else if (emitTheEnd) {
+            nullCount++;
+            if (nullCount > 3) {
+                TupleUtils.emitEndOfWindow(this.collector);
+                emitTheEnd = false;
+            }
         }
     }
 

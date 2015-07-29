@@ -23,7 +23,7 @@ public class TopologyKafkaCounterKafka {
         int numberOfComputers = Integer.parseInt(args[0]);        
         boolean fromBeginning = ("true".equals(args[1])) ? true : false;
 
-        KafkaConsumerSpout kafkaConsumerSpout = new KafkaConsumerSpout(fromBeginning);
+        KafkaConsumerSpout kafkaConsumerSpout = new KafkaConsumerSpout(fromBeginning, true);
         KafkaProducerBolt kafkaProducerBolt = new KafkaProducerBolt();
         
         TopologyBuilder builder = new TopologyBuilder();
