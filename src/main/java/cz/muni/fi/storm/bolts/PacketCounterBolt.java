@@ -52,7 +52,7 @@ public class PacketCounterBolt extends BaseRichBolt {
                             .withDefaultPrettyPrinter().writeValueAsString(packetCount);
                     collector.emit(new Values(packetCountJson));
                 } catch (JsonProcessingException e) {
-                    throw new RuntimeException(e);
+                    throw new RuntimeException("Can not create JSON from PacketCount", e);
                 }
             }
             TupleUtils.emitEndOfWindow(collector);
