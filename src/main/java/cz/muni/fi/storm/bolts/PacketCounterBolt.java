@@ -48,8 +48,7 @@ public class PacketCounterBolt extends BaseRichBolt {
                 packetCount.setDst_ip_addr(ip);
                 packetCount.setPackets(totalCounter.get(ip));
                 try {
-                    String packetCountJson = new ObjectMapper().writer()
-                            .withDefaultPrettyPrinter().writeValueAsString(packetCount);
+                    String packetCountJson = mapper.writeValueAsString(packetCount);
                     collector.emit(new Values(packetCountJson));
                 } catch (JsonProcessingException e) {
                     throw new RuntimeException("Can not create JSON from PacketCount", e);

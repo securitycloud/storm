@@ -49,8 +49,7 @@ public class GlobalPacketCounterBolt extends BaseRichBolt {
                     packetCount.setDst_ip_addr(ip);
                     packetCount.setPackets(packets);
                     try {
-                        String packetCountJson = new ObjectMapper().writer()
-                                .withDefaultPrettyPrinter().writeValueAsString(packetCount);
+                        String packetCountJson = mapper.writeValueAsString(packetCount);
                         kafkaProducer.send(packetCountJson);
                     } catch (JsonProcessingException e) {
                         throw new RuntimeException("Can not create JSON from PacketCount", e);
