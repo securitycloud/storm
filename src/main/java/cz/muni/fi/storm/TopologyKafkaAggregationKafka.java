@@ -33,7 +33,7 @@ public class TopologyKafkaAggregationKafka {
         builder.setSpout("kafka-consumer-spout", kafkaConsumerSpout, numberOfComputers);        
         builder.setBolt("packet-counter-bolt", packetCounterBolt, numberOfComputers)
                 .localOrShuffleGrouping("kafka-consumer-spout");
-        builder.setBolt("global-packet-counter-bolt", globalPacketCounterBolt, numberOfComputers)
+        builder.setBolt("global-packet-counter-bolt", globalPacketCounterBolt)
                 .globalGrouping("packet-counter-bolt");
 
         Config config = new Config();
