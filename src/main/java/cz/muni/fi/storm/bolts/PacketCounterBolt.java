@@ -45,7 +45,7 @@ public class PacketCounterBolt extends BaseRichBolt {
             }
             for (String ip : totalCounter.keySet()) {
                 PacketCount packetCount = new PacketCount();
-                packetCount.setDst_ip_addr(ip);
+                packetCount.setDestIpAddr(ip);
                 packetCount.setPackets(totalCounter.get(ip));
                 try {
                     String packetCountJson = mapper.writeValueAsString(packetCount);

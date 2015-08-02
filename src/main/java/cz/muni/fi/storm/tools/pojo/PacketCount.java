@@ -1,5 +1,6 @@
 package cz.muni.fi.storm.tools.pojo;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
 import scala.Serializable;
 
 /**
@@ -7,27 +8,34 @@ import scala.Serializable;
  */
 public class PacketCount implements Serializable {
 
-    private String dst_ip_addr;
+    @JsonProperty("dest_ip_addr")
+    private String destIpAddr;
+    
+    @JsonProperty("sum(packets)")
     private long packets;
 
-    public String getDst_ip_addr() {
-        return dst_ip_addr;
+    @JsonProperty("dest_ip_addr")
+    public String getDestIpAddr() {
+        return destIpAddr;
     }
 
-    public void setDst_ip_addr(String dst_ip_addr) {
-        this.dst_ip_addr = dst_ip_addr;
+    @JsonProperty("dest_ip_addr")
+    public void setDestIpAddr(String destIpAddr) {
+        this.destIpAddr = destIpAddr;
     }
 
+    @JsonProperty("sum(packets)")
     public long getPackets() {
         return packets;
     }
 
+    @JsonProperty("sum(packets)")
     public void setPackets(long packets) {
         this.packets = packets;
     }
 
     @Override
     public String toString() {
-        return "PacketCount{dst_ip_addr=" + dst_ip_addr + ", packets=" + packets + "}";
+        return "PacketCount{destIpAddr=" + destIpAddr + ", packets=" + packets + "}";
     }
 }
