@@ -26,7 +26,7 @@ URL_ZK=http://apache.miloslavbrada.cz/zookeeper/zookeeper-3.4.6/zookeeper-3.4.6.
 GIT_KAFKA=https://github.com/securitycloud/kafka.git
 
 KAFKA_INSTALL=/root/kafka/kafka_2.11-0.8.2.1
-FLOWS_FILE=/root/outOnlyTheSameIp
+FLOWS_FILE=/root/out
 WRK=/root/stormisti/workdir
 
 TESTING_TOPIC=storm-test
