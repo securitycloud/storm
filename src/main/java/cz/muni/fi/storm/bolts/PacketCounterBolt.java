@@ -67,8 +67,11 @@ public class PacketCounterBolt extends BaseRichBolt {
                     }
                 } else {
                     String ip = flow.getDst_ip_addr();
-                    long count = flow.getPackets() + totalCounter.get(ip);
-                    totalCounter.put(ip, count);
+                    long packets = flow.getPackets();
+                    if (totalCounter.containsKey(ip)) {
+                        packets += totalCounter.get(ip);
+                    }
+                    totalCounter.put(ip, packets);
                 }
             } catch (IOException e) {
                 // nothing

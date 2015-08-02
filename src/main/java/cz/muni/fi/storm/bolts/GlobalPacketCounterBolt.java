@@ -63,7 +63,10 @@ public class GlobalPacketCounterBolt extends BaseRichBolt {
             try {
                 PacketCount packetCount = mapper.readValue(packetCountJson, PacketCount.class);
                 String ip = packetCount.getDst_ip_addr();
-                long packets = packetCount.getPackets() + totalCounter.get(ip);
+                long packets = packetCount.getPackets();
+                if (totalCounter.containsKey(ip)) {
+                    packets += totalCounter.get(ip);
+                }
                 totalCounter.put(ip, packets);
 
             } catch (IOException e) {
