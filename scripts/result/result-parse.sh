@@ -31,7 +31,7 @@ do
         COMPUTERS=0
         COUNT=0
         SUM=0
-        MIN=0
+        MIN=99999999
         MAX=0
     fi
 
