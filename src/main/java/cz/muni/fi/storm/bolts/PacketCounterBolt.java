@@ -9,6 +9,7 @@ import backtype.storm.tuple.Tuple;
 import backtype.storm.tuple.Values;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import cz.muni.fi.storm.tools.ServiceCounter;
 import cz.muni.fi.storm.tools.TupleUtils;
 import cz.muni.fi.storm.tools.pojo.Flow;
 import cz.muni.fi.storm.tools.pojo.PacketCount;
@@ -23,6 +24,7 @@ public class PacketCounterBolt extends BaseRichBolt {
     private String onlyIp;
     private HashMap<String, Long> totalCounter;
     private long oneCounter;
+    private ServiceCounter counter;
 
     public PacketCounterBolt() {}
 
@@ -35,6 +37,10 @@ public class PacketCounterBolt extends BaseRichBolt {
         this.collector = collector;
         this.mapper = new ObjectMapper();
         this.totalCounter = new HashMap<String, Long>();
+        
+        String broker = (String) stormConf.get("kafkaProducer.broker");
+        int port = new Integer(stormConf.get("kafkaProducer.port").toString());
+        this.counter = new ServiceCounter(broker, port);
     }
 
     @Override
@@ -57,6 +63,7 @@ public class PacketCounterBolt extends BaseRichBolt {
             TupleUtils.emitEndOfWindow(collector);
             
         } else {
+            counter.count();
             String flowJson = tuple.getString(0);
             try {
                 Flow flow = mapper.readValue(flowJson, Flow.class);
