@@ -23,14 +23,16 @@ do
         else
             if [ $COUNT -gt 0 ]
             then
-                RESULT=$(($COMPUTERS * $COUNT * 1000000000 / $SUM))
-                echo RESULT = $RESULT flows/s
+                AVG=$(($COMPUTERS * $COUNT * 1000000000 / $SUM))
+                echo RESULT: MIN=$MIN, MAX=$MAX, AVG=$AVG flows/s
             fi
         fi
             
         COMPUTERS=0
         COUNT=0
         SUM=0
+        MIN=0
+        MAX=0
     fi
 
     echo $LINE
@@ -43,6 +45,14 @@ do
         else
             SUM=$((SUM + LINE))
             COUNT=$((COUNT + 1))
+            if [ $MIN > $LINE ]; then MIN=$LINE; fi
+            if [ $MAX < $LINE ]; then MAX=$LINE; fi
         fi
     fi
 done < $SOURCE
+
+if [ $COUNT -gt 0 ]
+then
+    AVG=$(($COMPUTERS * $COUNT * 1000000000 / $SUM))
+    echo RESULT: MIN=$MIN, MAX=$MAX, AVG=$AVG flows/s
+fi
