@@ -5,23 +5,18 @@ CUR_DIR=`dirname $0`
 
 TOPOLOGIES[1]=TopologyKafkaKafka
 TOPOLOGIES[2]=TopologyKafkaFilterKafka
+TOPOLOGIES[3]=TopologyKafkaCounterKafka
+TOPOLOGIES[4]=TopologyKafkaAggregationKafka
 
 BATCH_SIZE[1]=1000
 BATCH_SIZE[2]=5000
 
-PARTITIONS[1]=1
-PARTITIONS[2]=3
-PARTITIONS[3]=5
-
 COMPUTERS[1]=1
-COMPUTERS[2]=2
-COMPUTERS[3]=3
-COMPUTERS[4]=4
-COMPUTERS[5]=5
+COMPUTERS[2]=3
+COMPUTERS[3]=5
 
 NUM_TESTS=${#TOPOLOGIES[@]}
 NUM_TESTS=$((NUM_TESTS * ${#BATCH_SIZE[@]}))
-NUM_TESTS=$((NUM_TESTS * ${#PARTITIONS[@]}))
 NUM_TESTS=$((NUM_TESTS * ${#COMPUTERS[@]}))
 ACT_TEST=1
 
@@ -35,14 +30,11 @@ for TP in "${TOPOLOGIES[@]}"
 do
     for BS in "${BATCH_SIZE[@]}"
     do
-        for PTN in "${PARTITIONS[@]}"
+        for PC in "${COMPUTERS[@]}"
         do
-            for PC in "${COMPUTERS[@]}"
-            do
-                echo -e $LOG Running test $ACT_TEST/$NUM_TESTS: $OFF
-                $CUR_DIR/run/run-test-readwrite.sh $TP $PC $PTN $BS
-                ACT_TEST=$((ACT_TEST + 1))
-            done
+            echo -e $LOG Running test $ACT_TEST/$NUM_TESTS: $OFF
+            $CUR_DIR/run/run-test-readwrite.sh $TP $PC $PC $BS
+            ACT_TEST=$((ACT_TEST + 1))
         done
     done
 done

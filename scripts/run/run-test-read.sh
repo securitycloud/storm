@@ -23,11 +23,7 @@ $CUR_DIR/recreate-topic.sh $TESTING_TOPIC 1 $KAFKA_CONSUMER
 STORM_EXE=$WRK/storm/bin/storm
 STORM_JAR=$WRK/project/target/storm-1.0-SNAPSHOT-jar-with-dependencies.jar
 
-echo -e $LOG Logging info to service topic: $SERVICE_TOPIC $OFF
-ssh root@$KAFKA_CONSUMER "
-    echo Type=read, Topology=$TOPOLOGY, Computers=$COMPUTERS |
-        $KAFKA_INSTALL/bin/kafka-console-producer.sh --topic $SERVICE_TOPIC --broker-list localhost:9092
-"
+$CUR_DIR/log-to-service-topic.sh "Type=read, Topology=$TOPOLOGY, Computers=$COMPUTERS"
 
 echo -e $LOG Running topology $TOPOLOGY on $COMPUTERS computers $OFF
 ssh root@$SRV_NIMBUS "

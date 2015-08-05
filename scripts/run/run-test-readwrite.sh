@@ -38,15 +38,11 @@ $CUR_DIR/recreate-topic.sh $TESTING_TOPIC 1 $KAFKA_CONSUMER
 STORM_EXE=$WRK/storm/bin/storm
 STORM_JAR=$WRK/project/target/storm-1.0-SNAPSHOT-jar-with-dependencies.jar
 
+$CUR_DIR/log-to-service-topic.sh "Type=readwrite, Topology=$TOPOLOGY, Computers=$COMPUTERS, Partitions=$PARTITIONS, BatchSize=$BATCH_SIZE"
+
 echo -e $LOG Running topology $TOPOLOGY on $COMPUTERS computers $OFF
 ssh root@$SRV_NIMBUS "
     $STORM_EXE jar $STORM_JAR cz.muni.fi.storm.$TOPOLOGY $COMPUTERS false
-"
-
-echo -e $LOG Logging info to service topic: $SERVICE_TOPIC $OFF
-ssh root@$KAFKA_CONSUMER "
-    echo Type=readwrite, Topology=$TOPOLOGY, Computers=$COMPUTERS, Partitions=$PARTITIONS, BatchSize=$BATCH_SIZE |
-        $KAFKA_INSTALL/bin/kafka-console-producer.sh --topic $SERVICE_TOPIC --broker-list localhost:9092
 "
 
 # TESTING CORRECT NUMBER OF PARTITIONS
@@ -57,10 +53,7 @@ scp root@$KAFKA_PRODUCER:/tmp/storm-partitions /tmp/storm-partitions
 REAL_PARTITIONS=`cat /tmp/storm-partitions`
 if [ $REAL_PARTITIONS -ne $PARTITIONS ]
 then
-    ssh root@$KAFKA_CONSUMER "
-        echo ERROR: exist $REAL_PARTITIONS partitions |
-            $KAFKA_INSTALL/bin/kafka-console-producer.sh --topic $SERVICE_TOPIC --broker-list localhost:9092
-    "
+    $CUR_DIR/log-to-service-topic.sh "ERROR: exist $REAL_PARTITIONS partitions
 fi
 
 $CUR_DIR/run-input.sh $BATCH_SIZE
