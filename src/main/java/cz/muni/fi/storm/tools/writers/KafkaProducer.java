@@ -17,6 +17,7 @@ public class KafkaProducer implements Writer {
         props.put("serializer.class", "kafka.serializer.StringEncoder");
         props.put("request.required.acks", "0");
         props.put("producer.type", "async");
+        props.put("batch.size", 5000);
         ProducerConfig config = new ProducerConfig(props);
         this.producer = new Producer<String, String>(config);
         this.topic = topic;
