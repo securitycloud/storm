@@ -3,7 +3,10 @@
 CUR_DIR=`dirname $0`
 . $CUR_DIR/../setenv.sh
 
-# DOWNLOAD RESULTS
+# LOG
+echo -e $LOG Downloading results fro $KAFKA_CONSUMER $OFF
+
+# DOWNLOAD RESULTS FROM KAFKA TO TMP
 ssh root@$KAFKA_CONSUMER "
     $KAFKA_INSTALL/bin/kafka-console-consumer.sh --topic $SERVICE_TOPIC --zookeeper localhost:2181 --from-beginning > /tmp/storm-results
 " &
