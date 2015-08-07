@@ -15,9 +15,12 @@ COMPUTERS[1]=1
 COMPUTERS[2]=3
 COMPUTERS[3]=5
 
+REPEAT=5
+
 NUM_TESTS=${#TOPOLOGIES[@]}
 NUM_TESTS=$((NUM_TESTS * ${#BATCH_SIZE[@]}))
 NUM_TESTS=$((NUM_TESTS * ${#COMPUTERS[@]}))
+NUM_TESTS=$((NUM_TESTS * ${REPEAT}))
 ACT_TEST=1
 
 $CUR_DIR/clean/clean-cluster.sh
@@ -26,15 +29,18 @@ $CUR_DIR/start/start-cluster.sh
 sleep 20
 $CUR_DIR/run/recreate-topic.sh $SERVICE_TOPIC 1 $KAFKA_CONSUMER
 
-for TP in "${TOPOLOGIES[@]}"
+for BS in "${BATCH_SIZE[@]}"
 do
-    for BS in "${BATCH_SIZE[@]}"
+    for PC in "${COMPUTERS[@]}"
     do
-        for PC in "${COMPUTERS[@]}"
+        for i in `seq 1 $REPEAT`
         do
-            echo -e $LOG Running test $ACT_TEST/$NUM_TESTS: $OFF
-            $CUR_DIR/run/run-test-readwrite.sh $TP $PC $PC $BS
-            ACT_TEST=$((ACT_TEST + 1))
+            for TP in "${TOPOLOGIES[@]}"
+            do
+                echo -e $LOG Running test $ACT_TEST/$NUM_TESTS: $OFF
+                $CUR_DIR/run/run-test-readwrite.sh $TP $PC $PC $BS
+                ACT_TEST=$((ACT_TEST + 1))
+            done
         done
     done
 done
