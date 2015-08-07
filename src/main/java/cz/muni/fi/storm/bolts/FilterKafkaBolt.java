@@ -4,28 +4,34 @@ import backtype.storm.task.OutputCollector;
 import backtype.storm.task.TopologyContext;
 import backtype.storm.topology.OutputFieldsDeclarer;
 import backtype.storm.topology.base.BaseRichBolt;
-import backtype.storm.tuple.Fields;
 import backtype.storm.tuple.Tuple;
-import backtype.storm.tuple.Values;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import cz.muni.fi.storm.tools.ServiceCounter;
 import cz.muni.fi.storm.tools.pojo.Flow;
+import cz.muni.fi.storm.tools.writers.KafkaProducer;
 import java.io.IOException;
 import java.util.Map;
 
-public class FilterBolt extends BaseRichBolt {
+public class FilterKafkaBolt extends BaseRichBolt {
 
-    private OutputCollector collector;
     private ObjectMapper mapper;
     private String destIp;
+    private KafkaProducer kafkaProducer;
+    private ServiceCounter counter;
     
-    public FilterBolt(String destIp) {
+    public FilterKafkaBolt(String destIp) {
         this.destIp = destIp;
     }
 
     @Override
     public void prepare(Map stormConf, TopologyContext context, OutputCollector collector) {
-        this.collector = collector;
         this.mapper = new ObjectMapper();
+        
+        String broker = (String) stormConf.get("kafkaProducer.broker");
+        int port = new Integer(stormConf.get("kafkaProducer.port").toString());
+        String topic = (String) stormConf.get("kafkaProducer.topic");
+        this.kafkaProducer = new KafkaProducer(broker, port, topic);
+        this.counter = new ServiceCounter(kafkaProducer);
     }
 
     @Override
@@ -35,7 +41,8 @@ public class FilterBolt extends BaseRichBolt {
         try {
             Flow flow = mapper.readValue(flowJson, Flow.class);
             if (destIp.equals(flow.getDst_ip_addr())) {
-                this.collector.emit(new Values(flowJson));
+                kafkaProducer.send(flowJson);
+                counter.count();
             }
         } catch (IOException e) {
             // nothing
@@ -43,7 +50,11 @@ public class FilterBolt extends BaseRichBolt {
     } 
    
     @Override
-    public void declareOutputFields(OutputFieldsDeclarer declarer) {
-        declarer.declare(new Fields("flow"));
+    public void declareOutputFields(OutputFieldsDeclarer declarer) {}
+    
+    @Override
+    public void cleanup() {
+        kafkaProducer.close();
+        counter.close();
     }
 }

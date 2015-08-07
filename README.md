@@ -69,7 +69,7 @@ a) For topology KafkaConsumer -> KafkaProducer
         scripts/run/run-test-readwrite.sh TopologyKafkaKafka number_of_computers partitions batch_size
 
 b) For topology KafkaConsumer -> Filter -> KafkaProducer
-        (Sckeme: KafkaConsumerSpout -> FilterBolt -> KafkaProducerBolt):
+        (Sckeme: KafkaConsumerSpout -> FilterKafkaBolt):
 
         scripts/run/run-test-read.sh TopologyKafkaFilterKafka number_of_computers
         scripts/run/run-test-readwrite.sh TopologyKafkaFilterKafka number_of_computers partitions batch_size
