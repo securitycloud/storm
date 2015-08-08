@@ -2,9 +2,11 @@ package cz.muni.fi.storm;
 
 import backtype.storm.Config;
 import backtype.storm.StormSubmitter;
+import backtype.storm.topology.IRichBolt;
+import backtype.storm.topology.IRichSpout;
 import backtype.storm.topology.TopologyBuilder;
-import cz.muni.fi.storm.bolts.KafkaProducerBolt;
-import cz.muni.fi.storm.spouts.KafkaConsumerSpout;
+import cz.muni.fi.storm.bolts.KafkaBolt;
+import cz.muni.fi.storm.spouts.KafkaSpout;
 import cz.muni.fi.storm.tools.TopologyUtil;
 
 public class TopologyKafkaKafka {
@@ -18,13 +20,13 @@ public class TopologyKafkaKafka {
         int numberOfComputers = Integer.parseInt(args[0]);
         boolean fromBeginning = ("true".equals(args[1])) ? true : false;
 
-        KafkaConsumerSpout kafkaConsumerSpout = new KafkaConsumerSpout(fromBeginning, false);
-        KafkaProducerBolt kafkaProducerBolt = new KafkaProducerBolt();
+        IRichSpout kafkaSpout = new KafkaSpout(fromBeginning, false);
+        IRichBolt kafkaBolt = new KafkaBolt();
         
         TopologyBuilder builder = new TopologyBuilder();
-        builder.setSpout("kafka-consumer-spout", kafkaConsumerSpout, numberOfComputers);
-        builder.setBolt("kafka-producer-bolt", kafkaProducerBolt, numberOfComputers)
-                .localOrShuffleGrouping("kafka-consumer-spout");
+        builder.setSpout("kafkaSpout", kafkaSpout, numberOfComputers);
+        builder.setBolt("kafkaBolt", kafkaBolt, numberOfComputers)
+                .localOrShuffleGrouping("kafkaSpout");
 
         Config config = new Config();
         config.setNumWorkers(numberOfComputers);

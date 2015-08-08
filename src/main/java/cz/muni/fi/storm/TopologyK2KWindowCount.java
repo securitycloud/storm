@@ -2,13 +2,16 @@ package cz.muni.fi.storm;
 
 import backtype.storm.Config;
 import backtype.storm.StormSubmitter;
+import backtype.storm.topology.IRichBolt;
+import backtype.storm.topology.IRichSpout;
 import backtype.storm.topology.TopologyBuilder;
 import backtype.storm.tuple.Fields;
 import cz.muni.fi.storm.bolts.CounterBolt;
-import cz.muni.fi.storm.bolts.KafkaProducerBolt;
+import cz.muni.fi.storm.bolts.KafkaBolt;
 import cz.muni.fi.storm.bolts.SlidingWindowBolt;
-import cz.muni.fi.storm.spouts.KafkaConsumerSpout;
+import cz.muni.fi.storm.spouts.KafkaSpout;
 import cz.muni.fi.storm.tools.TopologyUtil;
+import cz.muni.fi.storm.tools.TupleUtils;
 import java.util.logging.Logger;
 
 public class TopologyK2KWindowCount {
@@ -25,16 +28,17 @@ public class TopologyK2KWindowCount {
         int numberOfComputers = Integer.parseInt(args[0]);
         boolean fromBeginning = ("true".equals(args[1])) ? true : false;
 
-        KafkaConsumerSpout kafkaConsumerSpout = new KafkaConsumerSpout(fromBeginning, false);
-        KafkaProducerBolt kafkaProducerBolt = new KafkaProducerBolt();
+        IRichSpout kafkaSpout = new KafkaSpout(fromBeginning, false);
+        IRichBolt kafkaBolt = new KafkaBolt();
         
         TopologyBuilder builder = new TopologyBuilder();
-        builder.setSpout("kafka-consumer-spout", kafkaConsumerSpout);
+        builder.setSpout("kafkaSpout", kafkaSpout);
         builder.setBolt("sliding-window-bolt", new SlidingWindowBolt(10, 2))
-                .fieldsGrouping("kafka-consumer-spout", new Fields("flow"));
+                .fieldsGrouping("kafkaSpout", new Fields("flow"));
         builder.setBolt("counter-bolt", new CounterBolt())
-                .fieldsGrouping("sliding-window-bolt", new Fields("flow"));
-        builder.setBolt("kafka-producer-bolt", kafkaProducerBolt)
+                .fieldsGrouping("sliding-window-bolt", new Fields("flow"))
+                .localOrShuffleGrouping("sliding-window-bolt", TupleUtils.getStreamIdForEndOfWindow());
+        builder.setBolt("kafkaBolt", kafkaBolt)
                 .fieldsGrouping("counter-bolt", new Fields("count"));
 
         Config config = new Config();

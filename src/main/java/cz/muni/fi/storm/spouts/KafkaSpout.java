@@ -11,7 +11,7 @@ import cz.muni.fi.storm.tools.TupleUtils;
 import cz.muni.fi.storm.tools.readers.KafkaConsumer;
 import cz.muni.fi.storm.tools.readers.Reader;
 
-public class KafkaConsumerSpout extends BaseRichSpout {
+public class KafkaSpout extends BaseRichSpout {
     
     private SpoutOutputCollector collector;
     private boolean fromBeginning;
@@ -19,7 +19,7 @@ public class KafkaConsumerSpout extends BaseRichSpout {
     private Reader kafkaConsumer;
     private int nullCount;
     
-    public KafkaConsumerSpout(boolean fromBeginning, boolean emitTheEnd) {
+    public KafkaSpout(boolean fromBeginning, boolean emitTheEnd) {
         this.fromBeginning = fromBeginning;
         this.emitTheEnd = emitTheEnd;
     }
@@ -56,6 +56,9 @@ public class KafkaConsumerSpout extends BaseRichSpout {
     @Override
     public void declareOutputFields(OutputFieldsDeclarer declarer) {
         declarer.declare(new Fields("flow"));
+        if (emitTheEnd) {
+            TupleUtils.declareEndOfWindow(declarer);
+        }
     }
     
     @Override

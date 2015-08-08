@@ -9,7 +9,7 @@ import cz.muni.fi.storm.tools.writers.KafkaProducer;
 import cz.muni.fi.storm.tools.ServiceCounter;
 import java.util.Map;
 
-public class KafkaProducerBolt extends BaseRichBolt {
+public class KafkaBolt extends BaseRichBolt {
 
     private KafkaProducer kafkaProducer;
     private ServiceCounter counter;

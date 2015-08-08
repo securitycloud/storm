@@ -88,5 +88,6 @@ public class PacketCounterBolt extends BaseRichBolt {
     @Override
     public void declareOutputFields(OutputFieldsDeclarer declarer) {
         declarer.declare(new Fields("count"));
+        TupleUtils.declareEndOfWindow(declarer);
     }
 }

@@ -63,25 +63,25 @@ All topologies are sent delay between every millionth flow in ms to kafka-consum
 Default kafka topic is <b>storm-test</b>.
 
 a) For topology KafkaConsumer -> KafkaProducer
-        (Scheme: KafkaConsumerSpout -> KafkaProducerBolt):
+        (Scheme: KafkaSpout -> KafkaBolt):
 
         scripts/run/run-test-read.sh TopologyKafkaKafka number_of_computers
         scripts/run/run-test-readwrite.sh TopologyKafkaKafka number_of_computers partitions batch_size
 
 b) For topology KafkaConsumer -> Filter -> KafkaProducer
-        (Sckeme: KafkaConsumerSpout -> FilterKafkaBolt):
+        (Sckeme: KafkaSpout -> FilterKafkaBolt):
 
         scripts/run/run-test-read.sh TopologyKafkaFilterKafka number_of_computers
         scripts/run/run-test-readwrite.sh TopologyKafkaFilterKafka number_of_computers partitions batch_size
 
 c) For topology KafkaConsumer -> Filter -> PacketCounter -> GlobalPacketCounter -> KafkaProducer
-        (Scheme: KafkaConsumerSpout -> PacketCounterBolt -> GlobalPacketCounterBolt):
+        (Scheme: KafkaSpout -> PacketCounterBolt -> GlobalPacketCounterBolt):
 
         scripts/run/run-test-read.sh TopologyKafkaCounterKafka number_of_computers
         scripts/run/run-test-readwrite.sh TopologyKafkaCounterKafka number_of_computers partitions batch_size
 
 d) For topology KafkaConsumer -> PacketCounter -> GlobalPacketCounter -> KafkaProducer
-        (Scheme: KafkaConsumerSpout -> PacketCounterBolt -> GlobalPacketCounterBolt):
+        (Scheme: KafkaSpout -> PacketCounterBolt -> GlobalPacketCounterBolt):
 
         scripts/run/run-test-read.sh TopologyKafkaAggregationKafka number_of_computers
         scripts/run/run-test-readwrite.sh TopologyKafkaAggregationKafka number_of_computers partitions batch_size
