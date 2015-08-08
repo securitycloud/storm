@@ -10,7 +10,6 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import cz.muni.fi.storm.tools.TupleUtils;
 import cz.muni.fi.storm.tools.pojo.PacketCount;
 import cz.muni.fi.storm.tools.writers.KafkaProducer;
-import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -57,20 +56,13 @@ public class GlobalPacketCounterBolt extends BaseRichBolt {
                 }
             }
         } else {
-            String packetCountJson = tuple.getString(0);
-
-            try {
-                PacketCount packetCount = mapper.readValue(packetCountJson, PacketCount.class);
-                String ip = packetCount.getDestIpAddr();
-                long packets = packetCount.getPackets();
-                if (totalCounter.containsKey(ip)) {
-                    packets += totalCounter.get(ip);
-                }
-                totalCounter.put(ip, packets);
-
-            } catch (IOException e) {
-                throw new RuntimeException("Excepted JSON format of PacetCount", e);
+            String ip = tuple.getString(0);
+            long packets = tuple.getLong(1);
+            
+            if (totalCounter.containsKey(ip)) {
+                packets += totalCounter.get(ip);
             }
+            totalCounter.put(ip, packets);
         }
     }
 

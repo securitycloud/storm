@@ -7,12 +7,10 @@ import backtype.storm.topology.base.BaseRichBolt;
 import backtype.storm.tuple.Fields;
 import backtype.storm.tuple.Tuple;
 import backtype.storm.tuple.Values;
-import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import cz.muni.fi.storm.tools.ServiceCounter;
 import cz.muni.fi.storm.tools.TupleUtils;
 import cz.muni.fi.storm.tools.pojo.Flow;
-import cz.muni.fi.storm.tools.pojo.PacketCount;
 import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
@@ -50,15 +48,7 @@ public class PacketCounterBolt extends BaseRichBolt {
                 totalCounter.put(onlyIp, oneCounter);
             }
             for (String ip : totalCounter.keySet()) {
-                PacketCount packetCount = new PacketCount();
-                packetCount.setDestIpAddr(ip);
-                packetCount.setPackets(totalCounter.get(ip));
-                try {
-                    String packetCountJson = mapper.writeValueAsString(packetCount);
-                    collector.emit(new Values(packetCountJson));
-                } catch (JsonProcessingException e) {
-                    throw new RuntimeException("Can not create JSON from PacketCount", e);
-                }
+                collector.emit(new Values(ip, totalCounter.get(ip)));
             }
             TupleUtils.emitEndOfWindow(collector);
             
@@ -87,7 +77,7 @@ public class PacketCounterBolt extends BaseRichBolt {
 
     @Override
     public void declareOutputFields(OutputFieldsDeclarer declarer) {
-        declarer.declare(new Fields("count"));
+        declarer.declare(new Fields("ip", "packets"));
         TupleUtils.declareEndOfWindow(declarer);
     }
 }
