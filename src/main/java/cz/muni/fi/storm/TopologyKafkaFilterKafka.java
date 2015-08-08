@@ -6,7 +6,9 @@ import backtype.storm.topology.IRichBolt;
 import backtype.storm.topology.IRichSpout;
 import backtype.storm.topology.TopologyBuilder;
 import cz.muni.fi.storm.bolts.FilterKafkaBolt;
+import cz.muni.fi.storm.bolts.GlobalCountWindowBolt;
 import cz.muni.fi.storm.spouts.KafkaSpout;
+import cz.muni.fi.storm.tools.ServiceCounter;
 import cz.muni.fi.storm.tools.TopologyUtil;
 import java.util.logging.Logger;
 
@@ -26,11 +28,14 @@ public class TopologyKafkaFilterKafka {
 
         IRichSpout kafkaSpout = new KafkaSpout(fromBeginning, false);
         IRichBolt filterKafkaBolt = new FilterKafkaBolt("62.148.241.49");
+        IRichBolt globalCountWindowBolt = new GlobalCountWindowBolt();
         
         TopologyBuilder builder = new TopologyBuilder();
         builder.setSpout("kafkaSpout", kafkaSpout, numberOfComputers);
         builder.setBolt("filterKafkaBolt", filterKafkaBolt, numberOfComputers)
                 .localOrShuffleGrouping("kafkaSpout");
+        builder.setBolt("globalCountWindowBolt", globalCountWindowBolt)
+                .globalGrouping("filterKafkaBolt", ServiceCounter.getStreamIdForService());
 
         Config config = new Config();
         config.setNumWorkers(numberOfComputers);

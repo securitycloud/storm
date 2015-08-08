@@ -20,9 +20,8 @@ public class FileWriterBolt extends BaseRichBolt {
         String filePath = (String) stormConf.get("fileWriter.filePath");
         this.fileWriter = new FileWriter(filePath);
         
-        String broker = (String) stormConf.get("kafkaProducer.broker");
-        int port = new Integer(stormConf.get("kafkaProducer.port").toString());
-        this.counter = new ServiceCounter(broker, port);
+        int totalTasks = context.getComponentTasks(context.getThisComponentId()).size();
+        this.counter = new ServiceCounter(collector, totalTasks, stormConf);
     }
 
     @Override
@@ -33,11 +32,12 @@ public class FileWriterBolt extends BaseRichBolt {
     }
     
     @Override
-    public void declareOutputFields(OutputFieldsDeclarer declarer) {}
+    public void declareOutputFields(OutputFieldsDeclarer declarer) {
+        ServiceCounter.declareServiceStream(declarer);
+    }
 
     @Override
     public void cleanup() {
         fileWriter.close();
-        counter.close();
     }
 }

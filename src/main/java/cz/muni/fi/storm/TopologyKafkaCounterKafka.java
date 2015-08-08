@@ -5,9 +5,11 @@ import backtype.storm.StormSubmitter;
 import backtype.storm.topology.IRichBolt;
 import backtype.storm.topology.IRichSpout;
 import backtype.storm.topology.TopologyBuilder;
+import cz.muni.fi.storm.bolts.GlobalCountWindowBolt;
 import cz.muni.fi.storm.bolts.GlobalPacketCounterBolt;
 import cz.muni.fi.storm.bolts.PacketCounterBolt;
 import cz.muni.fi.storm.spouts.KafkaSpout;
+import cz.muni.fi.storm.tools.ServiceCounter;
 import cz.muni.fi.storm.tools.TopologyUtil;
 import cz.muni.fi.storm.tools.TupleUtils;
 import java.util.logging.Logger;
@@ -29,6 +31,7 @@ public class TopologyKafkaCounterKafka {
         IRichSpout kafkaSpout = new KafkaSpout(fromBeginning, true);
         IRichBolt packetCounterBolt = new PacketCounterBolt("62.148.241.49");
         IRichBolt globalPacketCounterBolt = new GlobalPacketCounterBolt(numberOfComputers);
+        IRichBolt globalCountWindowBolt = new GlobalCountWindowBolt();
         
         TopologyBuilder builder = new TopologyBuilder();
         builder.setSpout("kafkaSpout", kafkaSpout, numberOfComputers);        
@@ -38,6 +41,8 @@ public class TopologyKafkaCounterKafka {
         builder.setBolt("globalPacketCounterBolt", globalPacketCounterBolt)
                 .globalGrouping("packetCounterBolt")
                 .globalGrouping("packetCounterBolt", TupleUtils.getStreamIdForEndOfWindow());
+        builder.setBolt("globalCountWindowBolt", globalCountWindowBolt)
+                .globalGrouping("packetCounterBolt", ServiceCounter.getStreamIdForService());
 
         Config config = new Config();
         config.setNumWorkers(numberOfComputers);

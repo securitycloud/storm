@@ -19,8 +19,10 @@ public class KafkaBolt extends BaseRichBolt {
         String broker = (String) stormConf.get("kafkaProducer.broker");
         int port = new Integer(stormConf.get("kafkaProducer.port").toString());
         String topic = (String) stormConf.get("kafkaProducer.topic");
-        kafkaProducer = new KafkaProducer(broker, port, topic);
-        counter = new ServiceCounter(kafkaProducer);
+        int totalTasks = context.getComponentTasks(context.getThisComponentId()).size();
+        
+        this.kafkaProducer = new KafkaProducer(broker, port, topic);
+        this.counter = new ServiceCounter(collector, totalTasks, stormConf);
     }
 
     @Override
@@ -30,7 +32,9 @@ public class KafkaBolt extends BaseRichBolt {
     }
     
     @Override
-    public void declareOutputFields(OutputFieldsDeclarer declarer) { }
+    public void declareOutputFields(OutputFieldsDeclarer declarer) {
+        ServiceCounter.declareServiceStream(declarer);
+    }
 
     @Override
     public void cleanup() {

@@ -2,9 +2,12 @@ package cz.muni.fi.storm;
 
 import backtype.storm.Config;
 import backtype.storm.StormSubmitter;
+import backtype.storm.topology.IRichBolt;
 import backtype.storm.topology.TopologyBuilder;
 import cz.muni.fi.storm.bolts.FileWriterBolt;
+import cz.muni.fi.storm.bolts.GlobalCountWindowBolt;
 import cz.muni.fi.storm.spouts.FileReaderSpout;
+import cz.muni.fi.storm.tools.ServiceCounter;
 import cz.muni.fi.storm.tools.TopologyUtil;
 
 public class TopologyFileFile {
@@ -16,10 +19,14 @@ public class TopologyFileFile {
 
         int numberOfComputers = Integer.parseInt(args[0]);
         
+        IRichBolt globalCountWindowBolt = new GlobalCountWindowBolt();
+        
         TopologyBuilder builder = new TopologyBuilder();
-        builder.setSpout("file-reader-spout", new FileReaderSpout(), numberOfComputers);
-        builder.setBolt("file-writer-bolt", new FileWriterBolt(), numberOfComputers)
-                .localOrShuffleGrouping("file-reader-spout");
+        builder.setSpout("fileReaderSpout", new FileReaderSpout(), numberOfComputers);
+        builder.setBolt("fileWriterBolt", new FileWriterBolt(), numberOfComputers)
+                .localOrShuffleGrouping("fileReaderSpout");
+        builder.setBolt("globalCountWindowBolt", globalCountWindowBolt)
+                .globalGrouping("fileWriterBolt", ServiceCounter.getStreamIdForService());
 
         Config config = new Config();
         config.setNumWorkers(numberOfComputers);

@@ -31,18 +31,20 @@ public class FilterKafkaBolt extends BaseRichBolt {
         int port = new Integer(stormConf.get("kafkaProducer.port").toString());
         String topic = (String) stormConf.get("kafkaProducer.topic");
         this.kafkaProducer = new KafkaProducer(broker, port, topic);
-        this.counter = new ServiceCounter(kafkaProducer);
+        
+        int totalTasks = context.getComponentTasks(context.getThisComponentId()).size();
+        this.counter = new ServiceCounter(collector, totalTasks, stormConf);
     }
 
     @Override
     public void execute (Tuple tuple) {
         String flowJson = tuple.getString(0);
+        counter.count();
         
         try {
             Flow flow = mapper.readValue(flowJson, Flow.class);
             if (destIp.equals(flow.getDst_ip_addr())) {
                 kafkaProducer.send(flowJson);
-                counter.count();
             }
         } catch (IOException e) {
             // nothing
@@ -50,11 +52,12 @@ public class FilterKafkaBolt extends BaseRichBolt {
     } 
    
     @Override
-    public void declareOutputFields(OutputFieldsDeclarer declarer) {}
+    public void declareOutputFields(OutputFieldsDeclarer declarer) {
+        ServiceCounter.declareServiceStream(declarer);
+    }
     
     @Override
     public void cleanup() {
         kafkaProducer.close();
-        counter.close();
     }
 }

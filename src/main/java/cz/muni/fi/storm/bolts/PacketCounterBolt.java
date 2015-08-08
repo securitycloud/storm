@@ -36,9 +36,8 @@ public class PacketCounterBolt extends BaseRichBolt {
         this.mapper = new ObjectMapper();
         this.totalCounter = new HashMap<String, Long>();
         
-        String broker = (String) stormConf.get("kafkaProducer.broker");
-        int port = new Integer(stormConf.get("kafkaProducer.port").toString());
-        this.counter = new ServiceCounter(broker, port);
+        int totalTasks = context.getComponentTasks(context.getThisComponentId()).size();
+        this.counter = new ServiceCounter(collector, totalTasks, stormConf);
     }
 
     @Override
@@ -79,5 +78,6 @@ public class PacketCounterBolt extends BaseRichBolt {
     public void declareOutputFields(OutputFieldsDeclarer declarer) {
         declarer.declare(new Fields("ip", "packets"));
         TupleUtils.declareEndOfWindow(declarer);
+        ServiceCounter.declareServiceStream(declarer);
     }
 }
