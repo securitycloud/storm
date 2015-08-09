@@ -7,6 +7,7 @@ TOPOLOGIES[1]=TopologyKafkaKafka
 TOPOLOGIES[2]=TopologyKafkaFilterKafka
 TOPOLOGIES[3]=TopologyKafkaCounterKafka
 TOPOLOGIES[4]=TopologyKafkaAggregationKafka
+TOPOLOGIES[5]=TopologyKafkaTopNKafka
 
 BATCH_SIZE[1]=1000
 BATCH_SIZE[2]=5000
