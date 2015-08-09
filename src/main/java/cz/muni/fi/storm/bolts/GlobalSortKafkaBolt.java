@@ -24,11 +24,7 @@ public class GlobalSortKafkaBolt extends BaseRichBolt {
     private HashMap<String, Long> totalCounter;
     private KafkaProducer kafkaProducer;
 
-    public GlobalSortKafkaBolt(int topN, int totalSenders) {
-        if (topN < 1) {
-            throw new IllegalArgumentException("TopN must be greater then 0");
-        }
-        this.topN = topN;
+    public GlobalSortKafkaBolt(int totalSenders) {
         this.totalSenders = totalSenders;
     }
 
@@ -37,6 +33,7 @@ public class GlobalSortKafkaBolt extends BaseRichBolt {
         this.mapper = new ObjectMapper();
         this.totalCounter = new HashMap<String, Long>();
         this.actualSenders = 0;
+        this.topN = new Integer(stormConf.get("sort.topN").toString());
         
         String broker = (String) stormConf.get("kafkaProducer.broker");
         int port = new Integer(stormConf.get("kafkaProducer.port").toString());

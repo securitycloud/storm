@@ -30,7 +30,7 @@ public class TopologyKafkaTopNKafka {
 
         IRichSpout kafkaSpout = new KafkaSpout(fromBeginning, true);
         IRichBolt packetCounterBolt = new PacketCounterBolt();
-        IRichBolt globalSortKafkaBolt = new GlobalSortKafkaBolt(10, numberOfComputers);
+        IRichBolt globalSortKafkaBolt = new GlobalSortKafkaBolt(numberOfComputers);
         IRichBolt globalCountWindowBolt = new GlobalCountWindowBolt();
         
         TopologyBuilder builder = new TopologyBuilder();
