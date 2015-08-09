@@ -1,5 +1,6 @@
 package cz.muni.fi.storm.tools.pojo;
 
+import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import scala.Serializable;
 
@@ -8,11 +9,22 @@ import scala.Serializable;
  */
 public class PacketCount implements Serializable {
 
+    @JsonInclude(JsonInclude.Include.NON_NULL)
+    private Integer rank;
+    
     @JsonProperty("dest_ip_addr")
     private String destIpAddr;
     
     @JsonProperty("sum(packets)")
     private long packets;
+    
+    public Integer getRank() {
+        return rank;
+    }
+    
+    public void setRank(int rank) {
+        this.rank = rank;
+    }
 
     @JsonProperty("dest_ip_addr")
     public String getDestIpAddr() {
