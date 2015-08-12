@@ -25,7 +25,7 @@ fi
 SERVER=$3
 
 # LOG
-echo -e $LOG Recreating topic $TOPIC with $PARTITION partitions on $SERVER $OFF
+echo -e $LOG Recreating topic $TOPIC with $PARTITIONS partitions on $SERVER $OFF
 
 # DELETE AND CREATE TOPIC
 ssh root@$SERVER "
