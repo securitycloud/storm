@@ -18,7 +18,6 @@ import java.util.TreeMap;
 public class TcpSynGlobalSortKafkaBolt extends BaseRichBolt {
 
     private ObjectMapper mapper;
-    private int topN;
     private int totalSenders;
     private int actualSenders;
     private HashMap<String, Long> totalCounter;
@@ -34,7 +33,6 @@ public class TcpSynGlobalSortKafkaBolt extends BaseRichBolt {
         this.mapper = new ObjectMapper();
         this.totalCounter = new HashMap<String, Long>();
         this.actualSenders = 0;
-        this.topN = new Integer(stormConf.get("sort.topN").toString());
         
         String broker = (String) stormConf.get("kafkaProducer.broker");
         int port = new Integer(stormConf.get("kafkaProducer.port").toString());
