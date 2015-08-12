@@ -45,17 +45,6 @@ ssh root@$SRV_NIMBUS "
     $STORM_EXE jar $STORM_JAR cz.muni.fi.storm.$TOPOLOGY $COMPUTERS false
 "
 
-# TESTING CORRECT NUMBER OF PARTITIONS
-ssh root@$KAFKA_PRODUCER "
-    ls -la /tmp/kafka-logs/ | grep storm-test | wc -l > /tmp/storm-partitions
-"
-scp root@$KAFKA_PRODUCER:/tmp/storm-partitions /tmp/storm-partitions
-REAL_PARTITIONS=`cat /tmp/storm-partitions`
-if [ $REAL_PARTITIONS -ne $PARTITIONS ]
-then
-    $CUR_DIR/log-to-service-topic.sh "ERROR: exist $REAL_PARTITIONS partitions
-fi
-
+$CUR_DIR/test-partitions.sh $PARTITIONS
 $CUR_DIR/run-input.sh $BATCH_SIZE
-
 $CUR_DIR/kill-topology.sh $TOPOLOGY

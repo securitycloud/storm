@@ -36,7 +36,7 @@ do
         for TP in "${TOPOLOGIES[@]}"
         do
             echo -e $LOG Running test $ACT_TEST/$NUM_TESTS: $OFF
-            $CUR_DIR/run/run-test-read.sh $TP $PC
+            $CUR_DIR/run/run-test-read.sh $TP $PC $PC
             ACT_TEST=$((ACT_TEST + 1))
         done
     done
