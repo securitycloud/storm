@@ -10,49 +10,52 @@ else
     SOURCE=$1
 fi
 
-
-FIRST=true
+declare -a TEST_COUNT=( $(for i in {1..100}; do echo 0; done) )
+declare -a TEST_SUM=( $(for i in {1..100}; do echo 0; done) )
+declare -a TEST_MIN=( $(for i in {1..100}; do echo 999999999; done) )
+declare -a TEST_MAX=( $(for i in {1..100}; do echo 0; done) )
 
 while read LINE
 do
-    if [[ ${LINE::1} =~ [a-zA-Z] ]]
+    # LINE IS NAME OF TEST
+    if [[ ${LINE::1} =~ "T" ]]
     then
-        if [ "$FIRST" = "true" ]
-        then
-            FIRST=false
-        else
-            if [ $COUNT -gt 0 ]
+        i=1
+        for NAME in "${TEST_NAME[@]}"
+        do
+            if [ "$NAME" = "$LINE" ] 
             then
-                AVG=$(($COMPUTERS * $COUNT * 1000000000 / $SUM))
-                echo RESULT: MIN=$MIN, MAX=$MAX, AVG=$AVG flows/s
+                break
             fi
-        fi
-            
-        COMPUTERS=0
-        COUNT=0
-        SUM=0
-        MIN=99999999
-        MAX=0
+            i=$((i + 1))
+        done
+        TEST_NAME[i]="$LINE"
+        TEST_INDEX=$i
     fi
-
-    echo $LINE
-
-    if [[ $LINE =~ ^[0-9]+$ ]]
+    
+    # FIRST WORD OF LINE IS NUMBER = RESULT OF TEST
+    RESULT=`echo $LINE | sed 's/^\([0-9]*\).*$/\1/'`
+    if [ -n "$RESULT" ]
     then
-        if [ $LINE -gt 1000000000 ]
-        then
-            COMPUTERS=$((COMPUTERS + 1))
-        else
-            SUM=$((SUM + LINE))
-            COUNT=$((COUNT + 1))
-            if [ $MIN > $LINE ]; then MIN=$LINE; fi
-            if [ $MAX < $LINE ]; then MAX=$LINE; fi
-        fi
-    fi
+        (( TEST_COUNT[TEST_INDEX]++ ))
+        (( TEST_SUM[TEST_INDEX] += RESULT ))
+        (( TEST_MAX[TEST_INDEX] = RESULT > TEST_MAX[TEST_INDEX] ? RESULT : TEST_MAX[TEST_INDEX] ))
+        (( TEST_MIN[TEST_INDEX] = RESULT < TEST_MIN[TEST_INDEX] ? RESULT : TEST_MIN[TEST_INDEX] ))
+    fi    
+
 done < $SOURCE
 
-if [ $COUNT -gt 0 ]
-then
-    AVG=$(($COMPUTERS * $COUNT * 1000000000 / $SUM))
-    echo RESULT: MIN=$MIN, MAX=$MAX, AVG=$AVG flows/s
-fi
+# WRITE RESULTS
+for i in `seq 1 ${#TEST_NAME[@]}`
+do
+    if [ "${TEST_COUNT[$i]}" -gt 0 ]
+    then
+        echo ${TEST_NAME[$i]}
+        (( AVG = TEST_SUM[i] / TEST_COUNT[i] ))
+        echo "Results for ${TEST_COUNT[$i]} tests:"
+        echo "  min = ${TEST_MIN[$i]} flows / s"
+        echo "  avg = $AVG flows / s"
+        echo "  max = ${TEST_MAX[$i]} flows / s"
+        echo
+    fi
+done

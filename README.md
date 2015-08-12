@@ -106,7 +106,7 @@ Results of testing
         scripts/results/results-download.sh
 
 2.) <i>Parse results:</i> It parses results from standard input (or file as argument) and computes
-minimal, maximal and average values in flows / s. On standard output it sends all downloaded results
-and for each test print computed values.
+minimal, maximal and average values in flows / s. Finally, for each test print computed values to
+standard output.
 
         scripts/results/results-parse.sh
