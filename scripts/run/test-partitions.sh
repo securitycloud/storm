@@ -23,6 +23,6 @@ if [ $REAL_PARTITIONS -ne $PARTITIONS ]
 then
     # IF NOT, SEND LOG
     $CUR_DIR/log-to-service-topic.sh "ERROR: exist $REAL_PARTITIONS partitions
-    echo $ERR ERROR: exist $REAL_PARTITIONS partitions $OFF
+    echo -e $ERR ERROR: exist $REAL_PARTITIONS partitions $OFF
     exit(1)
 fi
