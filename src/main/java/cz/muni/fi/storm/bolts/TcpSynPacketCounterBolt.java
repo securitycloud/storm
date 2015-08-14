@@ -19,18 +19,16 @@ public class TcpSynPacketCounterBolt extends BaseRichBolt {
 
     private OutputCollector collector;
     private ObjectMapper mapper;
-    private String onlyIp;
     private HashMap<String, Long> totalCounter;
     private long oneCounter;
     private ServiceCounter counter;
-
 
     @Override
     public void prepare(Map stormConf, TopologyContext context, OutputCollector collector) {
         this.collector = collector;
         this.mapper = new ObjectMapper();
         this.totalCounter = new HashMap<String, Long>();
-        
+
         int totalTasks = context.getComponentTasks(context.getThisComponentId()).size();
         this.counter = new ServiceCounter(collector, totalTasks, stormConf);
     }
@@ -38,25 +36,28 @@ public class TcpSynPacketCounterBolt extends BaseRichBolt {
     @Override
     public void execute(Tuple tuple) {
         if (TupleUtils.isEndOfWindow(tuple)) {
-           
+
             for (String ip : totalCounter.keySet()) {
                 collector.emit(new Values(ip, totalCounter.get(ip)));
             }
             TupleUtils.emitEndOfWindow(collector);
-            
+
         } else {
             counter.count();
             String flowJson = tuple.getString(0);
             try {
                 Flow flow = mapper.readValue(flowJson, Flow.class);
-                if ('S'== flow.getFlags().charAt(4)){
+
+                if (flow.getFlags().charAt(4) == 'S') {                    
                     String ip = flow.getDst_ip_addr();
                     long packets = flow.getPackets();
+                    
                     if (totalCounter.containsKey(ip)) {
                         packets += totalCounter.get(ip);
                     }
                     totalCounter.put(ip, packets);
                 }
+
             } catch (IOException e) {
                 // nothing
             }

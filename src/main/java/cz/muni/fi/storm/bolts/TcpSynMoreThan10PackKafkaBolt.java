@@ -15,25 +15,24 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.TreeMap;
 
-public class TcpSynGlobalSortKafkaBolt extends BaseRichBolt {
+public class TcpSynMoreThan10PackKafkaBolt extends BaseRichBolt {
 
     private ObjectMapper mapper;
-    private int totalSenders;
-    private int actualSenders;
     private HashMap<String, Long> totalCounter;
     private KafkaProducer kafkaProducer;
+    private int numberOfComputers;
+    private int numberOfActualReceives;
 
-
-    public TcpSynGlobalSortKafkaBolt(int totalSenders) {
-        this.totalSenders = totalSenders;
+    public TcpSynMoreThan10PackKafkaBolt(int numberOfComputers) {
+        this.numberOfComputers = numberOfComputers;
     }
 
     @Override
     public void prepare(Map stormConf, TopologyContext context, OutputCollector collector) {
         this.mapper = new ObjectMapper();
         this.totalCounter = new HashMap<String, Long>();
-        this.actualSenders = 0;
-        
+        this.numberOfActualReceives = 0;
+
         String broker = (String) stormConf.get("kafkaProducer.broker");
         int port = new Integer(stormConf.get("kafkaProducer.port").toString());
         String topic = (String) stormConf.get("kafkaProducer.topic");
@@ -43,37 +42,28 @@ public class TcpSynGlobalSortKafkaBolt extends BaseRichBolt {
     @Override
     public void execute(Tuple tuple) {
         if (TupleUtils.isEndOfWindow(tuple)) {
-            actualSenders++ ;
-            if (actualSenders == totalSenders) {
-                ValueComparator valueComparator =  new ValueComparator(totalCounter);
-                TreeMap<String, Long> sortedTotalCounter = new TreeMap<String, Long>(valueComparator);
-                
-                //vyberie z mapy(totalCounter) iba tie ktore maju Value viac ako 10
-                for (Map.Entry<String, Long> entry : totalCounter.entrySet()) {
-                     if(entry.getValue()>10){
-                         sortedTotalCounter.put(entry.getKey(),entry.getValue());                     
-                           }    
+            numberOfActualReceives++;
+            if (numberOfActualReceives == numberOfComputers) {
+                for (String ip : totalCounter.keySet()) {                  
+                    
+                    if (totalCounter.get(ip) > 10) {
+                        long packets = totalCounter.get(ip);
+                        PacketCount packetCount = new PacketCount();
+                        packetCount.setDestIpAddr(ip);
+                        packetCount.setPackets(packets);
+                        try {
+                            String packetCountJson = mapper.writeValueAsString(packetCount);
+                            kafkaProducer.send(packetCountJson);
+                        } catch (JsonProcessingException e) {
+                            throw new RuntimeException("Can not create JSON from PacketCount", e);
                         }
-
-                
-                for (String ip : sortedTotalCounter.keySet()) {
-                    PacketCount packetCount = new PacketCount();
-                    packetCount.setDestIpAddr(ip);
-                    packetCount.setPackets(totalCounter.get(ip));
-                    try {
-                        String packetCountJson = mapper.writeValueAsString(packetCount);
-                        kafkaProducer.send(packetCountJson);
-                    } catch (JsonProcessingException e) {
-                        throw new RuntimeException("Can not create JSON from PacketCount", e);
                     }
-                    break;
                 }
             }
-
         } else {
             String ip = tuple.getString(0);
             long packets = tuple.getLong(1);
-            
+
             if (totalCounter.containsKey(ip)) {
                 packets += totalCounter.get(ip);
             }
@@ -82,7 +72,8 @@ public class TcpSynGlobalSortKafkaBolt extends BaseRichBolt {
     }
 
     @Override
-    public void declareOutputFields(OutputFieldsDeclarer declarer) {}
+    public void declareOutputFields(OutputFieldsDeclarer declarer) {
+    }
 
     @Override
     public void cleanup() {

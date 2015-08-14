@@ -6,7 +6,7 @@ import backtype.storm.topology.IRichBolt;
 import backtype.storm.topology.IRichSpout;
 import backtype.storm.topology.TopologyBuilder;
 import cz.muni.fi.storm.bolts.GlobalCountWindowBolt;
-import cz.muni.fi.storm.bolts.TcpSynGlobalSortKafkaBolt;
+import cz.muni.fi.storm.bolts.TcpSynMoreThan10PackKafkaBolt;
 import cz.muni.fi.storm.bolts.TcpSynPacketCounterBolt;
 import cz.muni.fi.storm.spouts.KafkaSpout;
 import cz.muni.fi.storm.tools.ServiceCounter;
@@ -14,7 +14,7 @@ import cz.muni.fi.storm.tools.TopologyUtil;
 import cz.muni.fi.storm.tools.TupleUtils;
 import java.util.logging.Logger;
 
-public class TopologyKafkaTcpSyn{
+public class TopologyKafkaTcpSynKafka{
 
     private static final Logger log = Logger.getLogger(TopologyKafkaTopNKafka.class.getName());
 
@@ -30,7 +30,7 @@ public class TopologyKafkaTcpSyn{
 
         IRichSpout kafkaSpout = new KafkaSpout(fromBeginning, true);
         IRichBolt tcpSynPacketCounterBolt = new TcpSynPacketCounterBolt();
-        IRichBolt tcpSynGlobalSortKafkaBolt = new TcpSynGlobalSortKafkaBolt(numberOfComputers);
+        IRichBolt tcpSynGlobalSortKafkaBolt = new TcpSynMoreThan10PackKafkaBolt(numberOfComputers);
         IRichBolt globalCountWindowBolt = new GlobalCountWindowBolt();
         
         TopologyBuilder builder = new TopologyBuilder();
