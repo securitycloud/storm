@@ -4,7 +4,7 @@ CUR_DIR=`dirname $0`
 . $CUR_DIR/../../setenv.sh
 
 # LOG
-echo -e $LOG Waiting for finish test $END
+echo -e $LOG Waiting for finish test $OFF
 
 # UNTIL TEST HAS BEEN DONE
 while [ true ]
