@@ -26,6 +26,7 @@ do
             DONE=true
         fi
     done < /tmp/done-test
+    rm /tmp/done-test
 
     if [ "$DONE" = "true" ]; then break; fi
     sleep 60
