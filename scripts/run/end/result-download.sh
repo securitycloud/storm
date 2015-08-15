@@ -1,7 +1,7 @@
 #!/bin/bash
 
 CUR_DIR=`dirname $0`
-. $CUR_DIR/../setenv.sh
+. $CUR_DIR/../../setenv.sh
 
 # DOWNLOAD RESULTS FROM KAFKA TO TMP
 ssh root@$KAFKA_CONSUMER "

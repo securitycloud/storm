@@ -23,13 +23,13 @@ ACT_TEST=1
 $CUR_DIR/clean/clean-cluster.sh
 $CUR_DIR/install/install-cluster.sh
 $CUR_DIR/start/start-cluster.sh
-$CUR_DIR/run/recreate-topic.sh $SERVICE_TOPIC 1 $KAFKA_CONSUMER
+$CUR_DIR/run/begin/recreate-topic.sh $SERVICE_TOPIC 1 $KAFKA_CONSUMER
 
 for PC in "${COMPUTERS[@]}"
 do
-    $CUR_DIR/run/log-to-service-topic.sh "Input topic for read tests: Partitions=$PC"
-    $CUR_DIR/run/recreate-topic.sh $TESTING_TOPIC $PC $KAFKA_PRODUCER
-    $CUR_DIR/run/run-input.sh 5000
+    $CUR_DIR/run/begin/log-to-service-topic.sh "Input topic for read tests: Partitions=$PC"
+    $CUR_DIR/run/begin/recreate-topic.sh $TESTING_TOPIC $PC $KAFKA_PRODUCER
+    $CUR_DIR/run/begin/run-input.sh 5000
 
     for i in `seq 1 $REPEAT`
     do
@@ -43,4 +43,4 @@ do
 done
 
 echo -e $LOG Downloading and parsing results $OFF
-$CUR_DIR/result/result-download.sh | $CUR_DIR/result/result-parse.sh > out.`date +%s`.txt
+$CUR_DIR/run/end/result-download.sh | $CUR_DIR/run/end/result-parse.sh > out.`date +%s`.txt

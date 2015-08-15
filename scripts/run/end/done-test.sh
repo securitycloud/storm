@@ -1,9 +1,9 @@
 #!/bin/bash
 
 CUR_DIR=`dirname $0`
-. $CUR_DIR/../setenv.sh
+. $CUR_DIR/../../setenv.sh
 
-$CUR_DIR/../result/result-download.sh > /tmp/done-test
+$CUR_DIR/result-download.sh > /tmp/done-test
 
 # UNTIL TEST HAS BEEN DONE
 while [ true ]

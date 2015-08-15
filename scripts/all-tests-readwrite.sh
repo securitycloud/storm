@@ -28,7 +28,7 @@ $CUR_DIR/clean/clean-cluster.sh
 $CUR_DIR/install/install-cluster.sh
 $CUR_DIR/start/start-cluster.sh
 sleep 20
-$CUR_DIR/run/recreate-topic.sh $SERVICE_TOPIC 1 $KAFKA_CONSUMER
+$CUR_DIR/run/begin/recreate-topic.sh $SERVICE_TOPIC 1 $KAFKA_CONSUMER
 
 for BS in "${BATCH_SIZE[@]}"
 do
@@ -39,7 +39,7 @@ do
             for TP in "${TOPOLOGIES[@]}"
             do
                 echo -e $LOG Running test $ACT_TEST/$NUM_TESTS: $OFF
-                $CUR_DIR/run/run-test-readwrite.sh $TP $PC $PC $BS
+                $CUR_DIR/run/begin/run-test-readwrite.sh $TP $PC $PC $BS
                 ACT_TEST=$((ACT_TEST + 1))
             done
         done
@@ -47,4 +47,4 @@ do
 done
 
 echo -e $LOG Downloading and parsing results $OFF
-$CUR_DIR/result/result-download.sh | $CUR_DIR/result/result-parse.sh > out.`date +%s`.txt
+$CUR_DIR/run/end/result-download.sh | $CUR_DIR/run/end/result-parse.sh > out.`date +%s`.txt
