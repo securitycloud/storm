@@ -29,7 +29,7 @@ public class TopologyKafkaCounterKafka {
         boolean fromBeginning = ("true".equals(args[1])) ? true : false;
 
         IRichSpout kafkaSpout = new KafkaSpout(fromBeginning, true);
-        IRichBolt packetCounterBolt = new PacketCounterBolt("62.148.241.49");
+        IRichBolt packetCounterBolt = new PacketCounterBolt(PacketCounterBolt.FILTER_BY_DEST_IP, "62.148.241.49");
         IRichBolt globalPacketCounterBolt = new GlobalPacketCounterBolt(numberOfComputers);
         IRichBolt globalCountWindowBolt = new GlobalCountWindowBolt();
         

@@ -17,17 +17,22 @@ import java.util.Map;
 
 public class PacketCounterBolt extends BaseRichBolt {
 
+    public static final String FILTER_BY_DEST_IP = "dst_ip_addr";
+    public static final String FILTER_BY_FLAGS = "flags";
+    
     private OutputCollector collector;
     private ObjectMapper mapper;
-    private String onlyIp;
     private HashMap<String, Long> totalCounter;
     private long oneCounter;
     private ServiceCounter counter;
-
+    private String filterBy;
+    private String filterValue;
+    
     public PacketCounterBolt() {}
 
-    public PacketCounterBolt(String onlyIp) {
-        this.onlyIp = onlyIp;
+    public PacketCounterBolt(String filterBy, String filterValue) {
+        this.filterBy = filterBy;
+        this.filterValue = filterValue;
     }
 
     @Override
@@ -43,8 +48,8 @@ public class PacketCounterBolt extends BaseRichBolt {
     @Override
     public void execute(Tuple tuple) {
         if (TupleUtils.isEndOfWindow(tuple)) {
-            if (onlyIp != null) {
-                totalCounter.put(onlyIp, oneCounter);
+            if (FILTER_BY_DEST_IP.equals(filterBy)) {
+                totalCounter.put(filterValue, oneCounter);
             }
             for (String ip : totalCounter.keySet()) {
                 collector.emit(new Values(ip, totalCounter.get(ip)));
@@ -56,11 +61,16 @@ public class PacketCounterBolt extends BaseRichBolt {
             String flowJson = tuple.getString(0);
             try {
                 Flow flow = mapper.readValue(flowJson, Flow.class);
-                if (onlyIp != null) {
-                    if (onlyIp.equals(flow.getDst_ip_addr())) {
+                if (FILTER_BY_DEST_IP.equals(filterBy)) {
+                    if (filterValue.equals(flow.getDst_ip_addr())) {
                         oneCounter += flow.getPackets();
                     }
                 } else {
+                    if (FILTER_BY_FLAGS.equals(filterBy)) {
+                        if (! filterValue.equals(flow.getFlags())) {
+                            return;
+                        }
+                    }
                     String ip = flow.getDst_ip_addr();
                     long packets = flow.getPackets();
                     if (totalCounter.containsKey(ip)) {

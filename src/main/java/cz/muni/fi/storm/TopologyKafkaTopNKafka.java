@@ -6,7 +6,7 @@ import backtype.storm.topology.IRichBolt;
 import backtype.storm.topology.IRichSpout;
 import backtype.storm.topology.TopologyBuilder;
 import cz.muni.fi.storm.bolts.GlobalCountWindowBolt;
-import cz.muni.fi.storm.bolts.GlobalSortKafkaBolt;
+import cz.muni.fi.storm.bolts.GlobalSortPacketsKafkaBolt;
 import cz.muni.fi.storm.bolts.PacketCounterBolt;
 import cz.muni.fi.storm.spouts.KafkaSpout;
 import cz.muni.fi.storm.tools.ServiceCounter;
@@ -30,7 +30,7 @@ public class TopologyKafkaTopNKafka {
 
         IRichSpout kafkaSpout = new KafkaSpout(fromBeginning, true);
         IRichBolt packetCounterBolt = new PacketCounterBolt();
-        IRichBolt globalSortKafkaBolt = new GlobalSortKafkaBolt(numberOfComputers);
+        IRichBolt globalSortPacketsKafkaBolt = new GlobalSortPacketsKafkaBolt(numberOfComputers);
         IRichBolt globalCountWindowBolt = new GlobalCountWindowBolt();
         
         TopologyBuilder builder = new TopologyBuilder();
@@ -38,7 +38,7 @@ public class TopologyKafkaTopNKafka {
         builder.setBolt("packetCounterBolt", packetCounterBolt, numberOfComputers)
                 .localOrShuffleGrouping("kafkaSpout")
                 .localOrShuffleGrouping("kafkaSpout", TupleUtils.getStreamIdForEndOfWindow());
-        builder.setBolt("globalSortKafkaBolt", globalSortKafkaBolt)
+        builder.setBolt("globalSortPacketsKafkaBolt", globalSortPacketsKafkaBolt)
                 .globalGrouping("packetCounterBolt")
                 .globalGrouping("packetCounterBolt", TupleUtils.getStreamIdForEndOfWindow());
         builder.setBolt("globalCountWindowBolt", globalCountWindowBolt)

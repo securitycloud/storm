@@ -15,7 +15,7 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.TreeMap;
 
-public class GlobalSortKafkaBolt extends BaseRichBolt {
+public class GlobalSortPacketsKafkaBolt extends BaseRichBolt {
 
     private ObjectMapper mapper;
     private int topN;
@@ -24,7 +24,7 @@ public class GlobalSortKafkaBolt extends BaseRichBolt {
     private HashMap<String, Long> totalCounter;
     private KafkaProducer kafkaProducer;
 
-    public GlobalSortKafkaBolt(int totalSenders) {
+    public GlobalSortPacketsKafkaBolt(int totalSenders) {
         this.totalSenders = totalSenders;
     }
 
