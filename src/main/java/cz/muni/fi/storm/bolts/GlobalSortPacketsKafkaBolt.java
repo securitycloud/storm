@@ -19,7 +19,7 @@ public class GlobalSortPacketsKafkaBolt extends BaseRichBolt {
 
     private ObjectMapper mapper;
     private int topN;
-    private int totalSenders;
+    private final int totalSenders;
     private int actualSenders;
     private HashMap<String, Long> totalCounter;
     private KafkaProducer kafkaProducer;
@@ -33,7 +33,7 @@ public class GlobalSortPacketsKafkaBolt extends BaseRichBolt {
         this.mapper = new ObjectMapper();
         this.totalCounter = new HashMap<String, Long>();
         this.actualSenders = 0;
-        this.topN = new Integer(stormConf.get("sort.topN").toString());
+        this.topN = new Integer(stormConf.get("sortPackets.topN").toString());
         
         String broker = (String) stormConf.get("kafkaProducer.broker");
         int port = new Integer(stormConf.get("kafkaProducer.port").toString());
