@@ -27,7 +27,6 @@ PARTITIONS=$3
 
 $CUR_DIR/recreate-topic.sh $TESTING_TOPIC 1 $KAFKA_CONSUMER
 $CUR_DIR/log-to-service-topic.sh "Type=read, Topology=$TOPOLOGY, Computers=$COMPUTERS, Partitions=$PARTITIONS"
-$CUR_DIR/test-partitions.sh $PARTITIONS
 $CUR_DIR/run-topology.sh $TOPOLOGY $COMPUTERS true
 $CUR_DIR/done-test.sh
 $CUR_DIR/kill-topology.sh $TOPOLOGY

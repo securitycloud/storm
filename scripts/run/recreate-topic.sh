@@ -27,9 +27,24 @@ SERVER=$3
 # LOG
 echo -e $LOG Recreating topic $TOPIC with $PARTITIONS partitions on $SERVER $OFF
 
-# DELETE AND CREATE TOPIC
-ssh root@$SERVER "
-    $KAFKA_INSTALL/bin/kafka-topics.sh --delete --zookeeper localhost:2181 --topic $TOPIC
-    sleep 2
-    $KAFKA_INSTALL/bin/kafka-topics.sh --create --zookeeper localhost:2181 --replication-factor 1 --partitions $PARTITIONS --topic $TOPIC
-"
+# UNTIL TOPIS HAS BEEN CREATED WITH CORRECT NUMBER OF PARTITIONS
+while [ true ]
+do
+    # DELETE AND CREATE TOPIC
+    ssh root@$SERVER "
+        $KAFKA_INSTALL/bin/kafka-topics.sh --delete --zookeeper localhost:2181 --topic $TOPIC
+        $KAFKA_INSTALL/bin/kafka-topics.sh --create --zookeeper localhost:2181 --replication-factor 1 --partitions $PARTITIONS --topic $TOPIC
+    "
+
+    sleep 1
+
+    # SAVE ACTUAL NUMBER OF PARTITIONS AND DOWNLOAD IT
+    ssh root@$SERVER "
+        ls -la /tmp/kafka-logs/ | grep $TOPIC | wc -l > /tmp/storm-partitions
+    "
+    scp root@$SERVER:/tmp/storm-partitions /tmp/storm-partitions
+
+    # COMPARE ACTUAL NUMBER OF PARTITIONS AGAINST INPUT 
+    REAL_PARTITIONS=`cat /tmp/storm-partitions`
+    if [ $REAL_PARTITIONS -eq $PARTITIONS ]; then break; fi
+done
