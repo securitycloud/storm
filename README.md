@@ -57,7 +57,7 @@ Run Storm on cluster
 <i>Run test on cluster:</i> <b>ReadWrite test</b> open testing kafka topics, start topology for actual test
 and begin sent testing data to topology. If readWrite test finish producing data, then it kill topology.
 <b>Read test</b> open testing kafka topic only on kafka-consumer (topic on kafka-producer must exist and filled)
-and start topology for actual test. Read test wait 7 minutes and kill topology.
+and start topology for actual test. If read test has been done, then it kill topology.
 
 All topologies are implemented count window and they are sent working time in ms to kafka-consumer
 topic <b>storm-service</b>. Default kafka topic is <b>storm-test</b>.

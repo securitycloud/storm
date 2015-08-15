@@ -46,4 +46,5 @@ do
     done
 done
 
+echo -e $LOG Downloading and parsing results $OFF
 $CUR_DIR/result/result-download.sh | $CUR_DIR/result/result-parse.sh > out.`date +%s`.txt

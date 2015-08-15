@@ -24,12 +24,11 @@ then
 fi
 PARTITIONS=$3
 
-
-$CUR_DIR/recreate-topic.sh $TESTING_TOPIC 1 $KAFKA_CONSUMER
-
 STORM_EXE=$WRK/storm/bin/storm
 STORM_JAR=$WRK/project/target/storm-1.0-SNAPSHOT-jar-with-dependencies.jar
 
+
+$CUR_DIR/recreate-topic.sh $TESTING_TOPIC 1 $KAFKA_CONSUMER
 $CUR_DIR/log-to-service-topic.sh "Type=read, Topology=$TOPOLOGY, Computers=$COMPUTERS, Partitions=$PARTITIONS"
 $CUR_DIR/test-partitions.sh $PARTITIONS
 
@@ -38,6 +37,5 @@ ssh root@$SRV_NIMBUS "
     $STORM_EXE jar $STORM_JAR cz.muni.fi.storm.$TOPOLOGY $COMPUTERS true
 "
 
-sleep 420
-
+$CUR_DIR/done-test.sh
 $CUR_DIR/kill-topology.sh $TOPOLOGY
