@@ -86,11 +86,17 @@ d) For topology KafkaConsumer -> DstPacketCounter -> GlobalPacketCounter -> Kafk
         scripts/run/run-test-read.sh TopologyKafkaAggregationKafka number_of_computers
         scripts/run/run-test-readwrite.sh TopologyKafkaAggregationKafka number_of_computers partitions batch_size
 
-e) For topology KafkaConsumer -> DstPacketCounter -> GlobalSort -> KafkaProducer
-        (Scheme: KafkaSpout -> DstPacketCounterBolt -> GlobalSortKafkaBolt):
+e) For topology KafkaConsumer -> DstPacketCounter -> GlobalSortPackets -> KafkaProducer
+        (Scheme: KafkaSpout -> DstPacketCounterBolt -> GlobalSortPacketsKafkaBolt):
 
         scripts/run/run-test-read.sh TopologyKafkaTopNKafka number_of_computers
         scripts/run/run-test-readwrite.sh TopologyKafkaTopNKafka number_of_computers partitions batch_size
+
+e) For topology KafkaConsumer -> SrcPacketCounter -> MorePackets -> KafkaProducer
+        (Scheme: KafkaSpout -> DstPacketCounterBolt -> GlobalMorePacketsKafkaBolt):
+
+        scripts/run/run-test-read.sh TopologyKafkaTcpSynKafka number_of_computers
+        scripts/run/run-test-readwrite.sh TopologyKafkaTcpSynKafka number_of_computers partitions batch_size
 
 z) For topology FileReader -> FileWriter
         (Scheme: FileReaderSpout -> FileWriterBolt):
