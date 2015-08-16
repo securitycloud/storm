@@ -19,7 +19,7 @@ KAFKA_PRODUCER=10.16.31.200
 KAFKA_CONSUMER=10.16.31.201
 
 KAFKA_SERVERS[1]=$KAFKA_PRODUCER
-KAFKA_SERVERS[2]=$KAFKA_CONSUMER
+KAFKA_SERVERS[2]=localhost
 
 URL_STORM=http://apache.miloslavbrada.cz/storm/apache-storm-0.9.4/apache-storm-0.9.4.tar.gz
 URL_ZK=http://apache.miloslavbrada.cz/zookeeper/zookeeper-3.4.6/zookeeper-3.4.6.tar.gz
