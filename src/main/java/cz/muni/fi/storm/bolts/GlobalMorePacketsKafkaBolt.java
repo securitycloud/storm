@@ -51,7 +51,7 @@ public class GlobalMorePacketsKafkaBolt extends BaseRichBolt {
                         continue;
                     }
                     PacketCount packetCount = new PacketCount();
-                    packetCount.setDestIpAddr(ip);
+                    packetCount.setSrcIpAddr(ip);
                     packetCount.setPackets(packets);
                     try {
                         String packetCountJson = mapper.writeValueAsString(packetCount);

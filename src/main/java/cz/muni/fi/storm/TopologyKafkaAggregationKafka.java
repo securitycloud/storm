@@ -7,7 +7,7 @@ import backtype.storm.topology.IRichSpout;
 import backtype.storm.topology.TopologyBuilder;
 import cz.muni.fi.storm.bolts.GlobalCountWindowBolt;
 import cz.muni.fi.storm.bolts.GlobalPacketCounterBolt;
-import cz.muni.fi.storm.bolts.PacketCounterBolt;
+import cz.muni.fi.storm.bolts.DstPacketCounterBolt;
 import cz.muni.fi.storm.spouts.KafkaSpout;
 import cz.muni.fi.storm.tools.ServiceCounter;
 import cz.muni.fi.storm.tools.TopologyUtil;
@@ -29,20 +29,20 @@ public class TopologyKafkaAggregationKafka {
         boolean fromBeginning = ("true".equals(args[1])) ? true : false;
 
         IRichSpout kafkaSpout = new KafkaSpout(fromBeginning, true);
-        IRichBolt packetCounterBolt = new PacketCounterBolt();
+        IRichBolt dstPacketCounterBolt = new DstPacketCounterBolt();
         IRichBolt globalPacketCounterBolt = new GlobalPacketCounterBolt(numberOfComputers);
         IRichBolt globalCountWindowBolt = new GlobalCountWindowBolt();
         
         TopologyBuilder builder = new TopologyBuilder();
         builder.setSpout("kafkaSpout", kafkaSpout, numberOfComputers);
-        builder.setBolt("packetCounterBolt", packetCounterBolt, numberOfComputers)
+        builder.setBolt("dstPacketCounterBolt", dstPacketCounterBolt, numberOfComputers)
                 .localOrShuffleGrouping("kafkaSpout")
                 .localOrShuffleGrouping("kafkaSpout", TupleUtils.getStreamIdForEndOfWindow());
         builder.setBolt("globalPacketCounterBolt", globalPacketCounterBolt)
-                .globalGrouping("packetCounterBolt")
-                .globalGrouping("packetCounterBolt", TupleUtils.getStreamIdForEndOfWindow());
+                .globalGrouping("dstPacketCounterBolt")
+                .globalGrouping("dstPacketCounterBolt", TupleUtils.getStreamIdForEndOfWindow());
         builder.setBolt("globalCountWindowBolt", globalCountWindowBolt)
-                .globalGrouping("packetCounterBolt", ServiceCounter.getStreamIdForService());
+                .globalGrouping("dstPacketCounterBolt", ServiceCounter.getStreamIdForService());
 
         Config config = new Config();
         config.setNumWorkers(numberOfComputers);

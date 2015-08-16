@@ -7,7 +7,7 @@ import backtype.storm.topology.IRichSpout;
 import backtype.storm.topology.TopologyBuilder;
 import cz.muni.fi.storm.bolts.GlobalCountWindowBolt;
 import cz.muni.fi.storm.bolts.GlobalSortPacketsKafkaBolt;
-import cz.muni.fi.storm.bolts.PacketCounterBolt;
+import cz.muni.fi.storm.bolts.DstPacketCounterBolt;
 import cz.muni.fi.storm.spouts.KafkaSpout;
 import cz.muni.fi.storm.tools.ServiceCounter;
 import cz.muni.fi.storm.tools.TopologyUtil;
@@ -29,7 +29,7 @@ public class TopologyKafkaTopNKafka {
         boolean fromBeginning = ("true".equals(args[1])) ? true : false;
 
         IRichSpout kafkaSpout = new KafkaSpout(fromBeginning, true);
-        IRichBolt packetCounterBolt = new PacketCounterBolt();
+        IRichBolt packetCounterBolt = new DstPacketCounterBolt();
         IRichBolt globalSortPacketsKafkaBolt = new GlobalSortPacketsKafkaBolt(numberOfComputers);
         IRichBolt globalCountWindowBolt = new GlobalCountWindowBolt();
         
