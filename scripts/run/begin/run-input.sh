@@ -17,5 +17,5 @@ echo -e $LOG Start producing flows on $KAFKA_PRODUCER $OFF
 
 # PRODUCING FLOWS
 ssh root@$KAFKA_PRODUCER "
-    java -jar $KAFKA_JAR $FLOWS_FILE $BATCH_SIZE
+    java -cp $KAFKA_JAR cz.muni.fi.kafka.storm.KafkaProducer $FLOWS_FILE $BATCH_SIZE
 "
