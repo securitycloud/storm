@@ -9,7 +9,7 @@ import org.junit.Test;
 
 public class PacketCountTest {
     
-    private ObjectMapper mapper = new ObjectMapper();
+    private final ObjectMapper mapper = new ObjectMapper();
     
     @Test
     public void testSerialization() throws JsonProcessingException {

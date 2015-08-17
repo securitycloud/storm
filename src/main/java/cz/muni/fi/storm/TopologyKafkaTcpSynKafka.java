@@ -6,8 +6,8 @@ import backtype.storm.topology.IRichBolt;
 import backtype.storm.topology.IRichSpout;
 import backtype.storm.topology.TopologyBuilder;
 import cz.muni.fi.storm.bolts.GlobalCountWindowBolt;
-import cz.muni.fi.storm.bolts.SrcPacketCounterBolt;
-import cz.muni.fi.storm.bolts.GlobalMorePacketsKafkaBolt;
+import cz.muni.fi.storm.bolts.SrcFlowCounterBolt;
+import cz.muni.fi.storm.bolts.GlobalMoreFlowsKafkaBolt;
 import cz.muni.fi.storm.spouts.KafkaSpout;
 import cz.muni.fi.storm.tools.ServiceCounter;
 import cz.muni.fi.storm.tools.TopologyUtil;
@@ -29,20 +29,20 @@ public class TopologyKafkaTcpSynKafka{
         boolean fromBeginning = ("true".equals(args[1])) ? true : false;
 
         IRichSpout kafkaSpout = new KafkaSpout(fromBeginning, true);
-        IRichBolt srcPacketCounterBolt = new SrcPacketCounterBolt("....S.");
-        IRichBolt globalMorePacketsKafkaBolt = new GlobalMorePacketsKafkaBolt(numberOfComputers);
+        IRichBolt srcFlowCounterBolt = new SrcFlowCounterBolt("....S.");
+        IRichBolt globalMoreFlowsKafkaBolt = new GlobalMoreFlowsKafkaBolt(numberOfComputers);
         IRichBolt globalCountWindowBolt = new GlobalCountWindowBolt();
         
         TopologyBuilder builder = new TopologyBuilder();
         builder.setSpout("kafkaSpout", kafkaSpout, numberOfComputers);
-        builder.setBolt("srcPacketCounterBolt", srcPacketCounterBolt, numberOfComputers)
+        builder.setBolt("srcFlowCounterBolt", srcFlowCounterBolt, numberOfComputers)
                 .localOrShuffleGrouping("kafkaSpout")
                 .localOrShuffleGrouping("kafkaSpout", TupleUtils.getStreamIdForEndOfWindow());
-        builder.setBolt("globalMorePacketsKafkaBolt", globalMorePacketsKafkaBolt)
-                .globalGrouping("srcPacketCounterBolt")
-                .globalGrouping("srcPacketCounterBolt", TupleUtils.getStreamIdForEndOfWindow());
+        builder.setBolt("globalMoreFlowsKafkaBolt", globalMoreFlowsKafkaBolt)
+                .globalGrouping("srcFlowCounterBolt")
+                .globalGrouping("srcFlowCounterBolt", TupleUtils.getStreamIdForEndOfWindow());
         builder.setBolt("globalCountWindowBolt", globalCountWindowBolt)
-                .globalGrouping("srcPacketCounterBolt", ServiceCounter.getStreamIdForService());
+                .globalGrouping("srcFlowCounterBolt", ServiceCounter.getStreamIdForService());
 
         Config config = new Config();
         config.setNumWorkers(numberOfComputers);

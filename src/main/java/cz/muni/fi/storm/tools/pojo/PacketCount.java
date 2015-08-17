@@ -7,13 +7,10 @@ import scala.Serializable;
 /**
  * POJO for mapping of parsed JSON packet counter.
  */
-@JsonInclude(JsonInclude.Include.NON_NULL)
 public class PacketCount implements Serializable {
     
+    @JsonInclude(JsonInclude.Include.NON_NULL)
     private Integer rank;
-    
-    @JsonProperty("src_ip_addr")
-    private String srcIpAddr;
     
     @JsonProperty("dest_ip_addr")
     private String destIpAddr;
@@ -27,16 +24,6 @@ public class PacketCount implements Serializable {
     
     public void setRank(int rank) {
         this.rank = rank;
-    }
-    
-    @JsonProperty("src_ip_addr")
-    public String getSrcIpAddr() {
-        return srcIpAddr;
-    }
-
-    @JsonProperty("src_ip_addr")
-    public void setSrcIpAddr(String srcIpAddr) {
-        this.srcIpAddr = srcIpAddr;
     }
 
     @JsonProperty("dest_ip_addr")
@@ -61,7 +48,9 @@ public class PacketCount implements Serializable {
 
     @Override
     public String toString() {
-        return "PacketCount{rank=" + rank + ",srcIpAddr=" + srcIpAddr +
-                ",destIpAddr=" + destIpAddr + ", packets=" + packets + "}";
+        return "PacketCount{"
+                + "rank=" + rank + ", "
+                + "destIpAddr=" + destIpAddr + ", "
+                + "packets=" + packets + "}";
     }
 }

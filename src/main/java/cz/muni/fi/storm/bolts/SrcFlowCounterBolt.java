@@ -11,20 +11,21 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import cz.muni.fi.storm.tools.ServiceCounter;
 import cz.muni.fi.storm.tools.TupleUtils;
 import cz.muni.fi.storm.tools.pojo.Flow;
+import gnu.trove.map.hash.THashMap;
+import gnu.trove.procedure.TObjectObjectProcedure;
 import java.io.IOException;
-import java.util.HashMap;
 import java.util.Map;
 
-public class SrcPacketCounterBolt extends BaseRichBolt {
+public class SrcFlowCounterBolt extends BaseRichBolt {
     private OutputCollector collector;
     private ObjectMapper mapper;
-    private HashMap<String, Long> totalCounter;
+    private THashMap<String, Short> totalCounter;
     private ServiceCounter counter;
     private String onlyFlags;
     
-    public SrcPacketCounterBolt() {}
+    public SrcFlowCounterBolt() {}
 
-    public SrcPacketCounterBolt(String onlyFlags) {
+    public SrcFlowCounterBolt(String onlyFlags) {
         this.onlyFlags = onlyFlags;
     }
 
@@ -32,18 +33,31 @@ public class SrcPacketCounterBolt extends BaseRichBolt {
     public void prepare(Map stormConf, TopologyContext context, OutputCollector collector) {
         this.collector = collector;
         this.mapper = new ObjectMapper();
-        this.totalCounter = new HashMap<String, Long>();
+        this.totalCounter = new THashMap<String, Short>();
         
         int totalTasks = context.getComponentTasks(context.getThisComponentId()).size();
         this.counter = new ServiceCounter(collector, totalTasks, stormConf);
+    }
+    
+    private static final class EmitProcedure implements TObjectObjectProcedure<String, Short> {
+
+        private final OutputCollector collector;
+        
+        EmitProcedure(OutputCollector collector) {
+            this.collector = collector;
+        }
+
+        @Override
+        public final boolean execute(String ip, Short flows) {
+            collector.emit(new Values(ip, flows));
+            return true;
+        }
     }
 
     @Override
     public void execute(Tuple tuple) {
         if (TupleUtils.isEndOfWindow(tuple)) {
-            for (String ip : totalCounter.keySet()) {
-                collector.emit(new Values(ip, totalCounter.get(ip)));
-            }
+            totalCounter.forEachEntry(new EmitProcedure(collector));
             TupleUtils.emitEndOfWindow(collector);
             
         } else {
@@ -53,11 +67,11 @@ public class SrcPacketCounterBolt extends BaseRichBolt {
                 Flow flow = mapper.readValue(flowJson, Flow.class);
                 if (onlyFlags.equals(flow.getFlags())) {
                     String ip = flow.getSrc_ip_addr();
-                    long packets = flow.getPackets();
+                    short flows = 0;
                     if (totalCounter.containsKey(ip)) {
-                        packets += totalCounter.get(ip);
+                        flows = totalCounter.get(ip);
                     }
-                    totalCounter.put(ip, packets);
+                    totalCounter.put(ip, ++flows);
                 }
             } catch (IOException e) {
                 // nothing
@@ -67,7 +81,7 @@ public class SrcPacketCounterBolt extends BaseRichBolt {
 
     @Override
     public void declareOutputFields(OutputFieldsDeclarer declarer) {
-        declarer.declare(new Fields("ip", "packets"));
+        declarer.declare(new Fields("ip", "flows"));
         TupleUtils.declareEndOfWindow(declarer);
         ServiceCounter.declareServiceStream(declarer);
     }
