@@ -13,6 +13,7 @@ public class ServiceCounter {
     private boolean isFirstPassed;
     private int counter;
     private long countToEmit;
+    private long maxCount;
     
     public ServiceCounter(OutputCollector collector, int totalSender, Map conf) {
         this.collector = collector;
@@ -21,7 +22,7 @@ public class ServiceCounter {
         
         // Compute countToEmit
         long minCount = new Long(conf.get("countWindow.minCount").toString());
-        long maxCount = new Long(conf.get("countWindow.maxCount").toString());
+        this.maxCount = new Long(conf.get("countWindow.maxCount").toString());
         for (int i = 1; i < 50; i++) {
             countToEmit = (long) Math.ceil((double) minCount / (totalSender * i));
             if ((countToEmit <= 1000000) && (countToEmit * totalSender * i < maxCount)) {
@@ -35,16 +36,28 @@ public class ServiceCounter {
     }
     
     public void count() {
-        if (!isFirstPassed) {
-            collector.emit(streamIdForService, new Values(0));
-            isFirstPassed = true;
-        }
+        begin();
         
         counter++;
         if (counter == countToEmit) {
             collector.emit(streamIdForService, new Values(counter));
             counter = 0;
         }
+    }
+    
+    public void count(long num) {
+        collector.emit(streamIdForService, new Values(num));
+    }
+    
+    public void begin() {
+        if (!isFirstPassed) {
+            collector.emit(streamIdForService, new Values(0));
+            isFirstPassed = true;
+        }
+    }
+    
+    public void end() {
+        collector.emit(streamIdForService, new Values(maxCount));
     }
     
     public static void declareServiceStream(OutputFieldsDeclarer declarer) {
