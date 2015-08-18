@@ -11,7 +11,6 @@ import java.util.Map;
 
 public class GlobalCountWindowBolt extends BaseRichBolt {
 
-    private static final String topic = "storm-service";
     private long minCount;
     private long actualCount;
     private long initTime;
@@ -23,6 +22,8 @@ public class GlobalCountWindowBolt extends BaseRichBolt {
     public void prepare(Map stormConf, TopologyContext context, OutputCollector collector) {
         String broker = (String) stormConf.get("kafkaProducer.broker");
         int port = new Integer(stormConf.get("kafkaProducer.port").toString());
+        String topic = (String) stormConf.get("kafkaProducer.serviceTopic");
+        
         this.kafkaProducer = new KafkaProducer(broker, port, topic);
         this.currentTime = new HashMap<Integer, Long>();
         this.minCount = new Long(stormConf.get("countWindow.minCount").toString());
