@@ -28,7 +28,7 @@ supervisor.slots.ports:
 # 
 # 
 # ##### These may optionally be filled in:
-worker.childopts: "-Xm1280m"
+worker.childopts: "-Xmx1280m"
 #    
 ## List of custom serializations
 # topology.kryo.register:
