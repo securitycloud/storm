@@ -11,7 +11,7 @@ public class FlowCount implements Serializable {
     @JsonProperty("src_ip_addr")
     private String srcIpAddr;
     
-    @JsonProperty("sum(flows)")
+    @JsonProperty("count(flows)")
     private long flows;
     
     @JsonProperty("src_ip_addr")
@@ -29,7 +29,7 @@ public class FlowCount implements Serializable {
         return flows;
     }
 
-    @JsonProperty("sum(flows)")
+    @JsonProperty("count(flows)")
     public void setFlows(long flows) {
         this.flows = flows;
     }
