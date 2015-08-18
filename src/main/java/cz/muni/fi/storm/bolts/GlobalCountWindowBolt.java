@@ -17,7 +17,7 @@ public class GlobalCountWindowBolt extends BaseRichBolt {
     private long initTime;
     private KafkaProducer kafkaProducer;
     private Map<Integer, Long> currentTime;
-    private boolean alsoCurrentTime = true;
+    private final boolean alsoCurrentTime = true;
 
     @Override
     public void prepare(Map stormConf, TopologyContext context, OutputCollector collector) {
@@ -52,14 +52,16 @@ public class GlobalCountWindowBolt extends BaseRichBolt {
             if (alsoCurrentTime) {
                 int sourceTask = tuple.getSourceTask();
                 long now = System.currentTimeMillis();
-                kafkaProducer.send("id" + sourceTask + ": " + count + " flows / "
-                        + (now - currentTime.get(sourceTask)) + " ms");
-                currentTime.put(sourceTask, now);
+                if (currentTime.containsKey(sourceTask)) {
+                    kafkaProducer.send("id" + sourceTask + ": " + count + " flows / "
+                            + (now - currentTime.get(sourceTask)) + " ms");
+                    currentTime.put(sourceTask, now);
+                }
             }
             
             if (actualCount >= minCount) {
-                Double lengthInMs = new Double(System.currentTimeMillis() - initTime);
-                Double speed = actualCount / (lengthInMs / 1000);
+                long lengthInMs = System.currentTimeMillis() - initTime;
+                Double speed = actualCount / ((double) lengthInMs / 1000);
                 kafkaProducer.send(speed + " flows/s");
             }
         }
