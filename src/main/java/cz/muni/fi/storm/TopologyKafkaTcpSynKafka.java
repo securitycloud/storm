@@ -5,9 +5,10 @@ import backtype.storm.StormSubmitter;
 import backtype.storm.topology.IRichBolt;
 import backtype.storm.topology.IRichSpout;
 import backtype.storm.topology.TopologyBuilder;
+import backtype.storm.tuple.Fields;
 import cz.muni.fi.storm.bolts.GlobalCountWindowBolt;
+import cz.muni.fi.storm.bolts.MoreFlowsKafkaBolt;
 import cz.muni.fi.storm.bolts.SrcFlowCounterBolt;
-import cz.muni.fi.storm.bolts.GlobalMoreFlowsKafkaBolt;
 import cz.muni.fi.storm.spouts.KafkaSpout;
 import cz.muni.fi.storm.tools.ServiceCounter;
 import cz.muni.fi.storm.tools.TopologyUtil;
@@ -29,8 +30,8 @@ public class TopologyKafkaTcpSynKafka{
         boolean fromBeginning = ("true".equals(args[1])) ? true : false;
 
         IRichSpout kafkaSpout = new KafkaSpout(fromBeginning, true);
-        IRichBolt srcFlowCounterBolt = new SrcFlowCounterBolt("....S.");
-        IRichBolt globalMoreFlowsKafkaBolt = new GlobalMoreFlowsKafkaBolt(numberOfComputers);
+        IRichBolt srcFlowCounterBolt = new SrcFlowCounterBolt("....S.", "0xc2");
+        IRichBolt moreFlowsKafkaBolt = new MoreFlowsKafkaBolt(numberOfComputers);
         IRichBolt globalCountWindowBolt = new GlobalCountWindowBolt();
         
         TopologyBuilder builder = new TopologyBuilder();
@@ -38,9 +39,9 @@ public class TopologyKafkaTcpSynKafka{
         builder.setBolt("srcFlowCounterBolt", srcFlowCounterBolt, numberOfComputers)
                 .localOrShuffleGrouping("kafkaSpout")
                 .localOrShuffleGrouping("kafkaSpout", TupleUtils.getStreamIdForEndOfWindow());
-        builder.setBolt("globalMoreFlowsKafkaBolt", globalMoreFlowsKafkaBolt)
-                .globalGrouping("srcFlowCounterBolt")
-                .globalGrouping("srcFlowCounterBolt", TupleUtils.getStreamIdForEndOfWindow());
+        builder.setBolt("moreFlowsKafkaBolt", moreFlowsKafkaBolt, numberOfComputers)
+                .fieldsGrouping("srcFlowCounterBolt", new Fields("ip"))
+                .allGrouping("srcFlowCounterBolt", TupleUtils.getStreamIdForEndOfWindow());
         builder.setBolt("globalCountWindowBolt", globalCountWindowBolt)
                 .globalGrouping("srcFlowCounterBolt", ServiceCounter.getStreamIdForService());
 

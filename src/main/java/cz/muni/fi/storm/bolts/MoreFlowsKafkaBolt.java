@@ -14,7 +14,7 @@ import gnu.trove.map.hash.THashMap;
 import gnu.trove.procedure.TObjectObjectProcedure;
 import java.util.Map;
 
-public class GlobalMoreFlowsKafkaBolt extends BaseRichBolt {
+public class MoreFlowsKafkaBolt extends BaseRichBolt {
 
     private short greaterThan;
     private final int totalSenders;
@@ -22,7 +22,7 @@ public class GlobalMoreFlowsKafkaBolt extends BaseRichBolt {
     private THashMap<String, Short> totalCounter;
     private KafkaProducer kafkaProducer;
 
-    public GlobalMoreFlowsKafkaBolt(int totalSenders) {
+    public MoreFlowsKafkaBolt(int totalSenders) {
         this.totalSenders = totalSenders;
     }
 
@@ -54,17 +54,16 @@ public class GlobalMoreFlowsKafkaBolt extends BaseRichBolt {
 
         @Override
         public final boolean execute(String ip, Short flows) {
-            if (flows <= greaterThan ) {
-                return false;
-            }
-            FlowCount flowCount = new FlowCount();
-            flowCount.setSrcIpAddr(ip);
-            flowCount.setFlows(flows);
-            try {
-                String flowCountJson = mapper.writeValueAsString(flowCount);
-                producer.send(flowCountJson);
-            } catch (JsonProcessingException e) {
-                throw new RuntimeException("Can not create JSON from FlowCount", e);
+            if (flows > greaterThan ) {
+                FlowCount flowCount = new FlowCount();
+                flowCount.setSrcIpAddr(ip);
+                flowCount.setFlows(flows);
+                try {
+                    String flowCountJson = mapper.writeValueAsString(flowCount);
+                    producer.send(flowCountJson);
+                } catch (JsonProcessingException e) {
+                    throw new RuntimeException("Can not create JSON from FlowCount", e);
+                }
             }
             return true;
         }
@@ -80,12 +79,12 @@ public class GlobalMoreFlowsKafkaBolt extends BaseRichBolt {
 
         } else {
             String ip = tuple.getString(0);
-            short flows = tuple.getShort(1);
             
+            short flows = 0;
             if (totalCounter.containsKey(ip)) {
                 flows += totalCounter.get(ip);
             }
-            totalCounter.put(ip, flows);
+            totalCounter.put(ip, ++flows);
         }
     }
 
