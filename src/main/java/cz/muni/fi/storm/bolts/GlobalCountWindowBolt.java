@@ -10,7 +10,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 public class GlobalCountWindowBolt extends BaseRichBolt {
-
+    
     private long minCount;
     private long actualCount;
     private long initTime;
@@ -37,7 +37,7 @@ public class GlobalCountWindowBolt extends BaseRichBolt {
             throw new IllegalArgumentException("Count must not be a negative number.");
         }
         
-        if (count == 0) { // Initial for Counter
+        if (count == 0) { // Initial for Counter           
             if (initTime == 0) {
                 initTime = System.currentTimeMillis();
             }
@@ -60,12 +60,17 @@ public class GlobalCountWindowBolt extends BaseRichBolt {
                 }
             }
             
+            // Emit result for done emitting (read tests).
             if (actualCount >= minCount) {
-                long lengthInMs = System.currentTimeMillis() - initTime;
-                Double speed = actualCount / ((double) lengthInMs / 1000);
-                kafkaProducer.send(speed + " flows/s");
+                emitResult();
             }
         }
+    }
+    
+    private void emitResult() {
+        long lengthInMs = System.currentTimeMillis() - initTime;
+        Double speed = actualCount / ((double) lengthInMs / 1000);
+        kafkaProducer.send(speed + " flows/s");
     }
 
     @Override
@@ -73,6 +78,10 @@ public class GlobalCountWindowBolt extends BaseRichBolt {
     
     @Override
     public void cleanup() {
+        // Emit result for undone emitting (read-write tests).
+        if (actualCount < minCount) {
+            emitResult();
+        }
         kafkaProducer.close();
     }
 }
