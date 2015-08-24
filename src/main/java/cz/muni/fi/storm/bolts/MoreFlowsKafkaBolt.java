@@ -10,8 +10,8 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import cz.muni.fi.storm.tools.TupleUtils;
 import cz.muni.fi.storm.tools.pojo.FlowCount;
 import cz.muni.fi.storm.tools.writers.KafkaProducer;
-import gnu.trove.map.hash.THashMap;
-import gnu.trove.procedure.TObjectObjectProcedure;
+import it.unimi.dsi.fastutil.objects.Object2ByteOpenHashMap;
+import it.unimi.dsi.fastutil.objects.Object2IntOpenHashMap;
 import java.util.Map;
 
 public class MoreFlowsKafkaBolt extends BaseRichBolt {
@@ -19,8 +19,10 @@ public class MoreFlowsKafkaBolt extends BaseRichBolt {
     private short greaterThan;
     private final int totalSenders;
     private int actualSenders;
-    private THashMap<String, Short> totalCounter;
+    private Object2ByteOpenHashMap<String> smallCounter;
+    private Object2IntOpenHashMap<String> bigCounter;
     private KafkaProducer kafkaProducer;
+    private ObjectMapper mapper;
 
     public MoreFlowsKafkaBolt(int totalSenders) {
         this.totalSenders = totalSenders;
@@ -28,8 +30,9 @@ public class MoreFlowsKafkaBolt extends BaseRichBolt {
 
     @Override
     public void prepare(Map stormConf, TopologyContext context, OutputCollector collector) {
-        
-        this.totalCounter = new THashMap<String, Short>();
+        this.mapper = new ObjectMapper();
+        this.smallCounter = new Object2ByteOpenHashMap<String>();
+        this.bigCounter = new Object2IntOpenHashMap<String>();
         this.actualSenders = 0;
         this.greaterThan = new Short(stormConf.get("morePackets.greaterThen").toString());
         
@@ -38,53 +41,46 @@ public class MoreFlowsKafkaBolt extends BaseRichBolt {
         String topic = (String) stormConf.get("kafkaProducer.topic");
         this.kafkaProducer = new KafkaProducer(broker, port, topic);
     }
-    
-    private static final class MoreFlowsToKafkaProcedure
-            implements TObjectObjectProcedure<String, Short> {
-
-        private final KafkaProducer producer;
-        private final short greaterThan;
-        private final ObjectMapper mapper;
-        
-        public MoreFlowsToKafkaProcedure(KafkaProducer producer, short greaterThen) {
-            this.mapper = new ObjectMapper();
-            this.producer = producer;
-            this.greaterThan = greaterThen;
-        }
-
-        @Override
-        public final boolean execute(String ip, Short flows) {
-            if (flows > greaterThan ) {
-                FlowCount flowCount = new FlowCount();
-                flowCount.setSrcIpAddr(ip);
-                flowCount.setFlows(flows);
-                try {
-                    String flowCountJson = mapper.writeValueAsString(flowCount);
-                    producer.send(flowCountJson);
-                } catch (JsonProcessingException e) {
-                    throw new RuntimeException("Can not create JSON from FlowCount", e);
-                }
-            }
-            return true;
-        }
-    }
 
     @Override
     public void execute(Tuple tuple) {
         if (TupleUtils.isEndOfWindow(tuple)) {
             actualSenders++;
             if (actualSenders == totalSenders) {
-                totalCounter.forEachEntry(new MoreFlowsToKafkaProcedure(kafkaProducer, greaterThan));
+                for (Map.Entry<String, Integer> entry  : bigCounter.object2IntEntrySet()) {
+                    FlowCount flowCount = new FlowCount();
+                    flowCount.setSrcIpAddr(entry.getKey());
+                    flowCount.setFlows(entry.getValue());
+                    try {
+                        String flowCountJson = mapper.writeValueAsString(flowCount);
+                        kafkaProducer.send(flowCountJson);
+                    } catch (JsonProcessingException e) {
+                        throw new RuntimeException("Can not create JSON from FlowCount", e);
+                    }
+                }
             }
 
         } else {
             String ip = tuple.getString(0);
             
-            short flows = 0;
-            if (totalCounter.containsKey(ip)) {
-                flows += totalCounter.get(ip);
+            int flows = 1;
+            if (smallCounter.containsKey(ip)) {
+                flows += smallCounter.get(ip);
+                
+                if (flows > greaterThan) {
+                    smallCounter.remove(ip);
+                    bigCounter.put(ip, flows);
+                } else {
+                    smallCounter.put(ip, (byte) flows);
+                }
+                
+            } else if (bigCounter.containsKey(ip)) {
+                flows += bigCounter.get(ip);
+                
+                bigCounter.put(ip, flows);
+            } else {
+                smallCounter.put(ip, (byte) flows);
             }
-            totalCounter.put(ip, ++flows);
         }
     }
 
