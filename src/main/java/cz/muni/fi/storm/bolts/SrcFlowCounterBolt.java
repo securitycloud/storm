@@ -18,12 +18,10 @@ public class SrcFlowCounterBolt extends BaseRichBolt {
     private OutputCollector collector;
     private ObjectMapper mapper;
     private ServiceCounter counter;
-    private final String onlyFlags1;
-    private final String onlyFlags2;
+    private final String onlyFlags;
 
-    public SrcFlowCounterBolt(String onlyFlags1, String onlyFlags2) {
-        this.onlyFlags1 = onlyFlags1;
-        this.onlyFlags2 = onlyFlags2;
+    public SrcFlowCounterBolt(String onlyFlags) {
+        this.onlyFlags = onlyFlags;
     }
 
     @Override
@@ -45,7 +43,7 @@ public class SrcFlowCounterBolt extends BaseRichBolt {
             String flowJson = tuple.getString(0);
             try {
                 Flow flow = mapper.readValue(flowJson, Flow.class);
-                if (onlyFlags1.equals(flow.getFlags()) || onlyFlags2.equals(flow.getFlags())) {
+                if (onlyFlags.equals(flow.getFlags())) {
                     String ip = flow.getSrc_ip_addr();
                     collector.emit(new Values(ip));
                 }

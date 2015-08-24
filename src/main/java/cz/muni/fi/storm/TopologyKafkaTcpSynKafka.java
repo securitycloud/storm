@@ -30,7 +30,7 @@ public class TopologyKafkaTcpSynKafka{
         boolean fromBeginning = ("true".equals(args[1])) ? true : false;
 
         IRichSpout kafkaSpout = new KafkaSpout(fromBeginning, true);
-        IRichBolt srcFlowCounterBolt = new SrcFlowCounterBolt("....S.", "0xc2");
+        IRichBolt srcFlowCounterBolt = new SrcFlowCounterBolt("....S.");
         IRichBolt moreFlowsKafkaBolt = new MoreFlowsKafkaBolt(numberOfComputers);
         IRichBolt globalCountWindowBolt = new GlobalCountWindowBolt();
         
