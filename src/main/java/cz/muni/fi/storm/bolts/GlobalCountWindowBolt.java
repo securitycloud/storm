@@ -11,13 +11,18 @@ import java.util.Map;
 
 public class GlobalCountWindowBolt extends BaseRichBolt {
     
-    private long minCount;
+    private final boolean alsoCurrentTime = true;
+    private final int totalSenders;
+    private long doneCount;
     private long actualCount;
     private long initTime;
     private KafkaProducer kafkaProducer;
     private Map<Integer, Long> currentTime;
-    private final boolean alsoCurrentTime = true;
 
+    public GlobalCountWindowBolt(int totalSenders) {
+        this.totalSenders = totalSenders;
+    }
+    
     @Override
     public void prepare(Map stormConf, TopologyContext context, OutputCollector collector) {
         String broker = (String) stormConf.get("kafkaProducer.broker");
@@ -26,15 +31,21 @@ public class GlobalCountWindowBolt extends BaseRichBolt {
         
         this.kafkaProducer = new KafkaProducer(broker, port, topic);
         this.currentTime = new HashMap<Integer, Long>();
-        this.minCount = new Long(stormConf.get("countWindow.minCount").toString());
+        long messagesPerPartition = new Long(stormConf.get("countWindow.messagesPerPartition").toString());
+        long messagesPerWindow = new Long(stormConf.get("countWindow.messagesPerWindow").toString());
+        this.doneCount = messagesPerPartition * totalSenders;
         this.actualCount = 0;
+        if (((double) messagesPerPartition / messagesPerWindow) % 1 != 0) {
+            throw new RuntimeException("Wrong configuration: "
+                    + "messages per partition not devides messages per window.");
+        }
     }
 
     @Override
     public void execute(Tuple tuple) {
         long count = new Long(tuple.getValue(0).toString());
         if (count < 0) {
-            throw new IllegalArgumentException("Count must not be a negative number.");
+            throw new IllegalArgumentException("Count not be a negative number.");
         }
         
         if (count == 0) { // Initial for Counter           
@@ -60,8 +71,8 @@ public class GlobalCountWindowBolt extends BaseRichBolt {
                 }
             }
             
-            // Emit result for done emitting (read tests).
-            if (actualCount >= minCount) {
+            // Emit result for done emitting.
+            if (actualCount >= doneCount) {
                 emitResult();
             }
         }
@@ -78,8 +89,8 @@ public class GlobalCountWindowBolt extends BaseRichBolt {
     
     @Override
     public void cleanup() {
-        // Emit result for undone emitting (read-write tests).
-        if (actualCount < minCount) {
+        // Emit result for undone emitting.
+        if (actualCount < doneCount) {
             emitResult();
         }
         kafkaProducer.close();

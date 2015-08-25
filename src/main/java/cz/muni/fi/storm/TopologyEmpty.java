@@ -24,7 +24,7 @@ public class TopologyEmpty {
         config.putAll(new TopologyUtil().loadProperties());
 
         IRichSpout kafkaCounterSpout = new KafkaCounterSpout();
-        IRichBolt globalCountWindowBolt = new GlobalCountWindowBolt();
+        IRichBolt globalCountWindowBolt = new GlobalCountWindowBolt(numberOfComputers);
         
         TopologyBuilder builder = new TopologyBuilder();
         builder.setSpout("kafkaCounterSpout", kafkaCounterSpout, numberOfComputers);
