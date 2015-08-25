@@ -16,11 +16,11 @@
 
 ########### These MUST be filled in for a storm configuration
 storm.zookeeper.servers:
-     - "10.16.31.211"
+     - "100.64.25.102"
 #     - "server2"
 # 
-nimbus.host: "10.16.31.211"
-storm.local.dir: "/root/stormisti/workdir/tmp-storm"
+nimbus.host: "100.64.25.102"
+storm.local.dir: "/home/securitycloud/stormisti/workdir/tmp-storm"
 supervisor.slots.ports:
      - 6700
 #     - 6701
@@ -28,7 +28,7 @@ supervisor.slots.ports:
 # 
 # 
 # ##### These may optionally be filled in:
-worker.childopts: "-Xmx1280m"
+worker.childopts: "-Xmx10g"
 #    
 ## List of custom serializations
 # topology.kryo.register:

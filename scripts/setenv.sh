@@ -1,22 +1,22 @@
 #!/bin/bash
 
-ALL_SERVERS[1]=10.16.31.211
-ALL_SERVERS[2]=10.16.31.212
-ALL_SERVERS[3]=10.16.31.213
-ALL_SERVERS[4]=10.16.31.214
-ALL_SERVERS[5]=10.16.31.215
+ALL_SERVERS[1]=100.64.25.101
+ALL_SERVERS[2]=100.64.25.102
+ALL_SERVERS[3]=100.64.25.103
+ALL_SERVERS[4]=100.64.25.104
+ALL_SERVERS[5]=100.64.25.105
 
-SRV_SUPERVISOR[1]=${ALL_SERVERS[2]}
+SRV_SUPERVISOR[1]=${ALL_SERVERS[1]}
 SRV_SUPERVISOR[2]=${ALL_SERVERS[3]}
 SRV_SUPERVISOR[3]=${ALL_SERVERS[4]}
 SRV_SUPERVISOR[4]=${ALL_SERVERS[5]}
-SRV_SUPERVISOR[5]=${ALL_SERVERS[1]}
+SRV_SUPERVISOR[5]=${ALL_SERVERS[2]}
 
-SRV_NIMBUS=${ALL_SERVERS[1]}
-SRV_ZK=${ALL_SERVERS[1]}
+SRV_NIMBUS=${ALL_SERVERS[2]}
+SRV_ZK=${ALL_SERVERS[2]}
 
-KAFKA_PRODUCER=10.16.31.200
-KAFKA_CONSUMER=10.16.31.201
+KAFKA_PRODUCER=100.64.25.107
+KAFKA_CONSUMER=100.64.25.107
 
 KAFKA_SERVERS[1]=$KAFKA_PRODUCER
 KAFKA_SERVERS[2]=localhost
@@ -25,9 +25,9 @@ URL_STORM=http://apache.miloslavbrada.cz/storm/apache-storm-0.9.4/apache-storm-0
 URL_ZK=http://apache.miloslavbrada.cz/zookeeper/zookeeper-3.4.6/zookeeper-3.4.6.tar.gz
 GIT_KAFKA=https://github.com/securitycloud/kafka.git
 
-KAFKA_INSTALL=/root/kafka/kafka_2.11-0.8.2.1
-FLOWS_FILE=/root/out
-WRK=/root/stormisti/workdir
+KAFKA_INSTALL=/home/securitycloud/kafka/kafka_2.9.2-0.8.2.1
+FLOWS_FILE=/home/securitycloud/out_small
+WRK=/home/securitycloud/stormisti/workdir
 
 INPUT_TOPIC=storm-test
 OUTUT_TOPIC=storm-test2
