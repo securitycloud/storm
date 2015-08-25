@@ -14,15 +14,8 @@ import cz.muni.fi.storm.tools.readers.Reader;
 public class KafkaSpout extends BaseRichSpout {
     
     private SpoutOutputCollector collector;
-    private boolean fromBeginning;
-    private boolean emitTheEnd;
     private Reader kafkaConsumer;
-    private int nullCount;
-    
-    public KafkaSpout(boolean fromBeginning, boolean emitTheEnd) {
-        this.fromBeginning = fromBeginning;
-        this.emitTheEnd = emitTheEnd;
-    }
+    private int nullCount = 0;
     
     @Override
     public void open(Map stormConf, TopologyContext context, SpoutOutputCollector collector) {
@@ -32,10 +25,8 @@ public class KafkaSpout extends BaseRichSpout {
         int port = new Integer(stormConf.get("kafkaConsumer.port").toString());
         String topic = (String) stormConf.get("kafkaConsumer.topic");
         
-        this.kafkaConsumer = new KafkaConsumer(broker, port, topic,
-                fromBeginning, totalTasks, actualTask);
+        this.kafkaConsumer = new KafkaConsumer(broker, port, topic, true, totalTasks, actualTask);
         this.collector = collector;
-        this.nullCount = 0;
     }
     
     @Override
@@ -44,11 +35,11 @@ public class KafkaSpout extends BaseRichSpout {
         if (flow != null) {
             this.collector.emit(new Values(flow));
             nullCount = 0;
-        } else if (emitTheEnd) {
+            
+        } else {
             nullCount++;
             if (nullCount > 3) {
                 TupleUtils.emitEndOfWindow(this.collector);
-                emitTheEnd = false;
             }
         }
     }
@@ -56,9 +47,7 @@ public class KafkaSpout extends BaseRichSpout {
     @Override
     public void declareOutputFields(OutputFieldsDeclarer declarer) {
         declarer.declare(new Fields("flow"));
-        if (emitTheEnd) {
-            TupleUtils.declareEndOfWindow(declarer);
-        }
+        TupleUtils.declareEndOfWindow(declarer);
     }
     
     @Override

@@ -4,7 +4,7 @@ CUR_DIR=`dirname $0`
 . $CUR_DIR/setenv.sh
 
 TOPOLOGIES[1]=TopologyEmpty
-TOPOLOGIES[2]=TopologyKafkaFilterKafka
+TOPOLOGIES[2]=TopologyFilter
 TOPOLOGIES[3]=TopologyKafkaCounterKafka
 TOPOLOGIES[4]=TopologyKafkaAggregationKafka
 TOPOLOGIES[5]=TopologyKafkaTopNKafka

@@ -60,9 +60,10 @@ and write down count flows/messages.
 
         scripts/run/run-test.sh TopologyEmpty number_of_computers
 
-b) For topology KafkaConsumer -> Filter -> KafkaProducer:
+b) For topology <b>Filter</b>: Read all flows/messages and filter by source ip. Finally,
+write down count filtered flows/messages.
 
-        scripts/run/run-test.sh TopologyKafkaFilterKafka number_of_computers
+        scripts/run/run-test.sh TopologyFilter number_of_computers
 
 c) For topology KafkaConsumer -> Filter -> PacketCounter -> GlobalPacketCounter -> KafkaProducer:
 
