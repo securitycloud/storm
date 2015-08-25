@@ -29,7 +29,7 @@ $CUR_DIR/run/begin/recreate-topic.sh $SERVICE_TOPIC 1 $KAFKA_CONSUMER
 for PC in "${COMPUTERS[@]}"
 do
     $CUR_DIR/run/begin/log-to-service-topic.sh "Input topic for read tests: Partitions=$PC"
-    $CUR_DIR/run/begin/recreate-topic.sh $TESTING_TOPIC $PC $KAFKA_PRODUCER
+    $CUR_DIR/run/begin/recreate-topic.sh $INPUT_TOPIC $PC $KAFKA_PRODUCER
     $CUR_DIR/run/begin/run-input.sh 5000
 
     for i in `seq 1 $REPEAT`

@@ -29,7 +29,8 @@ KAFKA_INSTALL=/root/kafka/kafka_2.11-0.8.2.1
 FLOWS_FILE=/root/out
 WRK=/root/stormisti/workdir
 
-TESTING_TOPIC=storm-test
+INPUT_TOPIC=storm-test
+OUTUT_TOPIC=storm-test2
 SERVICE_TOPIC=storm-service
 
 ERR="\033[1;31m"

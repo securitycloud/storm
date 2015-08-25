@@ -32,8 +32,8 @@ fi
 BATCH_SIZE=$4
 
 
-$CUR_DIR/begin/recreate-topic.sh $TESTING_TOPIC $PARTITIONS $KAFKA_PRODUCER
-$CUR_DIR/begin/recreate-topic.sh $TESTING_TOPIC 1 $KAFKA_CONSUMER
+$CUR_DIR/begin/recreate-topic.sh $INPUT_TOPIC $PARTITIONS $KAFKA_PRODUCER
+$CUR_DIR/begin/recreate-topic.sh $OUTPUT_TOPIC 1 $KAFKA_CONSUMER
 $CUR_DIR/begin/log-to-service-topic.sh "Type=readWrite, Topology=$TOPOLOGY, Computers=$COMPUTERS, Partitions=$PARTITIONS, BatchSize=$BATCH_SIZE"
 $CUR_DIR/begin/run-topology.sh $TOPOLOGY $COMPUTERS false
 $CUR_DIR/begin/run-input.sh $BATCH_SIZE
