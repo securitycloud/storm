@@ -17,13 +17,6 @@ then
 fi
 COMPUTERS=$2
 
-if [ -z "$3" ]
-then
-    echo -e $ERR You must specify Reading kafka from beginning $OFF
-    exit 3;
-fi
-FROM_BEGINNING=$3
-
 STORM_EXE=$WRK/storm/bin/storm
 STORM_JAR=$WRK/project/target/storm-1.0-SNAPSHOT-jar-with-dependencies.jar
 
@@ -32,5 +25,5 @@ echo -e $LOG Running topology $TOPOLOGY on $COMPUTERS computers from-beginning=$
 
 # DEPLOY TO NIMBUS
 ssh root@$SRV_NIMBUS "
-    $STORM_EXE jar $STORM_JAR cz.muni.fi.storm.$TOPOLOGY $COMPUTERS $FROM_BEGINNING
+    $STORM_EXE jar $STORM_JAR cz.muni.fi.storm.$TOPOLOGY $COMPUTERS
 "

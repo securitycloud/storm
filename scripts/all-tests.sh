@@ -10,8 +10,8 @@ TOPOLOGIES[4]=TopologyKafkaAggregationKafka
 TOPOLOGIES[5]=TopologyKafkaTopNKafka
 TOPOLOGIES[6]=TopologyKafkaTcpSynKafka
 
-COMPUTERS[1]=1
-COMPUTERS[2]=3
+COMPUTERS[1]=3
+COMPUTERS[2]=4
 COMPUTERS[3]=5
 
 REPEAT=5
@@ -28,16 +28,16 @@ $CUR_DIR/run/begin/recreate-topic.sh $SERVICE_TOPIC 1 $KAFKA_CONSUMER
 
 for PC in "${COMPUTERS[@]}"
 do
-    $CUR_DIR/run/begin/log-to-service-topic.sh "Input topic for read tests: Partitions=$PC"
-    $CUR_DIR/run/begin/recreate-topic.sh $INPUT_TOPIC $PC $KAFKA_PRODUCER
-    $CUR_DIR/run/begin/run-input.sh 5000
+    #$CUR_DIR/run/begin/log-to-service-topic.sh "Input topic for tests: Partitions=$PC"
+    #$CUR_DIR/run/begin/recreate-topic.sh $INPUT_TOPIC $PC $KAFKA_PRODUCER
+    #$CUR_DIR/run/begin/run-input.sh 5000
 
     for i in `seq 1 $REPEAT`
     do
         for TP in "${TOPOLOGIES[@]}"
         do
             echo -e $LOG Running test $ACT_TEST/$NUM_TESTS: $OFF
-            $CUR_DIR/run/run-test-read.sh $TP $PC $PC
+            $CUR_DIR/run/run-test.sh $TP $PC $PC
             ACT_TEST=$((ACT_TEST + 1))
         done
     done

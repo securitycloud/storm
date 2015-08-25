@@ -12,7 +12,7 @@ SERVER=$1
 
 
 # COPY
-tar -cf project.tar $CUR_DIR/../../src $CUR_DIR/../../pom.xml $CUR_DIR/../../repo
+tar -cf project.tar $CUR_DIR/../../src $CUR_DIR/../../pom.xml
 scp project.tar $SERVER:/tmp/
 rm project.tar
 
