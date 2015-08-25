@@ -31,9 +31,9 @@ public class KafkaSpout extends BaseRichSpout {
     
     @Override
     public void nextTuple() {
-        String flow = kafkaConsumer.next();
-        if (flow != null) {
-            this.collector.emit(new Values(flow));
+        String flowJson = kafkaConsumer.next();
+        if (flowJson != null) {
+            this.collector.emit(new Values(flowJson));
             nullCount = 0;
             
         } else {

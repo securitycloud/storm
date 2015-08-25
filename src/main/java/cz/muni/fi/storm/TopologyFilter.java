@@ -11,6 +11,7 @@ import cz.muni.fi.storm.bolts.GlobalCounterBolt;
 import cz.muni.fi.storm.spouts.KafkaSpout;
 import cz.muni.fi.storm.tools.ServiceCounter;
 import cz.muni.fi.storm.tools.TopologyUtil;
+import cz.muni.fi.storm.tools.TupleUtils;
 
 public class TopologyFilter {
 
@@ -32,7 +33,8 @@ public class TopologyFilter {
         TopologyBuilder builder = new TopologyBuilder();
         builder.setSpout("kafkaSpout", kafkaSpout, numberOfComputers);
         builder.setBolt("filterCounterBolt", filterCounterBolt, numberOfComputers)
-                .localOrShuffleGrouping("kafkaSpout");
+                .localOrShuffleGrouping("kafkaSpout")
+                .localOrShuffleGrouping("kafkaSpout", TupleUtils.getStreamIdForEndOfWindow());
         builder.setBolt("globalCounterBolt", globalCounterBolt)
                 .globalGrouping("filterCounterBolt");
         builder.setBolt("globalCountWindowBolt", globalCountWindowBolt)

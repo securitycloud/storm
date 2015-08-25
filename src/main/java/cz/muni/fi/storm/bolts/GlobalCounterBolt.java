@@ -30,15 +30,12 @@ public class GlobalCounterBolt extends BaseRichBolt {
 
     @Override
     public void execute(Tuple tuple) {
-        if (TupleUtils.isEndOfWindow(tuple)) {
-            actualSenders++;
-            if (actualSenders == totalSenders) {
-                kafkaProducer.send("Count is " + count);
-            }
+        long newCount = new Long(tuple.getValue(0).toString());
+        count += newCount;
             
-        } else {
-            long newCount = new Long(tuple.getValue(0).toString());
-            count += newCount;
+        actualSenders++;
+        if (actualSenders == totalSenders) {
+            kafkaProducer.send("Count is " + count);
         }
     }
 
