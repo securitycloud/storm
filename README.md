@@ -20,7 +20,7 @@ Default configuration for this project:
 One script for testing
 ============================
 
-a) <i>Tests:</i> It prepares storm on cluster, fills kafka-producer by input file
+It prepares storm on cluster, it excepts filled input kafka topic for computers >= partitions 
 and runs all topologies one by one. It downloads and parses results and saves to out.date.txt
 
     scripts/all-tests-read.sh
@@ -48,15 +48,17 @@ Download and compile kafka-storm on kafka PCs. Download and compile project to n
 Run Storm on cluster
 ----------------------------
 
-<i>Run test on cluster:</i> <b>Test</b> open testing kafka topic only on kafka-consumer (topic on kafka-producer must exist and filled)
-and start topology for actual test. If read test has been done, then it kill topology.
+<i>Run test on cluster:</i> It opens testing output kafka topic only on kafka-consumer
+(topic on kafka-producer must exist and filled) and it starts topology for actual test.
+If test has been done, then it kill topology.
 
-All topologies are implemented count window and they are sent working time in ms to kafka-consumer
-topic <b>storm-service</b>. Default kafka topic is <b>storm-test</b>.
+All topologies are implemented count window and they are sent working time in ms to
+kafka-consumer service topic.
 
-a) For topology KafkaConsumer -> KafkaProducer:
+a) For topology <b>Empty framework</b>: Read all flows/messages from kafka-producer
+and write down count flows/messages.
 
-        scripts/run/run-test.sh TopologyKafkaKafka number_of_computers
+        scripts/run/run-test.sh TopologyEmpty number_of_computers
 
 b) For topology KafkaConsumer -> Filter -> KafkaProducer:
 
