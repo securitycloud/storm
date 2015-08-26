@@ -24,6 +24,6 @@ STORM_JAR=$WRK/project/target/storm-1.0-SNAPSHOT-jar-with-dependencies.jar
 echo -e $LOG Running topology $TOPOLOGY on $COMPUTERS computers from-beginning=$FROM_BEGINNING $OFF
 
 # DEPLOY TO NIMBUS
-ssh root@$SRV_NIMBUS "
+ssh $SRV_NIMBUS "
     $STORM_EXE jar $STORM_JAR cz.muni.fi.storm.$TOPOLOGY $COMPUTERS
 "

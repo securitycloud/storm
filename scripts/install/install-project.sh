@@ -5,11 +5,11 @@ CUR_DIR=`dirname $0`
 
 # COPY
 tar -cf project.tar $CUR_DIR/../../src $CUR_DIR/../../pom.xml
-scp project.tar root@$SRV_NIMBUS:/$WRK/project.new.tar
+scp project.tar $SRV_NIMBUS:/$WRK/project.new.tar
 rm project.tar
 
 # COMPILE
-ssh root@$SRV_NIMBUS "
+ssh $SRV_NIMBUS "
     cd $WRK
     if ! cmp project.tar project.new.tar > /dev/null 2> /dev/null
     then

@@ -12,7 +12,7 @@ fi
 SERVER=$1
 
 # RUN STORM NIMBUS AND UI
-ssh root@$SERVER "
+ssh $SERVER "
     $WRK/storm/bin/storm nimbus  > /dev/null 2>&1  &
     $WRK/storm/bin/storm ui  > /dev/null 2>&1  &
 "

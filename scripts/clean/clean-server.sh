@@ -12,7 +12,7 @@ fi
 SERVER=$1
 
 # KILL ALL JAVA PROCESS AND RECREATE WORKING DIRECTORY
-ssh root@$SERVER "
+ssh $SERVER "
     killall java
     rm -rf $WRK
     mkdir -p $WRK

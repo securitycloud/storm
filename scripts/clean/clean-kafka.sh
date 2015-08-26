@@ -12,7 +12,7 @@ fi
 SERVER=$1
 
 # RECREATE WORKING DIRECTORY
-ssh root@$SERVER "
+ssh $SERVER "
     rm -rf $WRK
     mkdir -p $WRK
 "

@@ -12,7 +12,7 @@ fi
 SERVER=$1
 
 # DOWNLOAD AND COMPILE
-ssh root@$SERVER "
+ssh $SERVER "
     cd $WRK
     git clone $GIT_KAFKA
     cd kafka/kafka-storm

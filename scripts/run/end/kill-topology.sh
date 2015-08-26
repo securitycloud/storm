@@ -17,7 +17,7 @@ STORM_EXE=$WRK/storm/bin/storm
 echo -e $LOG Killing topology $TOPOLOGY $OFF
 
 # KILL TOPOLOGY
-ssh root@$SRV_NIMBUS "
+ssh $SRV_NIMBUS "
     $STORM_EXE kill $TOPOLOGY 1
     sleep 1
     while $STORM_EXE kill $TOPOLOGY 1 2> /dev/null
