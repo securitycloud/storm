@@ -36,18 +36,18 @@ public class KafkaSpout extends BaseRichSpout {
             this.collector.emit(new Values(flowJson));
             nullCount = 0;
             
-        } else {
+        } /*else {
             nullCount++;
             if (nullCount > 3) {
                 TupleUtils.emitEndOfWindow(this.collector);
             }
-        }
+        }*/
     }
 
     @Override
     public void declareOutputFields(OutputFieldsDeclarer declarer) {
         declarer.declare(new Fields("flow"));
-        TupleUtils.declareEndOfWindow(declarer);
+        //TupleUtils.declareEndOfWindow(declarer);
     }
     
     @Override
