@@ -15,11 +15,12 @@ import cz.muni.fi.storm.spouts.KafkaCounterSpout;
 import cz.muni.fi.storm.spouts.MyKafkaSpout;
 import cz.muni.fi.storm.tools.ServiceCounter;
 import cz.muni.fi.storm.tools.TopologyUtil;
+import storm.kafka.KafkaSpout;
 import storm.kafka.SpoutConfig;
 import storm.kafka.StringScheme;
 import storm.kafka.ZkHosts;
 
-public class TopologyEmpty {
+public class TopologyEmpty2 {
 
     public static void main(String[] args) {
         
@@ -32,7 +33,7 @@ public class TopologyEmpty {
         config.setNumWorkers(numberOfComputers);
         config.putAll(new TopologyUtil().loadProperties());
         
-        /*
+        
         ZkHosts zkHosts = new ZkHosts("100.64.25.107:2181");
         SpoutConfig kafkaConfig = new SpoutConfig(zkHosts, "dataset-5part", "", "storm");
         kafkaConfig.scheme = new SchemeAsMultiScheme(new StringScheme() {
@@ -44,8 +45,7 @@ public class TopologyEmpty {
         kafkaConfig.startOffsetTime = kafka.api.OffsetRequest.EarliestTime();
         kafkaConfig.forceFromStart = true;
         
-        IRichSpout kafkaSpout = new KafkaSpout(kafkaConfig);*/
-        IRichSpout kafkaSpout = new MyKafkaSpout();
+        IRichSpout kafkaSpout = new KafkaSpout(kafkaConfig);
         IRichBolt kafkaBolt = new KafkaBolt();
         IRichBolt globalCountWindowBolt = new GlobalCountWindowBolt(numberOfComputers);
         
