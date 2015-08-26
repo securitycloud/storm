@@ -8,7 +8,7 @@ import backtype.storm.topology.TopologyBuilder;
 import cz.muni.fi.storm.bolts.FilterCounterBolt;
 import cz.muni.fi.storm.bolts.GlobalCountWindowBolt;
 import cz.muni.fi.storm.bolts.GlobalCounterBolt;
-import cz.muni.fi.storm.spouts.KafkaSpout;
+import cz.muni.fi.storm.spouts.MyKafkaSpout;
 import cz.muni.fi.storm.tools.ServiceCounter;
 import cz.muni.fi.storm.tools.TopologyUtil;
 import cz.muni.fi.storm.tools.TupleUtils;
@@ -25,7 +25,7 @@ public class TopologyFilter {
         config.setNumWorkers(numberOfComputers);
         config.putAll(new TopologyUtil().loadProperties());
 
-        IRichSpout kafkaSpout = new KafkaSpout();
+        IRichSpout kafkaSpout = new MyKafkaSpout();
         IRichBolt filterCounterBolt = new FilterCounterBolt();
         IRichBolt globalCounterBolt = new GlobalCounterBolt(numberOfComputers);
         IRichBolt globalCountWindowBolt = new GlobalCountWindowBolt(numberOfComputers);

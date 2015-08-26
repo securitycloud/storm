@@ -12,7 +12,7 @@ import cz.muni.fi.storm.bolts.GlobalCountWindowBolt;
 import cz.muni.fi.storm.bolts.GlobalCounterBolt;
 import cz.muni.fi.storm.bolts.KafkaBolt;
 import cz.muni.fi.storm.spouts.KafkaCounterSpout;
-import cz.muni.fi.storm.spouts.KafkaSpout;
+import cz.muni.fi.storm.spouts.MyKafkaSpout;
 import cz.muni.fi.storm.tools.ServiceCounter;
 import cz.muni.fi.storm.tools.TopologyUtil;
 import storm.kafka.SpoutConfig;
@@ -45,7 +45,7 @@ public class TopologyEmpty {
         kafkaConfig.forceFromStart = true;
         
         IRichSpout kafkaSpout = new KafkaSpout(kafkaConfig);*/
-        IRichSpout kafkaSpout = new KafkaSpout();
+        IRichSpout kafkaSpout = new MyKafkaSpout();
         IRichBolt kafkaBolt = new KafkaBolt();
         
         TopologyBuilder builder = new TopologyBuilder();
