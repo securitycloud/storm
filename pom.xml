@@ -81,6 +81,13 @@
             <scope>provided</scope>
         </dependency>
         
+        <!-- KafkaSpout -->
+        <dependency>
+            <groupId>org.apache.storm</groupId>
+            <artifactId>storm-kafka</artifactId>
+            <version>0.9.4</version>
+        </dependency>
+        
         <!-- Jackson -->
         <dependency>
             <groupId>com.fasterxml.jackson.core</groupId>
