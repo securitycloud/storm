@@ -9,6 +9,7 @@ import backtype.storm.tuple.Tuple;
 import backtype.storm.tuple.Values;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import cz.muni.fi.storm.tools.ServiceCounter;
+import cz.muni.fi.storm.tools.TupleUtils;
 import cz.muni.fi.storm.tools.pojo.Flow;
 import it.unimi.dsi.fastutil.objects.Object2IntOpenHashMap;
 import java.io.IOException;
@@ -48,19 +49,32 @@ public class PacketCounterBolt extends BaseRichBolt {
 
         try {
             Flow flow = mapper.readValue(flowJson, Flow.class);
+            String ip = flow.getSrc_ip_addr();
+            
             if (onlyIp) {
-                if (srcIp.equals(flow.getSrc_ip_addr())) {
+                if (srcIp.equals(ip)) {
                     onePacketCounter += flow.getPackets();
                 }
             } else {
-                
+                int packets = flow.getPackets();
+                if (packetCounter.containsKey(ip)) {
+                    packets += packetCounter.get(ip);
+                }
+                packetCounter.put(ip, packets);
             }
         } catch (IOException e) {
             throw new RuntimeException("Coult not parse JSON to Flow.");
         }
         
         if (serviceCounter.isEnd()) {
-            collector.emit(new Values(onePacketCounter));
+            if (onlyIp) {
+                collector.emit(new Values(onePacketCounter));
+            } else {
+                for (Map.Entry<String, Integer> entry : packetCounter.object2IntEntrySet()) {
+                    collector.emit(new Values(entry.getKey(), entry.getValue()));
+                }
+                TupleUtils.emitEndOfWindow(collector);
+            }
         }
     }
 
@@ -70,6 +84,7 @@ public class PacketCounterBolt extends BaseRichBolt {
             declarer.declare(new Fields("count"));
         } else {
             declarer.declare(new Fields("ip", "packets"));
+            TupleUtils.declareEndOfWindow(declarer);
         }
         ServiceCounter.declareServiceStream(declarer);
     }

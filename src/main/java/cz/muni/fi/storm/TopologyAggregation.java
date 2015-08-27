@@ -22,7 +22,7 @@ public class TopologyAggregation {
 
     public static void main(String[] args) {
         if (args.length < 1) {
-            throw new IllegalArgumentException("Missing argument: number_of_computers from_beginning");
+            throw new IllegalArgumentException("Missing argument: number_of_computers");
         }
         int numberOfComputers = Integer.parseInt(args[0]);        
         
@@ -44,23 +44,22 @@ public class TopologyAggregation {
         kafkaConfig.forceFromStart = true;
         
         IRichSpout kafkaSpout = new KafkaSpout(kafkaConfig);
-        IRichBolt dstPacketCounterBolt = new PacketCounterBolt();
+        IRichBolt packetCounterBolt = new PacketCounterBolt();
         IRichBolt globalPacketCounterBolt = new GlobalPacketCounterBolt(numberOfComputers * parallelism);
         IRichBolt globalCountWindowBolt = new GlobalCountWindowBolt(numberOfComputers * parallelism);
         
         TopologyBuilder builder = new TopologyBuilder();
         builder.setSpout("kafkaSpout", kafkaSpout, numberOfComputers * parallelism);
-        builder.setBolt("dstPacketCounterBolt", dstPacketCounterBolt, numberOfComputers * parallelism)
-                .localOrShuffleGrouping("kafkaSpout")
-                .localOrShuffleGrouping("kafkaSpout", TupleUtils.getStreamIdForEndOfWindow());
+        builder.setBolt("packetCounterBolt", packetCounterBolt, numberOfComputers * parallelism)
+                .localOrShuffleGrouping("kafkaSpout");
         builder.setBolt("globalPacketCounterBolt", globalPacketCounterBolt)
-                .globalGrouping("dstPacketCounterBolt")
-                .globalGrouping("dstPacketCounterBolt", TupleUtils.getStreamIdForEndOfWindow());
+                .globalGrouping("packetCounterBolt")
+                .globalGrouping("packetCounterBolt", TupleUtils.getStreamIdForEndOfWindow());
         builder.setBolt("globalCountWindowBolt", globalCountWindowBolt)
-                .globalGrouping("dstPacketCounterBolt", ServiceCounter.getStreamIdForService());
+                .globalGrouping("packetCounterBolt", ServiceCounter.getStreamIdForService());
 
         try {
-            StormSubmitter.submitTopology("TopologyKafkaAggregationKafka", config, builder.createTopology());
+            StormSubmitter.submitTopology("TopologyAggregation", config, builder.createTopology());
         } catch (Exception e) {
             e.printStackTrace();
             throw new IllegalStateException("Couldn't initialize the topology", e);
