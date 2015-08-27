@@ -29,6 +29,7 @@ supervisor.slots.ports:
 # 
 # ##### These may optionally be filled in:
 worker.childopts: "-Xmx10g"
+ui.port: 8081
 #    
 ## List of custom serializations
 # topology.kryo.register:
