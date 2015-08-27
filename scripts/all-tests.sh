@@ -5,9 +5,9 @@ CUR_DIR=`dirname $0`
 
 TOPOLOGIES[1]=TopologyEmpty
 TOPOLOGIES[2]=TopologyFilter
-TOPOLOGIES[3]=TopologyKafkaCounterKafka
-TOPOLOGIES[4]=TopologyKafkaAggregationKafka
-TOPOLOGIES[5]=TopologyKafkaTopNKafka
+TOPOLOGIES[3]=TopologyCounter
+TOPOLOGIES[4]=TopologyAggregation
+TOPOLOGIES[5]=TopologyTopN
 TOPOLOGIES[6]=TopologyKafkaTcpSynKafka
 
 COMPUTERS[1]=3

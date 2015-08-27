@@ -58,11 +58,7 @@ public class PacketCounterBolt extends BaseRichBolt {
                     onePacketCounter += flow.getPackets();
                 }
             } else {
-                int packets = flow.getPackets();
-                if (packetCounter.containsKey(ip)) {
-                    packets += packetCounter.get(ip);
-                }
-                packetCounter.put(ip, packets);
+                packetCounter.addTo(ip, flow.getPackets());
                 
                 if (serviceCounter.isTimeToClean()) {
                     for (Map.Entry<String, Integer> entry : packetCounter.object2IntEntrySet()) {
