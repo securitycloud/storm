@@ -5,9 +5,9 @@ import java.util.Map;
 
 public class ValueComparator implements Comparator<String> {
 
-    Map<String, Long> base;
+    Map<String, Integer> base;
     
-    public ValueComparator(Map<String, Long> base) {
+    public ValueComparator(Map<String, Integer> base) {
         this.base = base;
     }
 
