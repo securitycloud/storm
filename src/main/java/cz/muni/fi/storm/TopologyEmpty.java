@@ -29,8 +29,11 @@ public class TopologyEmpty {
         config.setNumWorkers(numberOfComputers);
         config.putAll(new TopologyUtil().loadProperties());
         
-        ZkHosts zkHosts = new ZkHosts("100.64.25.107:2181");
-        SpoutConfig kafkaConfig = new SpoutConfig(zkHosts, "dataset-" + numberOfComputers + "part", "", "storm");
+        String topic = (String) config.get("kafkaConsumer.topic");
+        String broker = (String) config.get("kafkaConsumer.broker")
+                      + ":" + (String) config.get("kafkaConsumer.port") ;
+        ZkHosts zkHosts = new ZkHosts(broker);
+        SpoutConfig kafkaConfig = new SpoutConfig(zkHosts, topic, "", "storm");
         kafkaConfig.scheme = new SchemeAsMultiScheme(new StringScheme() {
                 @Override
                 public Fields getOutputFields() {
