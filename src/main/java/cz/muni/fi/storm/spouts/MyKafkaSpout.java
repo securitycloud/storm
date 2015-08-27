@@ -6,6 +6,7 @@ import backtype.storm.topology.OutputFieldsDeclarer;
 import backtype.storm.topology.base.BaseRichSpout;
 import backtype.storm.tuple.Fields;
 import cz.muni.fi.storm.tools.SpoutCollector;
+import java.util.List;
 import java.util.Map;
 import storm.kafka.KafkaSpout;
 import storm.kafka.SpoutConfig;
@@ -16,6 +17,7 @@ public class MyKafkaSpout extends BaseRichSpout {
     private final KafkaSpout kafkaSpout;
     private SpoutOutputCollector collector;
     private SpoutCollector transfer;
+    private List<Object> tuple;
     
     public MyKafkaSpout() {
         /*String broker = (String) stormConf.get("kafkaConsumer.broker");
@@ -38,7 +40,10 @@ public class MyKafkaSpout extends BaseRichSpout {
     @Override
     public void nextTuple() {
         kafkaSpout.nextTuple();
-        this.collector.emit(transfer.getOutput());
+        tuple = transfer.getOutput();
+        if (tuple != null) {
+            this.collector.emit(tuple);
+        }
     }
 
     @Override
