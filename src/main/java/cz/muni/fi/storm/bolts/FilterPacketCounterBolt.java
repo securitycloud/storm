@@ -9,27 +9,24 @@ import backtype.storm.tuple.Tuple;
 import backtype.storm.tuple.Values;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import cz.muni.fi.storm.tools.ServiceCounter;
-import cz.muni.fi.storm.tools.TupleUtils;
 import cz.muni.fi.storm.tools.pojo.Flow;
-import it.unimi.dsi.fastutil.objects.Object2IntOpenHashMap;
 import java.io.IOException;
 import java.util.Map;
 
-public class PacketCounterBolt extends BaseRichBolt {
+public class FilterPacketCounterBolt extends BaseRichBolt {
     
     private OutputCollector collector;
     private ObjectMapper mapper;
-    private Object2IntOpenHashMap<String> packetCounter;
+    private long packetCounter;
     private ServiceCounter serviceCounter;
-    private int cleanUpSmallerThen;
+    private String srcIp;
 
     @Override
     public void prepare(Map stormConf, TopologyContext context, OutputCollector collector) {
         this.collector = collector;
         this.mapper = new ObjectMapper();
-        this.packetCounter = new Object2IntOpenHashMap<String>();
         this.serviceCounter = new ServiceCounter(collector, stormConf);
-        this.cleanUpSmallerThen = new Integer(stormConf.get("bigDataMap.cleanUpSmallerThen").toString());
+        this.srcIp = (String) stormConf.get("filter.srcIp");
     }
 
     @Override
@@ -40,31 +37,21 @@ public class PacketCounterBolt extends BaseRichBolt {
         try {
             Flow flow = mapper.readValue(flowJson, Flow.class);
             String ip = flow.getSrc_ip_addr();
-            packetCounter.addTo(ip, flow.getPackets());
+            if (srcIp.equals(ip)) {
+                packetCounter += flow.getPackets();
+            }
         } catch (IOException e) {
             throw new RuntimeException("Coult not parse JSON to Flow.");
         }
-
-        if (serviceCounter.isTimeToClean()) {
-            for (Map.Entry<String, Integer> entry : packetCounter.object2IntEntrySet()) {
-                if (entry.getValue() < cleanUpSmallerThen) {
-                    packetCounter.remove(entry.getKey());
-                }
-            }
-        }
         
         if (serviceCounter.isEnd()) {
-            for (Map.Entry<String, Integer> entry : packetCounter.object2IntEntrySet()) {
-                collector.emit(new Values(entry.getKey(), entry.getValue()));
-            }
-            TupleUtils.emitEndOfWindow(collector);
+            collector.emit(new Values(packetCounter));
         }
     }
 
     @Override
     public void declareOutputFields(OutputFieldsDeclarer declarer) {
-        declarer.declare(new Fields("ip", "packets"));
-        TupleUtils.declareEndOfWindow(declarer);
+        declarer.declare(new Fields("count"));
         ServiceCounter.declareServiceStream(declarer);
     }
 }

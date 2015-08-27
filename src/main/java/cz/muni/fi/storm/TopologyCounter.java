@@ -7,9 +7,9 @@ import backtype.storm.topology.IRichBolt;
 import backtype.storm.topology.IRichSpout;
 import backtype.storm.topology.TopologyBuilder;
 import backtype.storm.tuple.Fields;
+import cz.muni.fi.storm.bolts.FilterPacketCounterBolt;
 import cz.muni.fi.storm.bolts.GlobalCountWindowBolt;
 import cz.muni.fi.storm.bolts.GlobalCounterBolt;
-import cz.muni.fi.storm.bolts.PacketCounterBolt;
 import cz.muni.fi.storm.tools.ServiceCounter;
 import cz.muni.fi.storm.tools.TopologyUtil;
 import storm.kafka.KafkaSpout;
@@ -43,18 +43,18 @@ public class TopologyCounter {
         kafkaConfig.forceFromStart = true;
 
         IRichSpout kafkaSpout = new KafkaSpout(kafkaConfig);
-        IRichBolt packetCounterBolt = new PacketCounterBolt(true);
+        IRichBolt filterPacketCounterBolt = new FilterPacketCounterBolt();
         IRichBolt globalCounterBolt = new GlobalCounterBolt(numberOfComputers * parallelism);
         IRichBolt globalCountWindowBolt = new GlobalCountWindowBolt(numberOfComputers * parallelism);
         
         TopologyBuilder builder = new TopologyBuilder();
         builder.setSpout("kafkaSpout", kafkaSpout, numberOfComputers * parallelism);
-        builder.setBolt("packetCounterBolt", packetCounterBolt, numberOfComputers * parallelism)
+        builder.setBolt("filterPacketCounterBolt", filterPacketCounterBolt, numberOfComputers * parallelism)
                 .localOrShuffleGrouping("kafkaSpout");
         builder.setBolt("globalCounterBolt", globalCounterBolt)
-                .globalGrouping("packetCounterBolt");
+                .globalGrouping("filterPacketCounterBolt");
         builder.setBolt("globalCountWindowBolt", globalCountWindowBolt)
-                .globalGrouping("packetCounterBolt", ServiceCounter.getStreamIdForService());
+                .globalGrouping("filterPacketCounterBolt", ServiceCounter.getStreamIdForService());
 
         try {
             StormSubmitter.submitTopology("TopologyCounter", config, builder.createTopology());
