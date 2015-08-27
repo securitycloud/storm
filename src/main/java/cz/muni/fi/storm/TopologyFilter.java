@@ -30,10 +30,10 @@ public class TopologyFilter {
         config.putAll(new TopologyUtil().loadProperties());
         int parallelism = new Integer(config.get("parallelism.number").toString());
         
-        String topic = (String) config.get("kafkaConsumer.topic");
+        String zookeeper = (String) config.get("kafkaConsumer.zookeeper");
         String broker = (String) config.get("kafkaConsumer.broker");
         ZkHosts zkHosts = new ZkHosts(broker);
-        SpoutConfig kafkaConfig = new SpoutConfig(zkHosts, topic, "", "storm");
+        SpoutConfig kafkaConfig = new SpoutConfig(zkHosts, zookeeper, "", "storm");
         kafkaConfig.scheme = new SchemeAsMultiScheme(new StringScheme() {
                 @Override
                 public Fields getOutputFields() {

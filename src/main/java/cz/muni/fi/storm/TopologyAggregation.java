@@ -32,8 +32,8 @@ public class TopologyAggregation {
         int parallelism = new Integer(config.get("parallelism.number").toString());
 
         String topic = (String) config.get("kafkaConsumer.topic");
-        String broker = (String) config.get("kafkaConsumer.broker");
-        ZkHosts zkHosts = new ZkHosts(broker);
+        String zookeeper = (String) config.get("kafkaConsumer.zookeeper");
+        ZkHosts zkHosts = new ZkHosts(zookeeper);
         SpoutConfig kafkaConfig = new SpoutConfig(zkHosts, topic, "", "storm");
         kafkaConfig.scheme = new SchemeAsMultiScheme(new StringScheme() {
                 @Override
