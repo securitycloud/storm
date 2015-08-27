@@ -28,10 +28,10 @@ public class TopologyEmpty {
         Config config = new Config();
         config.setNumWorkers(numberOfComputers);
         config.putAll(new TopologyUtil().loadProperties());
+        int parallelism = new Integer(config.get("parallelism.number").toString());
         
         String topic = (String) config.get("kafkaConsumer.topic");
-        String broker = (String) config.get("kafkaConsumer.broker")
-                      + ":" + (String) config.get("kafkaConsumer.port") ;
+        String broker = (String) config.get("kafkaConsumer.broker");
         ZkHosts zkHosts = new ZkHosts(broker);
         SpoutConfig kafkaConfig = new SpoutConfig(zkHosts, topic, "", "storm");
         kafkaConfig.scheme = new SchemeAsMultiScheme(new StringScheme() {
@@ -44,11 +44,11 @@ public class TopologyEmpty {
         
         IRichSpout kafkaSpout = new KafkaSpout(kafkaConfig);
         IRichBolt counterBolt = new CounterBolt();
-        IRichBolt globalCountWindowBolt = new GlobalCountWindowBolt(numberOfComputers);
+        IRichBolt globalCountWindowBolt = new GlobalCountWindowBolt(numberOfComputers * parallelism);
         
         TopologyBuilder builder = new TopologyBuilder();
-        builder.setSpout("kafkaSpout", kafkaSpout, numberOfComputers);
-        builder.setBolt("counterBolt", counterBolt, numberOfComputers)
+        builder.setSpout("kafkaSpout", kafkaSpout, numberOfComputers * parallelism);
+        builder.setBolt("counterBolt", counterBolt, numberOfComputers * parallelism)
                 .localOrShuffleGrouping("kafkaSpout");
         builder.setBolt("globalCountWindowBolt", globalCountWindowBolt)
                 .globalGrouping("counterBolt", ServiceCounter.getStreamIdForService());

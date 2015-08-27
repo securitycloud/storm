@@ -30,8 +30,7 @@ public class TopologyCounter {
         config.putAll(new TopologyUtil().loadProperties());
         
         String topic = (String) config.get("kafkaConsumer.topic");
-        String broker = (String) config.get("kafkaConsumer.broker")
-                      + ":" + (String) config.get("kafkaConsumer.port") ;
+        String broker = (String) config.get("kafkaConsumer.broker");
         ZkHosts zkHosts = new ZkHosts(broker);
         SpoutConfig kafkaConfig = new SpoutConfig(zkHosts, topic, "", "storm");
         kafkaConfig.scheme = new SchemeAsMultiScheme(new StringScheme() {
