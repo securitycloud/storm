@@ -24,6 +24,7 @@ public class PacketCounterBolt extends BaseRichBolt {
     private ServiceCounter serviceCounter;
     private final boolean onlyIp;
     private String srcIp;
+    private int cleanUpSmallerThen;
     
     public PacketCounterBolt() {
         this(false);
@@ -40,6 +41,7 @@ public class PacketCounterBolt extends BaseRichBolt {
         this.packetCounter = new Object2IntOpenHashMap<String>();
         this.serviceCounter = new ServiceCounter(collector, stormConf);
         this.srcIp = (String) stormConf.get("filter.srcIp");
+        this.cleanUpSmallerThen = new Integer(stormConf.get("bigDataMap.cleanUpSmallerThen").toString());
     }
 
     @Override
@@ -61,6 +63,14 @@ public class PacketCounterBolt extends BaseRichBolt {
                     packets += packetCounter.get(ip);
                 }
                 packetCounter.put(ip, packets);
+                
+                if (serviceCounter.isTimeToClean()) {
+                    for (Map.Entry<String, Integer> entry : packetCounter.object2IntEntrySet()) {
+                        if (entry.getValue() < cleanUpSmallerThen) {
+                            packetCounter.remove(entry.getKey());
+                        }
+                    }
+                }
             }
         } catch (IOException e) {
             throw new RuntimeException("Coult not parse JSON to Flow.");

@@ -13,36 +13,38 @@ public class ServiceCounter {
     private final boolean isSpout;
     private final OutputCollector boltCollector;
     private final SpoutOutputCollector spoutCollector;
-    private final long countToEmit;
-    private final long messagesPerPartition; 
+    private long countToEmit;
+    private long messagesPerPartition;
+    private long cleanUpEveryFlows;
     private boolean isFirstPassed = false;
-    private long totalCount;
-    private long counter = 0;
+    private long totalCount = 0;
     
     public ServiceCounter(OutputCollector boltCollector, Map conf) {
         this.boltCollector = boltCollector;
         this.spoutCollector = null;
         this.isSpout = false;
-        this.messagesPerPartition = new Long(conf.get("countWindow.messagesPerPartition").toString());
-        this.countToEmit = new Long(conf.get("countWindow.messagesPerWindow").toString());
+        setup(conf);
     }
     
     public ServiceCounter(SpoutOutputCollector spoutCollector, Map conf) {
         this.boltCollector = null;
         this.spoutCollector = spoutCollector;
         this.isSpout = true;
+        setup(conf);
+    }
+    
+    private void setup(Map conf) {
         this.messagesPerPartition = new Long(conf.get("countWindow.messagesPerPartition").toString());
         this.countToEmit = new Long(conf.get("countWindow.messagesPerWindow").toString());
+        this.cleanUpEveryFlows = new Long(conf.get("countWindow.messagesPerWindow").toString());
     }
     
     public void count() {
         begin();
         
-        counter++;
         totalCount++;
-        if (counter == countToEmit) {
-            emit(counter);
-            counter = 0;
+        if (totalCount % countToEmit == 0) {
+            emit(countToEmit);
         }
     }
     
@@ -62,10 +64,11 @@ public class ServiceCounter {
     }
     
     public boolean isEnd() {
-        if (totalCount == messagesPerPartition) {
-            return true;
-        }
-        return false;
+        return totalCount % messagesPerPartition == 0;
+    }
+    
+    public boolean isTimeToClean() {
+        return totalCount % cleanUpEveryFlows == 0;
     }
     
     public static void declareServiceStream(OutputFieldsDeclarer declarer) {
