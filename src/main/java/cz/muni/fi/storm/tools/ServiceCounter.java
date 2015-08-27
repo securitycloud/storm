@@ -14,13 +14,16 @@ public class ServiceCounter {
     private final OutputCollector boltCollector;
     private final SpoutOutputCollector spoutCollector;
     private final long countToEmit;
+    private final long messagesPerPartition; 
     private boolean isFirstPassed = false;
-    private int counter = 0;
+    private long totalCount;
+    private long counter = 0;
     
     public ServiceCounter(OutputCollector boltCollector, Map conf) {
         this.boltCollector = boltCollector;
         this.spoutCollector = null;
         this.isSpout = false;
+        this.messagesPerPartition = new Long(conf.get("countWindow.messagesPerPartition").toString());
         this.countToEmit = new Long(conf.get("countWindow.messagesPerWindow").toString());
     }
     
@@ -28,6 +31,7 @@ public class ServiceCounter {
         this.boltCollector = null;
         this.spoutCollector = spoutCollector;
         this.isSpout = true;
+        this.messagesPerPartition = new Long(conf.get("countWindow.messagesPerPartition").toString());
         this.countToEmit = new Long(conf.get("countWindow.messagesPerWindow").toString());
     }
     
@@ -35,6 +39,7 @@ public class ServiceCounter {
         begin();
         
         counter++;
+        totalCount++;
         if (counter == countToEmit) {
             emit(counter);
             counter = 0;
@@ -54,6 +59,13 @@ public class ServiceCounter {
         } else {
             boltCollector.emit(streamIdForService, new Values(message));
         }
+    }
+    
+    public boolean isEnd() {
+        if (totalCount == messagesPerPartition) {
+            return true;
+        }
+        return false;
     }
     
     public static void declareServiceStream(OutputFieldsDeclarer declarer) {

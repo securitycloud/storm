@@ -2,16 +2,20 @@ package cz.muni.fi.storm;
 
 import backtype.storm.Config;
 import backtype.storm.StormSubmitter;
+import backtype.storm.spout.SchemeAsMultiScheme;
 import backtype.storm.topology.IRichBolt;
 import backtype.storm.topology.IRichSpout;
 import backtype.storm.topology.TopologyBuilder;
+import backtype.storm.tuple.Fields;
 import cz.muni.fi.storm.bolts.FilterCounterBolt;
 import cz.muni.fi.storm.bolts.GlobalCountWindowBolt;
 import cz.muni.fi.storm.bolts.GlobalCounterBolt;
-import cz.muni.fi.storm.spouts.MyKafkaSpout;
 import cz.muni.fi.storm.tools.ServiceCounter;
 import cz.muni.fi.storm.tools.TopologyUtil;
-import cz.muni.fi.storm.tools.TupleUtils;
+import storm.kafka.KafkaSpout;
+import storm.kafka.SpoutConfig;
+import storm.kafka.StringScheme;
+import storm.kafka.ZkHosts;
 
 public class TopologyFilter {
 
@@ -24,8 +28,18 @@ public class TopologyFilter {
         Config config = new Config();
         config.setNumWorkers(numberOfComputers);
         config.putAll(new TopologyUtil().loadProperties());
+        
+        ZkHosts zkHosts = new ZkHosts("100.64.25.107:2181");
+        SpoutConfig kafkaConfig = new SpoutConfig(zkHosts, "dataset-" + numberOfComputers + "part", "", "storm");
+        kafkaConfig.scheme = new SchemeAsMultiScheme(new StringScheme() {
+                @Override
+                public Fields getOutputFields() {
+                    return new Fields("flow");
+                }
+            });
+        kafkaConfig.forceFromStart = true;
 
-        IRichSpout kafkaSpout = new MyKafkaSpout();
+        IRichSpout kafkaSpout = new KafkaSpout(kafkaConfig);
         IRichBolt filterCounterBolt = new FilterCounterBolt();
         IRichBolt globalCounterBolt = new GlobalCounterBolt(numberOfComputers);
         IRichBolt globalCountWindowBolt = new GlobalCountWindowBolt(numberOfComputers);
@@ -33,8 +47,7 @@ public class TopologyFilter {
         TopologyBuilder builder = new TopologyBuilder();
         builder.setSpout("kafkaSpout", kafkaSpout, numberOfComputers);
         builder.setBolt("filterCounterBolt", filterCounterBolt, numberOfComputers)
-                .localOrShuffleGrouping("kafkaSpout")
-                .localOrShuffleGrouping("kafkaSpout", TupleUtils.getStreamIdForEndOfWindow());
+                .localOrShuffleGrouping("kafkaSpout");
         builder.setBolt("globalCounterBolt", globalCounterBolt)
                 .globalGrouping("filterCounterBolt");
         builder.setBolt("globalCountWindowBolt", globalCountWindowBolt)
