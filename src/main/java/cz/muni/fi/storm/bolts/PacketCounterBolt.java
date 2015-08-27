@@ -50,7 +50,7 @@ public class PacketCounterBolt extends BaseRichBolt {
             Flow flow = mapper.readValue(flowJson, Flow.class);
             if (onlyIp) {
                 if (srcIp.equals(flow.getSrc_ip_addr())) {
-                    onePacketCounter++;
+                    onePacketCounter += flow.getPackets();
                 }
             } else {
                 
