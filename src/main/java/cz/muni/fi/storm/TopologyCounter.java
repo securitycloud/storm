@@ -28,6 +28,7 @@ public class TopologyCounter {
         Config config = new Config();
         config.setNumWorkers(numberOfComputers);
         config.putAll(new TopologyUtil().loadProperties());
+        int parallelism = new Integer(config.get("parallelism.number").toString());
         
         String topic = (String) config.get("kafkaConsumer.topic");
         String broker = (String) config.get("kafkaConsumer.broker");
@@ -43,12 +44,12 @@ public class TopologyCounter {
 
         IRichSpout kafkaSpout = new KafkaSpout(kafkaConfig);
         IRichBolt packetCounterBolt = new PacketCounterBolt(true);
-        IRichBolt globalCounterBolt = new GlobalCounterBolt(numberOfComputers);
-        IRichBolt globalCountWindowBolt = new GlobalCountWindowBolt(numberOfComputers);
+        IRichBolt globalCounterBolt = new GlobalCounterBolt(numberOfComputers * parallelism);
+        IRichBolt globalCountWindowBolt = new GlobalCountWindowBolt(numberOfComputers * parallelism);
         
         TopologyBuilder builder = new TopologyBuilder();
-        builder.setSpout("kafkaSpout", kafkaSpout, numberOfComputers);        
-        builder.setBolt("packetCounterBolt", packetCounterBolt, numberOfComputers)
+        builder.setSpout("kafkaSpout", kafkaSpout, numberOfComputers * parallelism);
+        builder.setBolt("packetCounterBolt", packetCounterBolt, numberOfComputers * parallelism)
                 .localOrShuffleGrouping("kafkaSpout");
         builder.setBolt("globalCounterBolt", globalCounterBolt)
                 .globalGrouping("packetCounterBolt");

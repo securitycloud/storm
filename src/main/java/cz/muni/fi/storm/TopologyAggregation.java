@@ -29,6 +29,7 @@ public class TopologyAggregation {
         Config config = new Config();
         config.setNumWorkers(numberOfComputers);
         config.putAll(new TopologyUtil().loadProperties());
+        int parallelism = new Integer(config.get("parallelism.number").toString());
 
         String topic = (String) config.get("kafkaConsumer.topic");
         String broker = (String) config.get("kafkaConsumer.broker");
@@ -44,12 +45,12 @@ public class TopologyAggregation {
         
         IRichSpout kafkaSpout = new KafkaSpout(kafkaConfig);
         IRichBolt dstPacketCounterBolt = new PacketCounterBolt();
-        IRichBolt globalPacketCounterBolt = new GlobalPacketCounterBolt(numberOfComputers);
-        IRichBolt globalCountWindowBolt = new GlobalCountWindowBolt(numberOfComputers);
+        IRichBolt globalPacketCounterBolt = new GlobalPacketCounterBolt(numberOfComputers * parallelism);
+        IRichBolt globalCountWindowBolt = new GlobalCountWindowBolt(numberOfComputers * parallelism);
         
         TopologyBuilder builder = new TopologyBuilder();
-        builder.setSpout("kafkaSpout", kafkaSpout, numberOfComputers);
-        builder.setBolt("dstPacketCounterBolt", dstPacketCounterBolt, numberOfComputers)
+        builder.setSpout("kafkaSpout", kafkaSpout, numberOfComputers * parallelism);
+        builder.setBolt("dstPacketCounterBolt", dstPacketCounterBolt, numberOfComputers * parallelism)
                 .localOrShuffleGrouping("kafkaSpout")
                 .localOrShuffleGrouping("kafkaSpout", TupleUtils.getStreamIdForEndOfWindow());
         builder.setBolt("globalPacketCounterBolt", globalPacketCounterBolt)
