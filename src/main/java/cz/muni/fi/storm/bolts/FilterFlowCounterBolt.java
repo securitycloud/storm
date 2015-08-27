@@ -13,11 +13,11 @@ import cz.muni.fi.storm.tools.pojo.Flow;
 import java.io.IOException;
 import java.util.Map;
 
-public class FilterCounterBolt extends BaseRichBolt {
+public class FilterFlowCounterBolt extends BaseRichBolt {
 
     private ObjectMapper mapper;
     private String srcIp;
-    private long filterCounter = 0;
+    private long flowCounter = 0;
     private ServiceCounter serviceCounter;
     private OutputCollector collector;
 
@@ -37,14 +37,14 @@ public class FilterCounterBolt extends BaseRichBolt {
         try {
             Flow flow = mapper.readValue(flowJson, Flow.class);
             if (srcIp.equals(flow.getSrc_ip_addr())) {
-                filterCounter++;
+                flowCounter++;
             }
         } catch (IOException e) {
             throw new RuntimeException("Coult not parse JSON to Flow.");
         }
         
         if (serviceCounter.isEnd()) {
-            collector.emit(new Values(filterCounter));
+            collector.emit(new Values(flowCounter));
         }
     } 
    

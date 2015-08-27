@@ -8,7 +8,7 @@ import backtype.storm.tuple.Tuple;
 import cz.muni.fi.storm.tools.ServiceCounter;
 import java.util.Map;
 
-public class CounterBolt extends BaseRichBolt {
+public class FlowCounterBolt extends BaseRichBolt {
 
     private ServiceCounter serviceCounter;
     
