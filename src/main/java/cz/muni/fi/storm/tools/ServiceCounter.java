@@ -10,42 +10,45 @@ import java.util.Map;
 public class ServiceCounter {
 
     private static final String streamIdForService = "service";
-    private final boolean isSpout;
-    private final OutputCollector boltCollector;
-    private final SpoutOutputCollector spoutCollector;
-    private long countToEmit;
-    private long messagesPerPartition;
-    private long cleanUpEveryFlows;
+    private OutputCollector boltCollector = null;
+    private SpoutOutputCollector spoutCollector = null;
+    private int messagesPerWindow;
+    private int messagesPerPartition;
+    private int cleanUpEveryFlows;
     private boolean isFirstPassed = false;
-    private long totalCount = 0;
+    private int totalCount = 0;
+    
+    public ServiceCounter(Map conf) {
+        setup(conf);
+    }
     
     public ServiceCounter(OutputCollector boltCollector, Map conf) {
         this.boltCollector = boltCollector;
-        this.spoutCollector = null;
-        this.isSpout = false;
         setup(conf);
     }
     
     public ServiceCounter(SpoutOutputCollector spoutCollector, Map conf) {
-        this.boltCollector = null;
         this.spoutCollector = spoutCollector;
-        this.isSpout = true;
         setup(conf);
     }
     
     private void setup(Map conf) {
-        this.messagesPerPartition = new Long(conf.get("countWindow.messagesPerPartition").toString());
-        this.countToEmit = new Long(conf.get("countWindow.messagesPerWindow").toString());
-        this.cleanUpEveryFlows = new Long(conf.get("countWindow.messagesPerWindow").toString());
+        this.messagesPerPartition = new Integer(conf.get("countWindow.messagesPerPartition").toString());
+        this.messagesPerWindow = new Integer(conf.get("countWindow.messagesPerWindow").toString());
+        this.cleanUpEveryFlows = new Integer(conf.get("countWindow.cleanUpEveryFlows").toString());
     }
     
     public void count() {
         begin();
         
         totalCount++;
-        //if (totalCount % countToEmit == 0) {
-        //    emit(countToEmit);
-        //}
+        if (totalCount % messagesPerWindow == 0) {
+            emit(messagesPerWindow);
+        }
+    }
+    
+    public int getCount() {
+        return totalCount;
     }
     
     private void begin() {
@@ -56,9 +59,9 @@ public class ServiceCounter {
     }
     
     private void emit(Object message) {
-        if (isSpout) {
+        if (spoutCollector != null) {
             spoutCollector.emit(streamIdForService, new Values(message));
-        } else {
+        } if (boltCollector != null) {
             boltCollector.emit(streamIdForService, new Values(message));
         }
     }
