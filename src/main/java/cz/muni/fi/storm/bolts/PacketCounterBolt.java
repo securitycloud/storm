@@ -45,17 +45,19 @@ public class PacketCounterBolt extends BaseRichBolt {
             throw new RuntimeException("Coult not parse JSON to Flow.");
         }
 
-        if (serviceCounter.isTimeToClean()) {
+        /*if (serviceCounter.isTimeToClean()) {
             for (Map.Entry<String, Integer> entry : packetCounter.object2IntEntrySet()) {
                 if (entry.getValue() < cleanUpSmallerThen) {
                     packetCounter.remove(entry.getKey());
                 }
             }
-        }
+        }*/
         
         if (serviceCounter.isEnd()) {
             for (Map.Entry<String, Integer> entry : packetCounter.object2IntEntrySet()) {
-                collector.emit(new Values(entry.getKey(), entry.getValue()));
+                if (entry.getValue() >= cleanUpSmallerThen) {
+                    collector.emit(new Values(entry.getKey(), entry.getValue()));
+                }
             }
             TupleUtils.emitEndOfWindow(collector);
         }

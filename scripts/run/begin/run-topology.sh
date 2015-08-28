@@ -29,7 +29,7 @@ STORM_JAR=$WRK/project/target/storm-1.0-SNAPSHOT-jar-with-dependencies.jar
 
 
 # LOG
-echo -e $LOG Running topology $TOPOLOGY on $COMPUTERS computers * $PARALLELISM parallelism $OFF
+echo -e $LOG Running topology $TOPOLOGY on $COMPUTERS computers, $PARALLELISM parallelism $OFF
 
 # DEPLOY TO NIMBUS
 ssh $SRV_NIMBUS "
