@@ -16,7 +16,7 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
 
-public class PacketCounterBolt extends BaseRichBolt {
+public class AggPacketCounterBolt extends BaseRichBolt {
     
     private OutputCollector collector;
     private ObjectMapper mapper;

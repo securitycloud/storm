@@ -13,29 +13,27 @@ import cz.muni.fi.storm.spouts.KafkaSpout;
 import cz.muni.fi.storm.tools.ServiceCounter;
 import cz.muni.fi.storm.tools.TopologyUtil;
 import cz.muni.fi.storm.tools.TupleUtils;
-import java.util.logging.Logger;
 
-public class TopologyKafkaTcpSynKafka{
-
-    private static final Logger log = Logger.getLogger(TopologyKafkaTopNKafka.class.getName());
+public class TopologySynScan{
 
     public static void main(String[] args) {
-        log.fine("Starting: TopologyKafkaTcpSynKafka");
-        
         if (args.length < 2) {
-            throw new IllegalArgumentException("Missing argument: number_of_computers from_beginning");
+            throw new IllegalArgumentException("Missing argument: computers parallelism");
         }
+        int computers = Integer.parseInt(args[0]);
+        int parallelism =Integer.parseInt(args[1]);
         
-        int numberOfComputers = Integer.parseInt(args[0]);        
-        boolean fromBeginning = ("true".equals(args[1])) ? true : false;
+        Config config = new Config();
+        config.setNumWorkers(computers);
+        config.putAll(new TopologyUtil().loadProperties());
 
-        IRichSpout kafkaSpout = new KafkaSpout(fromBeginning, true);
+        IRichSpout kafkaSpout = new KafkaSpout(config);
         IRichBolt srcFlowCounterBolt = new SrcFlowCounterBolt("....S.");
         IRichBolt moreFlowsKafkaBolt = new MoreFlowsKafkaBolt(numberOfComputers);
         IRichBolt globalCountWindowBolt = new GlobalCountWindowBolt();
         
         TopologyBuilder builder = new TopologyBuilder();
-        builder.setSpout("kafkaSpout", kafkaSpout, numberOfComputers);
+        builder.setSpout("kafkaSpout", kafkaSpout, computers * parallelism);
         builder.setBolt("srcFlowCounterBolt", srcFlowCounterBolt, numberOfComputers)
                 .localOrShuffleGrouping("kafkaSpout")
                 .localOrShuffleGrouping("kafkaSpout", TupleUtils.getStreamIdForEndOfWindow());
@@ -45,12 +43,8 @@ public class TopologyKafkaTcpSynKafka{
         builder.setBolt("globalCountWindowBolt", globalCountWindowBolt)
                 .globalGrouping("srcFlowCounterBolt", ServiceCounter.getStreamIdForService());
 
-        Config config = new Config();
-        config.setNumWorkers(numberOfComputers);
-        config.putAll(new TopologyUtil().loadProperties());
-
         try {
-            StormSubmitter.submitTopology("TopologyKafkaTcpSynKafka", config, builder.createTopology());
+            StormSubmitter.submitTopology("TopologySynScan", config, builder.createTopology());
         } catch (Exception e) {
             e.printStackTrace();
             throw new IllegalStateException("Couldn't initialize the topology", e);
