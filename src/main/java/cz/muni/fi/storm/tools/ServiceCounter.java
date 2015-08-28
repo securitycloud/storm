@@ -35,7 +35,7 @@ public class ServiceCounter {
     private void setup(Map conf) {
         this.messagesPerPartition = new Integer(conf.get("countWindow.messagesPerPartition").toString());
         this.messagesPerWindow = new Integer(conf.get("countWindow.messagesPerWindow").toString());
-        this.cleanUpEveryFlows = new Integer(conf.get("countWindow.cleanUpEveryFlows").toString());
+        this.cleanUpEveryFlows = new Integer(conf.get("bigDataMap.cleanUpEveryFlows").toString());
     }
     
     public void count() {
@@ -61,7 +61,8 @@ public class ServiceCounter {
     private void emit(Object message) {
         if (spoutCollector != null) {
             spoutCollector.emit(streamIdForService, new Values(message));
-        } if (boltCollector != null) {
+        }
+        if (boltCollector != null) {
             boltCollector.emit(streamIdForService, new Values(message));
         }
     }
