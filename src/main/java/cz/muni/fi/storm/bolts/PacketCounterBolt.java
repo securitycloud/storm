@@ -11,15 +11,15 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import cz.muni.fi.storm.tools.ServiceCounter;
 import cz.muni.fi.storm.tools.TupleUtils;
 import cz.muni.fi.storm.tools.pojo.Flow;
-import it.unimi.dsi.fastutil.objects.Object2IntOpenHashMap;
 import java.io.IOException;
+import java.util.HashMap;
 import java.util.Map;
 
 public class PacketCounterBolt extends BaseRichBolt {
     
     private OutputCollector collector;
     private ObjectMapper mapper;
-    private Object2IntOpenHashMap<String> packetCounter;
+    private Map<String, Integer> packetCounter;
     private ServiceCounter serviceCounter;
     private int cleanUpSmallerThen;
 
@@ -27,7 +27,7 @@ public class PacketCounterBolt extends BaseRichBolt {
     public void prepare(Map stormConf, TopologyContext context, OutputCollector collector) {
         this.collector = collector;
         this.mapper = new ObjectMapper();
-        this.packetCounter = new Object2IntOpenHashMap<String>();
+        this.packetCounter = new HashMap<String, Integer>();
         this.serviceCounter = new ServiceCounter(stormConf);
         this.cleanUpSmallerThen = new Integer(stormConf.get("bigDataMap.cleanUpSmallerThen").toString());
     }
@@ -40,21 +40,25 @@ public class PacketCounterBolt extends BaseRichBolt {
         try {
             Flow flow = mapper.readValue(flowJson, Flow.class);
             String ip = flow.getSrc_ip_addr();
-            packetCounter.addTo(ip, flow.getPackets());
+            int packets = flow.getPackets();
+            if (packetCounter.containsKey(ip)) {
+                packets += packetCounter.get(ip);
+            }
+            packetCounter.put(ip, packets);
         } catch (IOException e) {
             throw new RuntimeException("Coult not parse JSON to Flow.");
         }
 
-        /*if (serviceCounter.isTimeToClean()) {
-            for (Map.Entry<String, Integer> entry : packetCounter.object2IntEntrySet()) {
+        if (serviceCounter.isTimeToClean()) {
+            for (Map.Entry<String, Integer> entry : packetCounter.entrySet()) {
                 if (entry.getValue() < cleanUpSmallerThen) {
                     packetCounter.remove(entry.getKey());
                 }
             }
-        }*/
+        }
         
         if (serviceCounter.isEnd()) {
-            for (Map.Entry<String, Integer> entry : packetCounter.object2IntEntrySet()) {
+            for (Map.Entry<String, Integer> entry : packetCounter.entrySet()) {
                 if (entry.getValue() >= cleanUpSmallerThen) {
                     collector.emit(new Values(entry.getKey(), entry.getValue()));
                 }

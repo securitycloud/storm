@@ -10,13 +10,13 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import cz.muni.fi.storm.tools.TupleUtils;
 import cz.muni.fi.storm.tools.pojo.IpCount;
 import cz.muni.fi.storm.tools.writers.KafkaProducer;
-import it.unimi.dsi.fastutil.objects.Object2IntOpenHashMap;
+import java.util.HashMap;
 import java.util.Map;
 
 public class GlobalPacketCounterBolt extends BaseRichBolt {
 
     private ObjectMapper mapper;
-    private Object2IntOpenHashMap<String> packetCounter;
+    private Map<String, Integer> packetCounter;
     private final int totalSenders;
     private int actualSender = 0;
     private KafkaProducer kafkaProducer;
@@ -33,7 +33,7 @@ public class GlobalPacketCounterBolt extends BaseRichBolt {
         String topic = (String) stormConf.get("kafkaProducer.topic");
         this.kafkaProducer = new KafkaProducer(broker, port, topic, false);
         this.mapper = new ObjectMapper();
-        this.packetCounter = new Object2IntOpenHashMap<String>();
+        this.packetCounter = new HashMap<String, Integer>();
         this.srcIp = (String) stormConf.get("filter.srcIp");
     }
 
@@ -56,7 +56,10 @@ public class GlobalPacketCounterBolt extends BaseRichBolt {
         } else {
             String ip = tuple.getString(0);
             int packets = tuple.getInteger(1);
-            packetCounter.addTo(ip, packets);
+            if (packetCounter.containsKey(ip)) {
+                packets += packetCounter.get(ip);
+            }
+            packetCounter.put(ip, packets);
         }
     }
 

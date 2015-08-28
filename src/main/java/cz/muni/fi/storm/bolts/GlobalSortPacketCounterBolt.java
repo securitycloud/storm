@@ -11,14 +11,14 @@ import cz.muni.fi.storm.tools.TupleUtils;
 import cz.muni.fi.storm.tools.ValueComparator;
 import cz.muni.fi.storm.tools.pojo.IpCount;
 import cz.muni.fi.storm.tools.writers.KafkaProducer;
-import it.unimi.dsi.fastutil.objects.Object2IntOpenHashMap;
+import java.util.HashMap;
 import java.util.Map;
 import java.util.TreeMap;
 
 public class GlobalSortPacketCounterBolt extends BaseRichBolt {
 
     private ObjectMapper mapper;
-    private Object2IntOpenHashMap<String> packetCounter;
+    private Map<String, Integer> packetCounter;
     private final int totalSenders;
     private int actualSenders = 0;
     private KafkaProducer kafkaProducer;
@@ -35,7 +35,7 @@ public class GlobalSortPacketCounterBolt extends BaseRichBolt {
         String topic = (String) stormConf.get("kafkaProducer.topic");
         this.kafkaProducer = new KafkaProducer(broker, port, topic, false);
         this.mapper = new ObjectMapper();
-        this.packetCounter = new Object2IntOpenHashMap<String>();
+        this.packetCounter = new HashMap<String, Integer>();
         this.topN = new Integer(stormConf.get("sortPackets.topN").toString());
     }
 
@@ -50,12 +50,12 @@ public class GlobalSortPacketCounterBolt extends BaseRichBolt {
 
                 String output = new String();
                 int rank = 0;
-                for (String ip : sortedPacketCounter.keySet()) {
+                for (Map.Entry<String, Integer> entry : sortedPacketCounter.entrySet()) {
                     rank++;
                     IpCount ipCount = new IpCount();
                     ipCount.setRank(rank);
-                    ipCount.setSrcIpAddr(ip);
-                    ipCount.setPackets(sortedPacketCounter.get(ip));
+                    ipCount.setSrcIpAddr(entry.getKey());
+                    ipCount.setPackets(entry.getValue());
                     try {
                         String ipCountJson = mapper.writeValueAsString(ipCount);
                         output += ipCountJson;
@@ -72,7 +72,10 @@ public class GlobalSortPacketCounterBolt extends BaseRichBolt {
         } else {
             String ip = tuple.getString(0);
             int packets = tuple.getInteger(1);
-            packetCounter.addTo(ip, packets);
+            if (packetCounter.containsKey(ip)) {
+                packets += packetCounter.get(ip);
+            }
+            packetCounter.put(ip, packets);
         }
     }
 

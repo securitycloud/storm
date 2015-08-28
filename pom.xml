@@ -95,13 +95,6 @@
             <version>2.6.0-rc2</version>
         </dependency>
         
-        <!-- FastUtil -->
-        <dependency>
-            <groupId>it.unimi.dsi</groupId>
-            <artifactId>fastutil</artifactId>
-            <version>7.0.7</version>
-        </dependency>
-        
         <dependency>
             <groupId>junit</groupId>
             <artifactId>junit</artifactId>
