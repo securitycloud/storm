@@ -23,7 +23,6 @@ public class GlobalSortPacketCounterBolt extends BaseRichBolt {
     private int actualSenders = 0;
     private KafkaProducer kafkaProducer;
     private int topN;
-    private String srcIp;
 
     public GlobalSortPacketCounterBolt(int totalSenders) {
         this.totalSenders = totalSenders;
@@ -37,7 +36,6 @@ public class GlobalSortPacketCounterBolt extends BaseRichBolt {
         this.kafkaProducer = new KafkaProducer(broker, port, topic, false);
         this.mapper = new ObjectMapper();
         this.packetCounter = new Object2IntOpenHashMap<String>();
-        this.srcIp = (String) stormConf.get("filter.srcIp");
         this.topN = new Integer(stormConf.get("sortPackets.topN").toString());
     }
 
@@ -56,8 +54,8 @@ public class GlobalSortPacketCounterBolt extends BaseRichBolt {
                     rank++;
                     IpCount ipCount = new IpCount();
                     ipCount.setRank(rank);
-                    ipCount.setSrcIpAddr(srcIp);
-                    ipCount.setPackets(sortedPacketCounter.get(srcIp));
+                    ipCount.setSrcIpAddr(ip);
+                    ipCount.setPackets(sortedPacketCounter.get(ip));
                     try {
                         String ipCountJson = mapper.writeValueAsString(ipCount);
                         output += ipCountJson;
