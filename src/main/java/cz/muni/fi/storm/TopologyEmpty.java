@@ -6,32 +6,30 @@ import backtype.storm.topology.IRichBolt;
 import backtype.storm.topology.IRichSpout;
 import backtype.storm.topology.TopologyBuilder;
 import cz.muni.fi.storm.bolts.FlowCounterBolt;
-import cz.muni.fi.storm.bolts.GlobalCountWindowBolt;
 import cz.muni.fi.storm.bolts.GlobalCounterBolt;
 import cz.muni.fi.storm.spouts.KafkaSpout;
-import cz.muni.fi.storm.tools.ServiceCounter;
 import cz.muni.fi.storm.tools.TopologyUtil;
 
 public class TopologyEmpty {
 
     public static void main(String[] args) {
-        if (args.length < 1) {
-            throw new IllegalArgumentException("Missing argument: number_of_computers");
+        if (args.length < 2) {
+            throw new IllegalArgumentException("Missing argument: computers parallelism");
         }
-        int numberOfComputers = Integer.parseInt(args[0]);
+        int computers = Integer.parseInt(args[0]);
+        int parallelism =Integer.parseInt(args[1]);
         
         Config config = new Config();
-        config.setNumWorkers(numberOfComputers);
+        config.setNumWorkers(computers);
         config.putAll(new TopologyUtil().loadProperties());
-        int parallelism = new Integer(config.get("parallelism.number").toString());
         
         IRichSpout kafkaSpout = new KafkaSpout(config);
         IRichBolt flowCounterBolt = new FlowCounterBolt();
-        IRichBolt globalCounterBolt = new GlobalCounterBolt(numberOfComputers * parallelism);
+        IRichBolt globalCounterBolt = new GlobalCounterBolt(computers * parallelism);
         
         TopologyBuilder builder = new TopologyBuilder();
-        builder.setSpout("kafkaSpout", kafkaSpout, numberOfComputers * parallelism);
-        builder.setBolt("flowCounterBolt", flowCounterBolt, numberOfComputers * parallelism)
+        builder.setSpout("kafkaSpout", kafkaSpout, computers * parallelism);
+        builder.setBolt("flowCounterBolt", flowCounterBolt, computers * parallelism)
                 .localOrShuffleGrouping("kafkaSpout");
         builder.setBolt("globalCounterBolt", globalCounterBolt)
                 .globalGrouping("flowCounterBolt");

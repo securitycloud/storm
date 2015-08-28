@@ -19,15 +19,14 @@ COMPUTERS=$2
 
 if [ -z "$3" ] 
 then
-    echo -e $ERR You must specify Number of partitions $OFF
+    echo -e $ERR You must specify Number of parallelism $OFF
     exit 3;
 fi
-PARTITIONS=$3
+PARALLELISM=$3
 
 
-ssh sc6 "~/ekafsender/reset_kafka_topics.sh"
-$CUR_DIR/begin/log-to-service-topic.sh "Topology=$TOPOLOGY, Computers=$COMPUTERS, Partitions=$PARTITIONS"
-$CUR_DIR/begin/run-topology.sh $TOPOLOGY $COMPUTERS
+ssh sc6 "cd ~/ekafsender; ./reset_kafka_topics.sh"
+$CUR_DIR/begin/run-topology.sh $TOPOLOGY $COMPUTERS $PARALLELISM
 sleep 10
 ssh sc6 "cd ~/ekafsender/; ./run.sh"
 $CUR_DIR/end/kill-topology.sh $TOPOLOGY
