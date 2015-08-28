@@ -12,7 +12,7 @@ import storm.kafka.ZkHosts;
 
 public class KafkaSpout extends BaseRichSpout {
     
-    private final storm.kafka.KafkaSpout kafkaSpout;
+    private storm.kafka.KafkaSpout kafkaSpout;
 
     public KafkaSpout(Config config) {
         String zookeeper = (String) config.get("kafkaConsumer.zookeeper");

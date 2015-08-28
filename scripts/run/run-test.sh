@@ -28,6 +28,7 @@ PARTITIONS=$3
 ssh sc6 "~/ekafsender/reset_kafka_topics.sh"
 $CUR_DIR/begin/log-to-service-topic.sh "Topology=$TOPOLOGY, Computers=$COMPUTERS, Partitions=$PARTITIONS"
 $CUR_DIR/begin/run-topology.sh $TOPOLOGY $COMPUTERS
-ssh sc6 "~/ekafsender/run.sh"
+sleep 10
+ssh sc6 "cd ~/ekafsender/; ./run.sh"
 #$CUR_DIR/end/done-test.sh
 #$CUR_DIR/end/kill-topology.sh $TOPOLOGY
