@@ -13,6 +13,7 @@ import cz.muni.fi.storm.tools.TupleUtils;
 import cz.muni.fi.storm.tools.pojo.Flow;
 import java.io.IOException;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.Map;
 
 public class PacketCounterBolt extends BaseRichBolt {
@@ -50,9 +51,11 @@ public class PacketCounterBolt extends BaseRichBolt {
         }
 
         if (serviceCounter.isTimeToClean()) {
-            for (Map.Entry<String, Integer> entry : packetCounter.entrySet()) {
+            Iterator it = packetCounter.entrySet().iterator();
+            while (it.hasNext()) {
+                Map.Entry<String, Integer> entry = (Map.Entry<String, Integer>) it.next();
                 if (entry.getValue() < cleanUpSmallerThen) {
-                    packetCounter.remove(entry.getKey());
+                    it.remove();
                 }
             }
         }
