@@ -51,6 +51,6 @@ public class FilterFlowCounterBolt extends BaseRichBolt {
     @Override
     public void declareOutputFields(OutputFieldsDeclarer declarer) {
         declarer.declare(new Fields("count"));
-        ServiceCounter.declareServiceStream(declarer);
+        //ServiceCounter.declareServiceStream(declarer);
     }
 }

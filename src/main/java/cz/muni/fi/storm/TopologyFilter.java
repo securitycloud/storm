@@ -28,7 +28,7 @@ public class TopologyFilter {
         IRichSpout kafkaSpout = new KafkaSpout(config);
         IRichBolt filterFlowCounterBolt = new FilterFlowCounterBolt();
         IRichBolt globalCounterBolt = new GlobalCounterBolt(numberOfComputers * parallelism);
-        IRichBolt globalCountWindowBolt = new GlobalCountWindowBolt(numberOfComputers * parallelism);
+        //IRichBolt globalCountWindowBolt = new GlobalCountWindowBolt(numberOfComputers * parallelism);
         
         TopologyBuilder builder = new TopologyBuilder();
         builder.setSpout("kafkaSpout", kafkaSpout, numberOfComputers * parallelism);
@@ -36,8 +36,8 @@ public class TopologyFilter {
                 .localOrShuffleGrouping("kafkaSpout");
         builder.setBolt("globalCounterBolt", globalCounterBolt)
                 .globalGrouping("filterFlowCounterBolt");
-        builder.setBolt("globalCountWindowBolt", globalCountWindowBolt)
-                .globalGrouping("filterFlowCounterBolt", ServiceCounter.getStreamIdForService());
+        //builder.setBolt("globalCountWindowBolt", globalCountWindowBolt)
+        //        .globalGrouping("filterFlowCounterBolt", ServiceCounter.getStreamIdForService());
 
         try {
             StormSubmitter.submitTopology("TopologyFilter", config, builder.createTopology());
