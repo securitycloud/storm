@@ -6,10 +6,8 @@ import backtype.storm.topology.IRichBolt;
 import backtype.storm.topology.IRichSpout;
 import backtype.storm.topology.TopologyBuilder;
 import cz.muni.fi.storm.bolts.FilterFlowCounterBolt;
-import cz.muni.fi.storm.bolts.GlobalCountWindowBolt;
 import cz.muni.fi.storm.bolts.GlobalCounterBolt;
 import cz.muni.fi.storm.spouts.KafkaSpout;
-import cz.muni.fi.storm.tools.ServiceCounter;
 import cz.muni.fi.storm.tools.TopologyUtil;
 
 public class TopologyFilter {

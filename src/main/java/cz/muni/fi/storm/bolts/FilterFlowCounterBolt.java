@@ -31,7 +31,7 @@ public class FilterFlowCounterBolt extends BaseRichBolt {
 
     @Override
     public void execute (Tuple tuple) {
-        String flowJson = tuple.getString(0);
+        String flowJson = tuple.getValue(0).toString();
         serviceCounter.count();
 
         try {
@@ -40,7 +40,7 @@ public class FilterFlowCounterBolt extends BaseRichBolt {
                 flowCounter++;
             }
         } catch (IOException e) {
-            throw new RuntimeException("Coult not parse JSON to Flow.");
+            throw new RuntimeException("Coult not parse JSON to Flow: " + flowJson, e);
         }
         
         if (serviceCounter.isEnd()) {
