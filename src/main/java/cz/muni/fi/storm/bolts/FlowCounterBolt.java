@@ -23,6 +23,7 @@ public class FlowCounterBolt extends BaseRichBolt {
 
     @Override
     public void execute(Tuple tuple) {
+        serviceCounter.count();
         if (serviceCounter.isEnd()) {
             collector.emit(new Values(serviceCounter.getCount()));
         }
