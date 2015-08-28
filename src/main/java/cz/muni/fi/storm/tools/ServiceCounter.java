@@ -43,9 +43,9 @@ public class ServiceCounter {
         begin();
         
         totalCount++;
-        if (totalCount % countToEmit == 0) {
-            emit(countToEmit);
-        }
+        //if (totalCount % countToEmit == 0) {
+        //    emit(countToEmit);
+        //}
     }
     
     private void begin() {

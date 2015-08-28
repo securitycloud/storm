@@ -7,6 +7,7 @@ import backtype.storm.topology.IRichSpout;
 import backtype.storm.topology.TopologyBuilder;
 import cz.muni.fi.storm.bolts.FlowCounterBolt;
 import cz.muni.fi.storm.bolts.GlobalCountWindowBolt;
+import cz.muni.fi.storm.bolts.GlobalCounterBolt;
 import cz.muni.fi.storm.spouts.KafkaSpout;
 import cz.muni.fi.storm.tools.ServiceCounter;
 import cz.muni.fi.storm.tools.TopologyUtil;
@@ -26,14 +27,17 @@ public class TopologyEmpty {
         
         IRichSpout kafkaSpout = new KafkaSpout(config);
         IRichBolt flowCounterBolt = new FlowCounterBolt();
-        IRichBolt globalCountWindowBolt = new GlobalCountWindowBolt(numberOfComputers * parallelism);
+        IRichBolt globalCounterBolt = new GlobalCounterBolt(numberOfComputers * parallelism);
+        //IRichBolt globalCountWindowBolt = new GlobalCountWindowBolt(numberOfComputers * parallelism);
         
         TopologyBuilder builder = new TopologyBuilder();
         builder.setSpout("kafkaSpout", kafkaSpout, numberOfComputers * parallelism);
         builder.setBolt("flowCounterBolt", flowCounterBolt, numberOfComputers * parallelism)
                 .localOrShuffleGrouping("kafkaSpout");
-        builder.setBolt("globalCountWindowBolt", globalCountWindowBolt)
-                .globalGrouping("flowCounterBolt", ServiceCounter.getStreamIdForService());
+        builder.setBolt("globalCounterBolt", globalCounterBolt)
+                .globalGrouping("flowCounterBolt");
+        //builder.setBolt("globalCountWindowBolt", globalCountWindowBolt)
+                //.globalGrouping("flowCounterBolt", ServiceCounter.getStreamIdForService());
 
         try {
             StormSubmitter.submitTopology("TopologyEmpty", config, builder.createTopology());

@@ -19,6 +19,7 @@ public class KafkaSpout extends BaseRichSpout {
         String zookeeper = (String) config.get("kafkaConsumer.zookeeper");
         ZkHosts zkHosts = new ZkHosts(zookeeper);
         SpoutConfig kafkaConfig = new SpoutConfig(zkHosts, topic, "", "storm");
+        kafkaConfig.forceFromStart = true;
         this.kafkaSpout = new storm.kafka.KafkaSpout(kafkaConfig);
     }
 
