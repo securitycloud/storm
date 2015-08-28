@@ -31,7 +31,7 @@ public class GlobalPacketCounterBolt extends BaseRichBolt {
         String broker = (String) stormConf.get("kafkaProducer.broker");
         int port = new Integer(stormConf.get("kafkaProducer.port").toString());
         String topic = (String) stormConf.get("kafkaProducer.topic");
-        this.kafkaProducer = new KafkaProducer(broker, port, topic);
+        this.kafkaProducer = new KafkaProducer(broker, port, topic, false);
         this.mapper = new ObjectMapper();
         this.packetCounter = new Object2IntOpenHashMap<String>();
         this.srcIp = (String) stormConf.get("filter.srcIp");

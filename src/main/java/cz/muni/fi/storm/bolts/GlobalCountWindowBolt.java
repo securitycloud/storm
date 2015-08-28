@@ -29,7 +29,7 @@ public class GlobalCountWindowBolt extends BaseRichBolt {
         int port = new Integer(stormConf.get("kafkaProducer.port").toString());
         String topic = (String) stormConf.get("kafkaProducer.serviceTopic");
         
-        this.kafkaProducer = new KafkaProducer(broker, port, topic);
+        this.kafkaProducer = new KafkaProducer(broker, port, topic, true);
         this.currentTime = new HashMap<Integer, Long>();
         long messagesPerPartition = new Long(stormConf.get("countWindow.messagesPerPartition").toString());
         long messagesPerWindow = new Long(stormConf.get("countWindow.messagesPerWindow").toString());

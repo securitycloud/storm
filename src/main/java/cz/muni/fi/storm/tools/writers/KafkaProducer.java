@@ -7,16 +7,18 @@ import kafka.producer.ProducerConfig;
 
 public class KafkaProducer implements Writer {
 
-    private Producer<String, String> producer;
-    private String topic;
+    private final Producer<String, String> producer;
+    private final String topic;
 
-    public KafkaProducer(String broker, int port, String topic) {
+    public KafkaProducer(String broker, int port, String topic, boolean isAsync) {
         Properties props = new Properties();
         props.put("metadata.broker.list", broker + ":" + port);
         props.put("broker.id", "0");
         props.put("serializer.class", "kafka.serializer.StringEncoder");
         props.put("request.required.acks", "0");
-        props.put("producer.type", "async");
+        if (isAsync) {
+            props.put("producer.type", "async");
+        }
         props.put("batch.size", 5000);
         ProducerConfig config = new ProducerConfig(props);
         this.producer = new Producer<String, String>(config);

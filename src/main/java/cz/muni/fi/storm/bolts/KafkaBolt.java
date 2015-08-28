@@ -21,7 +21,7 @@ public class KafkaBolt extends BaseRichBolt {
         String topic = (String) stormConf.get("kafkaProducer.topic");
         int totalTasks = context.getComponentTasks(context.getThisComponentId()).size();
         
-        this.kafkaProducer = new KafkaProducer(broker, port, topic);
+        this.kafkaProducer = new KafkaProducer(broker, port, topic, true);
         this.counter = new ServiceCounter(collector, stormConf);
     }
 
