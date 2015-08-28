@@ -7,21 +7,20 @@ import backtype.storm.topology.OutputFieldsDeclarer;
 import backtype.storm.topology.base.BaseRichSpout;
 import backtype.storm.tuple.Fields;
 import java.util.Map;
-import storm.kafka.KafkaSpout;
 import storm.kafka.SpoutConfig;
 import storm.kafka.ZkHosts;
 
-public class KafkaSpout2 extends BaseRichSpout {
+public class KafkaSpout extends BaseRichSpout {
     
-    private KafkaSpout kafkaSpout;
+    private final storm.kafka.KafkaSpout kafkaSpout;
 
-    public KafkaSpout2(Config config) {
+    public KafkaSpout(Config config) {
         String zookeeper = (String) config.get("kafkaConsumer.zookeeper");
         String broker = (String) config.get("kafkaConsumer.broker");
         ZkHosts zkHosts = new ZkHosts(broker);
         SpoutConfig kafkaConfig = new SpoutConfig(zkHosts, zookeeper, "", "storm");
         kafkaConfig.forceFromStart = true;
-        this.kafkaSpout = new KafkaSpout(kafkaConfig);
+        this.kafkaSpout = new storm.kafka.KafkaSpout(kafkaConfig);
     }
 
     @Override

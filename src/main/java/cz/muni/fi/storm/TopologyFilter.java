@@ -8,7 +8,7 @@ import backtype.storm.topology.TopologyBuilder;
 import cz.muni.fi.storm.bolts.FilterFlowCounterBolt;
 import cz.muni.fi.storm.bolts.GlobalCountWindowBolt;
 import cz.muni.fi.storm.bolts.GlobalCounterBolt;
-import cz.muni.fi.storm.spouts.KafkaSpout2;
+import cz.muni.fi.storm.spouts.KafkaSpout;
 import cz.muni.fi.storm.tools.ServiceCounter;
 import cz.muni.fi.storm.tools.TopologyUtil;
 
@@ -25,7 +25,7 @@ public class TopologyFilter {
         config.putAll(new TopologyUtil().loadProperties());
         int parallelism = new Integer(config.get("parallelism.number").toString());
         
-        IRichSpout kafkaSpout = new KafkaSpout2(config);
+        IRichSpout kafkaSpout = new KafkaSpout(config);
         IRichBolt filterFlowCounterBolt = new FilterFlowCounterBolt();
         IRichBolt globalCounterBolt = new GlobalCounterBolt(numberOfComputers * parallelism);
         IRichBolt globalCountWindowBolt = new GlobalCountWindowBolt(numberOfComputers * parallelism);
