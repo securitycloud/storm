@@ -55,6 +55,7 @@ public class GlobalSortPacketCounterBolt extends BaseRichBolt {
                 for (String ip : sortedPacketCounter.keySet()) {
                     rank++;
                     IpCount ipCount = new IpCount();
+                    ipCount.setRank(rank);
                     ipCount.setSrcIpAddr(srcIp);
                     ipCount.setPackets(sortedPacketCounter.get(srcIp));
                     try {
