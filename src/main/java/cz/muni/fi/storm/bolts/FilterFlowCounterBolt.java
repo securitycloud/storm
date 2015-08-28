@@ -31,20 +31,24 @@ public class FilterFlowCounterBolt extends BaseRichBolt {
 
     @Override
     public void execute (Tuple tuple) {
-        String flowJson = tuple.getString(0);
-        serviceCounter.count();
-
         try {
-            Flow flow = mapper.readValue(flowJson, Flow.class);
-            if (srcIp.equals(flow.getSrc_ip_addr())) {
-                flowCounter++;
+            String flowJson = tuple.getString(0);
+            serviceCounter.count();
+
+            try {
+                Flow flow = mapper.readValue(flowJson, Flow.class);
+                if (srcIp.equals(flow.getSrc_ip_addr())) {
+                    flowCounter++;
+                }
+            } catch (IOException e) {
+                //throw new RuntimeException("Coult not parse JSON to Flow <" + flowJson + ">", e);
             }
-        } catch (IOException e) {
-            //throw new RuntimeException("Coult not parse JSON to Flow <" + flowJson + ">", e);
-        }
-        
-        if (serviceCounter.isEnd()) {
-            collector.emit(new Values(flowCounter));
+
+            if (serviceCounter.isEnd()) {
+                collector.emit(new Values(flowCounter));
+            }
+        } catch (Exception e) {
+            //
         }
     } 
    
