@@ -51,7 +51,9 @@ public class GlobalSortPacketCounterBolt extends BaseRichBolt {
                 sortedPacketCounter.putAll(packetCounter);
 
                 String output = new String();
+                int rank = 0;
                 for (String ip : sortedPacketCounter.keySet()) {
+                    rank++;
                     IpCount ipCount = new IpCount();
                     ipCount.setSrcIpAddr(srcIp);
                     ipCount.setPackets(sortedPacketCounter.get(srcIp));
@@ -60,6 +62,9 @@ public class GlobalSortPacketCounterBolt extends BaseRichBolt {
                         output += ipCountJson;
                     } catch (JsonProcessingException e) {
                         throw new RuntimeException("Can not create JSON from IpCount", e);
+                    }
+                    if (rank == topN) {
+                        break;
                     }
                 }
                 kafkaProducer.send(output);
