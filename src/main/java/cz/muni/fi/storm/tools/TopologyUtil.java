@@ -1,9 +1,15 @@
 package cz.muni.fi.storm.tools;
 
+import backtype.storm.Config;
+import backtype.storm.spout.SchemeAsMultiScheme;
+import backtype.storm.tuple.Fields;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.Map;
 import java.util.Properties;
+import storm.kafka.SpoutConfig;
+import storm.kafka.StringScheme;
+import storm.kafka.ZkHosts;
 
 public class TopologyUtil {
     
@@ -41,5 +47,20 @@ public class TopologyUtil {
         } catch (IOException e) {
             throw new RuntimeException("Properties file is corrupted", e);
         }
+    }
+    
+    public static SpoutConfig getKafkaSpoutConfig(Config config) {
+        String zookeeper = (String) config.get("kafkaConsumer.zookeeper");
+        String broker = (String) config.get("kafkaConsumer.broker");
+        ZkHosts zkHosts = new ZkHosts(broker);
+        SpoutConfig kafkaConfig = new SpoutConfig(zkHosts, zookeeper, "", "storm");
+        kafkaConfig.scheme = new SchemeAsMultiScheme(new StringScheme() {
+            @Override
+            public Fields getOutputFields() {
+                return new Fields("flow");
+            }
+        });
+        kafkaConfig.forceFromStart = true;
+        return kafkaConfig;
     }
 }
