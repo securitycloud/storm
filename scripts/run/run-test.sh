@@ -30,5 +30,4 @@ $CUR_DIR/begin/log-to-service-topic.sh "Topology=$TOPOLOGY, Computers=$COMPUTERS
 $CUR_DIR/begin/run-topology.sh $TOPOLOGY $COMPUTERS
 sleep 10
 ssh sc6 "cd ~/ekafsender/; ./run.sh"
-#$CUR_DIR/end/done-test.sh
-#$CUR_DIR/end/kill-topology.sh $TOPOLOGY
+$CUR_DIR/end/kill-topology.sh $TOPOLOGY

@@ -12,14 +12,13 @@ import storm.kafka.ZkHosts;
 
 public class KafkaSpout extends BaseRichSpout {
     
-    private storm.kafka.KafkaSpout kafkaSpout;
+    private final storm.kafka.KafkaSpout kafkaSpout;
 
     public KafkaSpout(Config config) {
+        String topic = (String) config.get("kafkaConsumer.topic");
         String zookeeper = (String) config.get("kafkaConsumer.zookeeper");
-        String broker = (String) config.get("kafkaConsumer.broker");
-        ZkHosts zkHosts = new ZkHosts(broker);
-        SpoutConfig kafkaConfig = new SpoutConfig(zkHosts, zookeeper, "", "storm");
-        kafkaConfig.forceFromStart = true;
+        ZkHosts zkHosts = new ZkHosts(zookeeper);
+        SpoutConfig kafkaConfig = new SpoutConfig(zkHosts, topic, "", "storm");
         this.kafkaSpout = new storm.kafka.KafkaSpout(kafkaConfig);
     }
 
