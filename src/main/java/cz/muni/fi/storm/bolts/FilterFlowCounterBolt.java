@@ -31,7 +31,7 @@ public class FilterFlowCounterBolt extends BaseRichBolt {
 
     @Override
     public void execute (Tuple tuple) {
-        String flowJson = tuple.getValue(0).toString();
+        String flowJson = tuple.toString();
         serviceCounter.count();
 
         try {
