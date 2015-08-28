@@ -23,7 +23,7 @@ public class FilterFlowCounterBolt extends BaseRichBolt {
 
     @Override
     public void prepare(Map stormConf, TopologyContext context, OutputCollector collector) {
-        this.serviceCounter = new ServiceCounter(collector, stormConf);
+        this.serviceCounter = new ServiceCounter(stormConf);
         this.srcIp = (String) stormConf.get("filter.srcIp");
         this.mapper = new ObjectMapper();
         this.collector = collector;
@@ -40,7 +40,7 @@ public class FilterFlowCounterBolt extends BaseRichBolt {
                 flowCounter++;
             }
         } catch (IOException e) {
-            throw new RuntimeException("Coult not parse JSON to Flow: " + flowJson, e);
+            throw new RuntimeException("Coult not parse JSON to Flow <" + flowJson + ">", e);
         }
         
         if (serviceCounter.isEnd()) {
