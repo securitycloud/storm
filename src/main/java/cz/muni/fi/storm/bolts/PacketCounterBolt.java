@@ -28,7 +28,7 @@ public class PacketCounterBolt extends BaseRichBolt {
         this.collector = collector;
         this.mapper = new ObjectMapper();
         this.packetCounter = new Object2IntOpenHashMap<String>();
-        this.serviceCounter = new ServiceCounter(collector, stormConf);
+        this.serviceCounter = new ServiceCounter(stormConf);
         this.cleanUpSmallerThen = new Integer(stormConf.get("bigDataMap.cleanUpSmallerThen").toString());
     }
 
@@ -65,6 +65,5 @@ public class PacketCounterBolt extends BaseRichBolt {
     public void declareOutputFields(OutputFieldsDeclarer declarer) {
         declarer.declare(new Fields("ip", "packets"));
         TupleUtils.declareEndOfWindow(declarer);
-        ServiceCounter.declareServiceStream(declarer);
     }
 }
