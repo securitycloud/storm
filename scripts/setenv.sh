@@ -29,8 +29,8 @@ KAFKA_INSTALL=/home/securitycloud/kafka/kafka_2.9.2-0.8.2.1
 FLOWS_FILE=/home/securitycloud/out_small
 WRK=/home/securitycloud/stormisti/workdir
 
-INPUT_TOPIC=testDan
-OUTPUT_TOPIC=storm-test
+INPUT_TOPIC=tst
+OUTPUT_TOPIC=out
 SERVICE_TOPIC=storm-service
 
 ERR="\033[1;31m"

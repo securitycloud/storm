@@ -25,8 +25,9 @@ fi
 PARTITIONS=$3
 
 
-$CUR_DIR/begin/recreate-topic.sh $OUTPUT_TOPIC 1 $KAFKA_CONSUMER
+ssh sc6 "~/ekafsender/reset_kafka_topics.sh"
 $CUR_DIR/begin/log-to-service-topic.sh "Topology=$TOPOLOGY, Computers=$COMPUTERS, Partitions=$PARTITIONS"
 $CUR_DIR/begin/run-topology.sh $TOPOLOGY $COMPUTERS
-$CUR_DIR/end/done-test.sh
-$CUR_DIR/end/kill-topology.sh $TOPOLOGY
+ssh sc6 "~/ekafsender/run.sh"
+#$CUR_DIR/end/done-test.sh
+#$CUR_DIR/end/kill-topology.sh $TOPOLOGY
