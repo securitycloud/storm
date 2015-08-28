@@ -41,7 +41,7 @@ public class FilterPacketCounterBolt extends BaseRichBolt {
                 packetCounter += flow.getPackets();
             }
         } catch (IOException e) {
-            throw new RuntimeException("Coult not parse JSON to Flow.");
+            throw new RuntimeException("Coult not parse JSON to Flow <" + flowJson + ">", e);
         }
         
         if (serviceCounter.isEnd()) {
@@ -52,6 +52,5 @@ public class FilterPacketCounterBolt extends BaseRichBolt {
     @Override
     public void declareOutputFields(OutputFieldsDeclarer declarer) {
         declarer.declare(new Fields("count"));
-        //ServiceCounter.declareServiceStream(declarer);
     }
 }
