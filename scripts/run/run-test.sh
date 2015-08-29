@@ -25,7 +25,11 @@ fi
 PARALLELISM=$3
 
 
-ssh sc6 "cd ~/ekafsender; ./reset_kafka_topics.sh"
+white ssh sc6 "cd ~/ekafsender; ./reset_kafka_topics.sh"
+do
+    sleep 1
+    echo -e $LOG Repeating recreate topics $OFF
+done
 $CUR_DIR/begin/run-topology.sh $TOPOLOGY $COMPUTERS $PARALLELISM
 sleep 10
 ssh sc6 "cd ~/ekafsender/; ./run.sh"
