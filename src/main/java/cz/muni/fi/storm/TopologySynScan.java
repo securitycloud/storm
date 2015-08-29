@@ -5,12 +5,9 @@ import backtype.storm.StormSubmitter;
 import backtype.storm.topology.IRichBolt;
 import backtype.storm.topology.IRichSpout;
 import backtype.storm.topology.TopologyBuilder;
-import backtype.storm.tuple.Fields;
-import cz.muni.fi.storm.bolts.GlobalCountWindowBolt;
-import cz.muni.fi.storm.bolts.MoreFlowsKafkaBolt;
-import cz.muni.fi.storm.bolts.SrcFlowCounterBolt;
+import cz.muni.fi.storm.bolts.AggSynFlowCounterBolt;
+import cz.muni.fi.storm.bolts.GlobalAggSortCounterBolt;
 import cz.muni.fi.storm.spouts.KafkaSpout;
-import cz.muni.fi.storm.tools.ServiceCounter;
 import cz.muni.fi.storm.tools.TopologyUtil;
 import cz.muni.fi.storm.tools.TupleUtils;
 
@@ -28,20 +25,16 @@ public class TopologySynScan{
         config.putAll(new TopologyUtil().loadProperties());
 
         IRichSpout kafkaSpout = new KafkaSpout(config);
-        IRichBolt srcFlowCounterBolt = new SrcFlowCounterBolt("....S.");
-        IRichBolt moreFlowsKafkaBolt = new MoreFlowsKafkaBolt(numberOfComputers);
-        IRichBolt globalCountWindowBolt = new GlobalCountWindowBolt();
+        IRichBolt aggSynFlowCounterBolt = new AggSynFlowCounterBolt();
+        IRichBolt globalAggSortCounterBolt = new GlobalAggSortCounterBolt(computers * parallelism);
         
         TopologyBuilder builder = new TopologyBuilder();
         builder.setSpout("kafkaSpout", kafkaSpout, computers * parallelism);
-        builder.setBolt("srcFlowCounterBolt", srcFlowCounterBolt, numberOfComputers)
-                .localOrShuffleGrouping("kafkaSpout")
-                .localOrShuffleGrouping("kafkaSpout", TupleUtils.getStreamIdForEndOfWindow());
-        builder.setBolt("moreFlowsKafkaBolt", moreFlowsKafkaBolt, numberOfComputers)
-                .fieldsGrouping("srcFlowCounterBolt", new Fields("ip"))
-                .allGrouping("srcFlowCounterBolt", TupleUtils.getStreamIdForEndOfWindow());
-        builder.setBolt("globalCountWindowBolt", globalCountWindowBolt)
-                .globalGrouping("srcFlowCounterBolt", ServiceCounter.getStreamIdForService());
+        builder.setBolt("aggSynFlowCounterBolt", aggSynFlowCounterBolt, computers * parallelism)
+                .localOrShuffleGrouping("kafkaSpout");
+        builder.setBolt("globalAggSortCounterBolt", globalAggSortCounterBolt)
+                .globalGrouping("aggSynFlowCounterBolt")
+                .globalGrouping("aggSynFlowCounterBolt", TupleUtils.getStreamIdForEndOfWindow());
 
         try {
             StormSubmitter.submitTopology("TopologySynScan", config, builder.createTopology());
