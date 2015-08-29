@@ -8,6 +8,7 @@ import backtype.storm.tuple.Fields;
 import backtype.storm.tuple.Tuple;
 import backtype.storm.tuple.Values;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import cz.muni.fi.storm.tools.BigDataUtil;
 import cz.muni.fi.storm.tools.ServiceCounter;
 import cz.muni.fi.storm.tools.TupleUtils;
 import cz.muni.fi.storm.tools.pojo.Flow;
@@ -54,13 +55,7 @@ public class AggSynFlowCounterBolt extends BaseRichBolt {
         }
         
         if (serviceCounter.isTimeToClean()) {
-            Iterator it = flowCounter.entrySet().iterator();
-            while (it.hasNext()) {
-                Map.Entry<String, Integer> entry = (Map.Entry<String, Integer>) it.next();
-                if (entry.getValue() < cleanUpSmallerThen) {
-                    it.remove();
-                }
-            }
+            BigDataUtil.cleanUpMap(flowCounter, cleanUpSmallerThen);
         }
         
         if (serviceCounter.isEnd()) {
