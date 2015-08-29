@@ -35,7 +35,7 @@ public class TopologyFilter2 {
                 .globalGrouping("filterFlowCounterBolt");
 
         try {
-            StormSubmitter.submitTopology("TopologyFilter", config, builder.createTopology());
+            StormSubmitter.submitTopology("TopologyFilter2", config, builder.createTopology());
         } catch (Exception e) {
             e.printStackTrace();
             throw new IllegalStateException("Couldn't initialize the topology", e);

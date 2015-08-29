@@ -24,10 +24,15 @@ NUM_TESTS=$((NUM_TESTS * ${#PARALLELISM[@]}))
 NUM_TESTS=$((NUM_TESTS * ${REPEAT}))
 ACT_TEST=1
 
-$CUR_DIR/clean/clean-cluster.sh
-$CUR_DIR/install/install-cluster.sh
-$CUR_DIR/start/start-cluster.sh
-sleep 10
+if [ -z "$1" ] 
+then
+    $CUR_DIR/clean/clean-cluster.sh
+    $CUR_DIR/install/install-cluster.sh
+    $CUR_DIR/start/start-cluster.sh
+    sleep 10
+else
+    $CUR_DIR/install/install-project.sh
+fi
 
 for PC in "${COMPUTERS[@]}"
 do
