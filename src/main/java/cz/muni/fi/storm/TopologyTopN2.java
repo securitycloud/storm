@@ -36,7 +36,7 @@ public class TopologyTopN2 {
         builder.setBolt("packetSenderBolt", packetSenderBolt, computers * parallelism)
                 .localOrShuffleGrouping("kafkaSpout");
         builder.setBolt("aggSortPacketCounterBolt", aggSortPacketCounterBolt, computers * parallelism)
-                .fieldsGrouping("packetSenderBolt", new Fields("ip", "packets"))
+                .fieldsGrouping("packetSenderBolt", new Fields("ip"))
                 .allGrouping("packetSenderBolt", TupleUtils.getStreamIdForEndOfWindow());
         builder.setBolt("globalAggSortCounterBolt", globalAggSortCounterBolt)
                 .globalGrouping("aggSortPacketCounterBolt")
