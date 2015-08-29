@@ -7,13 +7,12 @@ import backtype.storm.topology.base.BaseRichBolt;
 import backtype.storm.tuple.Tuple;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import cz.muni.fi.storm.tools.BigDataUtil;
 import cz.muni.fi.storm.tools.TupleUtils;
-import cz.muni.fi.storm.tools.ValueComparator;
 import cz.muni.fi.storm.tools.pojo.IpCount;
 import cz.muni.fi.storm.tools.writers.KafkaProducer;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.TreeMap;
 
 public class GlobalAggSortCounterBolt extends BaseRichBolt {
 
@@ -44,13 +43,9 @@ public class GlobalAggSortCounterBolt extends BaseRichBolt {
         if (TupleUtils.isEndOfWindow(tuple)) {
             actualSenders++ ;
             if (actualSenders == totalSenders) {
-                ValueComparator valueComparator =  new ValueComparator(counter);
-                TreeMap<String, Integer> sortedPacketCounter = new TreeMap<String, Integer>(valueComparator);
-                sortedPacketCounter.putAll(counter);
-
                 String output = new String();
                 int rank = 0;
-                for (Map.Entry<String, Integer> entry : sortedPacketCounter.entrySet()) {
+                for (Map.Entry<String, Integer> entry : BigDataUtil.sortMap(counter).entrySet()) {
                     rank++;
                     IpCount ipCount = new IpCount();
                     ipCount.setRank(rank);
