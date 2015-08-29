@@ -24,7 +24,7 @@ NUM_TESTS=$((NUM_TESTS * ${#PARALLELISM[@]}))
 NUM_TESTS=$((NUM_TESTS * ${REPEAT}))
 ACT_TEST=1
 
-if [ -z "$1" ] 
+if [ -z "$0" ] 
 then
     $CUR_DIR/clean/clean-cluster.sh
     $CUR_DIR/install/install-cluster.sh
