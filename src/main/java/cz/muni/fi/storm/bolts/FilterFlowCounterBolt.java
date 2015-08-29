@@ -23,7 +23,7 @@ public class FilterFlowCounterBolt extends BaseRichBolt {
 
     @Override
     public void prepare(Map stormConf, TopologyContext context, OutputCollector collector) {
-        this.serviceCounter = new ServiceCounter(stormConf);
+        this.serviceCounter = new ServiceCounter(stormConf, context);
         this.srcIp = (String) stormConf.get("filter.srcIp");
         this.mapper = new ObjectMapper();
         this.collector = collector;

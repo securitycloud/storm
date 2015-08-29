@@ -25,7 +25,7 @@ public class FilterPacketCounterBolt extends BaseRichBolt {
     public void prepare(Map stormConf, TopologyContext context, OutputCollector collector) {
         this.collector = collector;
         this.mapper = new ObjectMapper();
-        this.serviceCounter = new ServiceCounter(stormConf);
+        this.serviceCounter = new ServiceCounter(stormConf, context);
         this.srcIp = (String) stormConf.get("filter.srcIp");
     }
 

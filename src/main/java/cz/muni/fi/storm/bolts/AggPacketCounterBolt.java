@@ -29,7 +29,7 @@ public class AggPacketCounterBolt extends BaseRichBolt {
         this.collector = collector;
         this.mapper = new ObjectMapper();
         this.packetCounter = new HashMap<String, Integer>();
-        this.serviceCounter = new ServiceCounter(stormConf);
+        this.serviceCounter = new ServiceCounter(stormConf, context);
         this.cleanUpSmallerThen = new Integer(stormConf.get("bigDataMap.cleanUpSmallerThen").toString());
     }
 

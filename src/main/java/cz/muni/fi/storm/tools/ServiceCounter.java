@@ -2,6 +2,7 @@ package cz.muni.fi.storm.tools;
 
 import backtype.storm.spout.SpoutOutputCollector;
 import backtype.storm.task.OutputCollector;
+import backtype.storm.task.TopologyContext;
 import backtype.storm.topology.OutputFieldsDeclarer;
 import backtype.storm.tuple.Fields;
 import backtype.storm.tuple.Values;
@@ -12,29 +13,30 @@ public class ServiceCounter {
     private static final String streamIdForService = "service";
     private OutputCollector boltCollector = null;
     private SpoutOutputCollector spoutCollector = null;
-    private int messagesPerWindow;
+    private int messagesPerTopic;
     private int messagesPerPartition;
     private int cleanUpEveryFlows;
     private boolean isFirstPassed = false;
     private int totalCount = 0;
     
-    public ServiceCounter(Map conf) {
-        setup(conf);
+    public ServiceCounter(Map conf, TopologyContext context) {
+        setup(conf, context);
     }
     
-    public ServiceCounter(OutputCollector boltCollector, Map conf) {
+    public ServiceCounter(OutputCollector boltCollector, Map conf, TopologyContext context) {
         this.boltCollector = boltCollector;
-        setup(conf);
+        setup(conf, context);
     }
     
-    public ServiceCounter(SpoutOutputCollector spoutCollector, Map conf) {
+    public ServiceCounter(SpoutOutputCollector spoutCollector, Map conf, TopologyContext context) {
         this.spoutCollector = spoutCollector;
-        setup(conf);
+        setup(conf, context);
     }
     
-    private void setup(Map conf) {
-        this.messagesPerPartition = new Integer(conf.get("countWindow.messagesPerPartition").toString());
-        this.messagesPerWindow = new Integer(conf.get("countWindow.messagesPerWindow").toString());
+    private void setup(Map conf, TopologyContext context) {
+        this.messagesPerTopic = new Integer(conf.get("serviceCounter.messagesPerTopic").toString());
+        int totalTasks = context.getComponentTasks(context.getThisComponentId()).size();
+        this.messagesPerPartition = messagesPerTopic / totalTasks;
         this.cleanUpEveryFlows = new Integer(conf.get("bigDataMap.cleanUpEveryFlows").toString());
     }
     
@@ -42,9 +44,9 @@ public class ServiceCounter {
         begin();
         
         totalCount++;
-        if (totalCount % messagesPerWindow == 0) {
-            emit(messagesPerWindow);
-        }
+        //if (totalCount % messagesPerWindow == 0) {
+        //    emit(messagesPerWindow);
+        //}
     }
     
     public int getCount() {

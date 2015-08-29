@@ -8,7 +8,7 @@ TOPOLOGIES[2]=TopologyFilter
 TOPOLOGIES[3]=TopologyCounter
 TOPOLOGIES[4]=TopologyAggregation
 TOPOLOGIES[5]=TopologyTopN
-TOPOLOGIES[6]=TopologyKafkaTcpSynKafka
+TOPOLOGIES[6]=TopologySynScan
 
 COMPUTERS[1]=3
 COMPUTERS[2]=4
@@ -44,8 +44,3 @@ do
         done
     done
 done
-
-echo -e $LOG Downloading and parsing results $OFF
-OUT=out.`date +%s`
-$CUR_DIR/run/end/result-download.sh > $OUT.orig
-$CUR_DIR/run/end/result-parse.sh $OUT.orig > $OUT.parsed

@@ -18,7 +18,7 @@ public class FlowCounterBolt extends BaseRichBolt {
     @Override
     public void prepare(Map stormConf, TopologyContext context, OutputCollector collector) {
         this.collector = collector;
-        this.serviceCounter = new ServiceCounter(stormConf);
+        this.serviceCounter = new ServiceCounter(stormConf, context);
     }
 
     @Override
