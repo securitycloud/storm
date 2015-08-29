@@ -5,7 +5,7 @@ import backtype.storm.StormSubmitter;
 import backtype.storm.topology.IRichBolt;
 import backtype.storm.topology.IRichSpout;
 import backtype.storm.topology.TopologyBuilder;
-import cz.muni.fi.storm.bolts.GlobalSortPacketCounterBolt;
+import cz.muni.fi.storm.bolts.GlobalAggSortCounterBolt;
 import cz.muni.fi.storm.bolts.AggPacketCounterBolt;
 import cz.muni.fi.storm.spouts.KafkaSpout;
 import cz.muni.fi.storm.tools.TopologyUtil;
@@ -26,7 +26,7 @@ public class TopologyTopN {
 
         IRichSpout kafkaSpout = new KafkaSpout(config);
         IRichBolt aggPacketCounterBolt = new AggPacketCounterBolt();
-        IRichBolt globalSortPacketCounterBolt = new GlobalSortPacketCounterBolt(computers * parallelism);
+        IRichBolt globalSortPacketCounterBolt = new GlobalAggSortCounterBolt(computers * parallelism);
         
         TopologyBuilder builder = new TopologyBuilder();
         builder.setSpout("kafkaSpout", kafkaSpout, computers * parallelism);

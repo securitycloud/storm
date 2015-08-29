@@ -5,7 +5,7 @@ import backtype.storm.StormSubmitter;
 import backtype.storm.topology.IRichBolt;
 import backtype.storm.topology.IRichSpout;
 import backtype.storm.topology.TopologyBuilder;
-import cz.muni.fi.storm.bolts.GlobalPacketCounterBolt;
+import cz.muni.fi.storm.bolts.GlobalAggCounterBolt;
 import cz.muni.fi.storm.bolts.AggPacketCounterBolt;
 import cz.muni.fi.storm.spouts.KafkaSpout;
 import cz.muni.fi.storm.tools.TopologyUtil;
@@ -26,13 +26,13 @@ public class TopologyAggregation {
         
         IRichSpout kafkaSpout = new KafkaSpout(config);
         IRichBolt aggPacketCounterBolt = new AggPacketCounterBolt();
-        IRichBolt globalPacketCounterBolt = new GlobalPacketCounterBolt(computers * parallelism);
+        IRichBolt globalAggPacketCounterBolt = new GlobalAggCounterBolt(computers * parallelism);
         
         TopologyBuilder builder = new TopologyBuilder();
         builder.setSpout("kafkaSpout", kafkaSpout, computers * parallelism);
         builder.setBolt("aggPacketCounterBolt", aggPacketCounterBolt, computers * parallelism)
                 .localOrShuffleGrouping("kafkaSpout");
-        builder.setBolt("globalPacketCounterBolt", globalPacketCounterBolt)
+        builder.setBolt("globalAggPacketCounterBolt", globalAggPacketCounterBolt)
                 .globalGrouping("aggPacketCounterBolt")
                 .globalGrouping("aggPacketCounterBolt", TupleUtils.getStreamIdForEndOfWindow());
 

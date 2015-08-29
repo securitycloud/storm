@@ -11,15 +11,9 @@ import scala.Serializable;
 public class IpCount implements Serializable {
     
     private Integer rank;
-    
     @JsonProperty("src_ip_addr")
     private String srcIp;
-    
-    @JsonProperty("sum(packets)")
-    private Integer packets;
-    
-    @JsonProperty("count(flows)")
-    private Integer flows;
+    private Integer count;
     
     public Integer getRank() {
         return rank;
@@ -37,21 +31,10 @@ public class IpCount implements Serializable {
         this.srcIp = srcIp;
     }
 
-    @JsonProperty("sum(packets)")
-    public Integer getPackets() {
-        return packets;
+    public Integer getCount() {
+        return count;
     }
-    @JsonProperty("sum(packets)")
-    public void setPackets(Integer packets) {
-        this.packets = packets;
-    }
-    
-    @JsonProperty("count(flows)")
-    public Integer getFlows() {
-        return flows;
-    }
-    @JsonProperty("count(flows)")
-    public void setFlows(Integer flows) {
-        this.flows = flows;
+    public void setCount(Integer count) {
+        this.count = count;
     }
 }

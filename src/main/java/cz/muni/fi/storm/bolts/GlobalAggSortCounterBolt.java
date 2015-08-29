@@ -15,16 +15,16 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.TreeMap;
 
-public class GlobalSortPacketCounterBolt extends BaseRichBolt {
+public class GlobalAggSortCounterBolt extends BaseRichBolt {
 
     private ObjectMapper mapper;
-    private Map<String, Integer> packetCounter;
+    private Map<String, Integer> counter;
     private final int totalSenders;
     private int actualSenders = 0;
     private KafkaProducer kafkaProducer;
     private int topN;
 
-    public GlobalSortPacketCounterBolt(int totalSenders) {
+    public GlobalAggSortCounterBolt(int totalSenders) {
         this.totalSenders = totalSenders;
     }
 
@@ -35,7 +35,7 @@ public class GlobalSortPacketCounterBolt extends BaseRichBolt {
         String topic = (String) stormConf.get("kafkaProducer.topic");
         this.kafkaProducer = new KafkaProducer(broker, port, topic, false);
         this.mapper = new ObjectMapper();
-        this.packetCounter = new HashMap<String, Integer>();
+        this.counter = new HashMap<String, Integer>();
         this.topN = new Integer(stormConf.get("sortPackets.topN").toString());
     }
 
@@ -44,9 +44,9 @@ public class GlobalSortPacketCounterBolt extends BaseRichBolt {
         if (TupleUtils.isEndOfWindow(tuple)) {
             actualSenders++ ;
             if (actualSenders == totalSenders) {
-                ValueComparator valueComparator =  new ValueComparator(packetCounter);
+                ValueComparator valueComparator =  new ValueComparator(counter);
                 TreeMap<String, Integer> sortedPacketCounter = new TreeMap<String, Integer>(valueComparator);
-                sortedPacketCounter.putAll(packetCounter);
+                sortedPacketCounter.putAll(counter);
 
                 String output = new String();
                 int rank = 0;
@@ -55,7 +55,7 @@ public class GlobalSortPacketCounterBolt extends BaseRichBolt {
                     IpCount ipCount = new IpCount();
                     ipCount.setRank(rank);
                     ipCount.setSrcIpAddr(entry.getKey());
-                    ipCount.setPackets(entry.getValue());
+                    ipCount.setCount(entry.getValue());
                     try {
                         String ipCountJson = mapper.writeValueAsString(ipCount);
                         output += ipCountJson;
@@ -72,10 +72,10 @@ public class GlobalSortPacketCounterBolt extends BaseRichBolt {
         } else {
             String ip = tuple.getString(0);
             int packets = tuple.getInteger(1);
-            if (packetCounter.containsKey(ip)) {
-                packets += packetCounter.get(ip);
+            if (counter.containsKey(ip)) {
+                packets += counter.get(ip);
             }
-            packetCounter.put(ip, packets);
+            counter.put(ip, packets);
         }
     }
 

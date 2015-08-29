@@ -13,16 +13,16 @@ import cz.muni.fi.storm.tools.writers.KafkaProducer;
 import java.util.HashMap;
 import java.util.Map;
 
-public class GlobalPacketCounterBolt extends BaseRichBolt {
+public class GlobalAggCounterBolt extends BaseRichBolt {
 
     private ObjectMapper mapper;
-    private Map<String, Integer> packetCounter;
+    private Map<String, Integer> counter;
     private final int totalSenders;
     private int actualSender = 0;
     private KafkaProducer kafkaProducer;
     private String srcIp;
 
-    public GlobalPacketCounterBolt(int totalSenders) {
+    public GlobalAggCounterBolt(int totalSenders) {
         this.totalSenders = totalSenders;
     }
 
@@ -33,7 +33,7 @@ public class GlobalPacketCounterBolt extends BaseRichBolt {
         String topic = (String) stormConf.get("kafkaProducer.topic");
         this.kafkaProducer = new KafkaProducer(broker, port, topic, false);
         this.mapper = new ObjectMapper();
-        this.packetCounter = new HashMap<String, Integer>();
+        this.counter = new HashMap<String, Integer>();
         this.srcIp = (String) stormConf.get("filter.srcIp");
     }
 
@@ -44,7 +44,7 @@ public class GlobalPacketCounterBolt extends BaseRichBolt {
             if (actualSender == totalSenders) {
                 IpCount ipCount = new IpCount();
                 ipCount.setSrcIpAddr(srcIp);
-                ipCount.setPackets(packetCounter.get(srcIp));
+                ipCount.setCount(counter.get(srcIp));
                 try {
                     String ipCountJson = mapper.writeValueAsString(ipCount);
                     kafkaProducer.send(ipCountJson);
@@ -56,10 +56,10 @@ public class GlobalPacketCounterBolt extends BaseRichBolt {
         } else {
             String ip = tuple.getString(0);
             int packets = tuple.getInteger(1);
-            if (packetCounter.containsKey(ip)) {
-                packets += packetCounter.get(ip);
+            if (counter.containsKey(ip)) {
+                packets += counter.get(ip);
             }
-            packetCounter.put(ip, packets);
+            counter.put(ip, packets);
         }
     }
 
