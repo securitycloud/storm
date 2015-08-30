@@ -91,6 +91,7 @@ Results of testing
 1.) <i>Download results</i>: results is written on standard output. For storing to file e.g:
 
         scripts/all-tests.sh > results.out &
+        tail -f results.out
 
 2.) <i>Parse results:</i> Parse results from standard input (or file as argument) and computes
 minimal, maximal and average values in flows / s. Finally, for each test print computed values
