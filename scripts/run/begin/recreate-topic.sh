@@ -36,15 +36,13 @@ do
         $KAFKA_INSTALL/bin/kafka-topics.sh --create --zookeeper localhost:2181 --replication-factor 2 --partitions $PARTITIONS --topic $TOPIC
     "
 
-    sleep 1
+    sleep 5
 
-    # SAVE ACTUAL NUMBER OF PARTITIONS AND DOWNLOAD IT
-    ssh $SERVER "
-        ls -la /tmp/kafka-logs/ | grep $TOPIC | wc -l > /tmp/storm-partitions
-    "
-    scp $SERVER:/tmp/storm-partitions /tmp/storm-partitions
-
-    # COMPARE ACTUAL NUMBER OF PARTITIONS AGAINST INPUT 
-    REAL_PARTITIONS=`cat /tmp/storm-partitions`
-    if [ $REAL_PARTITIONS -eq $PARTITIONS ]; then break; fi
+    # COMPARE CREATED PARTITIONS WITH CORRECT NUMBER
+    if ssh $SERVER '
+        if [ `ls -la /tmp/kafka-logs/ | grep $TOPIC | wc -l` -ne $PARTITIONS ]
+            then exit 1
+        fi'
+    then break
+    fi
 done
