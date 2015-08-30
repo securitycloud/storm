@@ -7,7 +7,9 @@ import backtype.storm.task.TopologyContext;
 import backtype.storm.topology.OutputFieldsDeclarer;
 import backtype.storm.topology.base.BaseRichSpout;
 import backtype.storm.tuple.Fields;
-import cz.muni.fi.storm.tools.SpoutCollector;
+import cz.muni.fi.storm.tools.FakeCollector;
+import java.util.Iterator;
+import java.util.List;
 import java.util.Map;
 import storm.kafka.SpoutConfig;
 import storm.kafka.StringScheme;
@@ -17,7 +19,7 @@ public class KafkaSpout2 extends BaseRichSpout {
     
     private final storm.kafka.KafkaSpout kafkaSpout;
     private SpoutOutputCollector collector;
-    private SpoutCollector fakeCollector;
+    private FakeCollector fakeCollector;
 
     public KafkaSpout2(Config config) {
         String topic = (String) config.get("kafkaConsumer.topic");
@@ -37,16 +39,18 @@ public class KafkaSpout2 extends BaseRichSpout {
     @Override
     public void open(Map stormConf, TopologyContext context, SpoutOutputCollector collector) {
         this.collector = collector;
-        this.fakeCollector = new SpoutCollector(collector);
+        this.fakeCollector = new FakeCollector(collector);
         kafkaSpout.open(stormConf, context, fakeCollector);
     }
 
     @Override
     public void nextTuple() {
-        fakeCollector.cleanOutput();
         kafkaSpout.nextTuple();
-        if (fakeCollector.getOutput() != null) {
-            collector.emit(fakeCollector.getOutput());
+        Iterator<List<Object>> it = fakeCollector.getOutputIterator();
+        while (it.hasNext()) {
+            List<Object> message = it.next();
+            collector.emit(message);
+            it.remove();
         }
     }
     

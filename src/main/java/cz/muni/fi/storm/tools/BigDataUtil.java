@@ -7,9 +7,9 @@ import java.util.TreeMap;
 public class BigDataUtil {
 
     public static void cleanUpMap(Map<String, Integer> map, int cleanUpSmallerThen) {
-        Iterator it = map.entrySet().iterator();
+        Iterator<Map.Entry<String, Integer>> it = map.entrySet().iterator();
         while (it.hasNext()) {
-            Map.Entry<String, Integer> entry = (Map.Entry<String, Integer>) it.next();
+            Map.Entry<String, Integer> entry = it.next();
             if (entry.getValue() < cleanUpSmallerThen) {
                 it.remove();
             }

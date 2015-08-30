@@ -2,13 +2,15 @@ package cz.muni.fi.storm.tools;
 
 import backtype.storm.spout.ISpoutOutputCollector;
 import backtype.storm.spout.SpoutOutputCollector;
+import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
 
-public class SpoutCollector extends SpoutOutputCollector {
+public class FakeCollector extends SpoutOutputCollector {
 
-    private List<Object> output;
+    private List<List<Object>> output = new ArrayList<List<Object>>();
 
-    public SpoutCollector(ISpoutOutputCollector delegate) {
+    public FakeCollector(ISpoutOutputCollector delegate) {
         super(delegate);
     }
 
@@ -24,7 +26,7 @@ public class SpoutCollector extends SpoutOutputCollector {
 
     @Override
     public List<Integer> emit(List<Object> tuple) {
-        this.output = tuple;
+        this.output.add(tuple);
         return null;
     }
 
@@ -57,11 +59,7 @@ public class SpoutCollector extends SpoutOutputCollector {
     public void reportError(Throwable error) {
     }
 
-    public List<Object> getOutput() {
-        return output;
-    }
-    
-    public void cleanOutput() {
-        output = null;
+    public Iterator<List<Object>> getOutputIterator() {
+        return output.iterator();
     }
 }
