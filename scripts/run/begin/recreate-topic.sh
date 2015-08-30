@@ -38,11 +38,13 @@ do
 
     sleep 5
 
-    # COMPARE CREATED PARTITIONS WITH CORRECT NUMBER
-    if ssh $SERVER '
-        if [ `ls -la /tmp/kafka-logs/ | grep $TOPIC | wc -l` -ne $PARTITIONS ]
-            then exit 1
-        fi'
-    then break
-    fi
+    # SAVE ACTUAL NUMBER OF PARTITIONS AND DOWNLOAD IT
+    ssh $SERVER "
+        ls -la /tmp/kafka-logs/ | grep $TOPIC | wc -l > /tmp/number-of-partitions
+    "
+    scp $SERVER:/tmp/storm-partitions /tmp/number-of-partitions
+
+    # COMPARE ACTUAL NUMBER OF PARTITIONS AGAINST INPUT 
+    REAL_PARTITIONS=`cat /tmp/number-of-partitions`
+    if [ $REAL_PARTITIONS -eq $PARTITIONS ]; then break; fi
 done
