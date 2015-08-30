@@ -42,7 +42,7 @@ do
     ssh $SERVER "
         ls -la /tmp/kafka-logs/ | grep $TOPIC | wc -l > /tmp/number-of-partitions
     "
-    scp $SERVER:/tmp/storm-partitions /tmp/number-of-partitions
+    scp $SERVER:/tmp/number-of-partitions /tmp/number-of-partitions
 
     # COMPARE ACTUAL NUMBER OF PARTITIONS AGAINST INPUT 
     REAL_PARTITIONS=`cat /tmp/number-of-partitions`
