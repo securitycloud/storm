@@ -14,12 +14,13 @@ declare -a TEST_COUNT=( $(for i in {1..100}; do echo 0; done) )
 declare -a TEST_SUM=( $(for i in {1..100}; do echo 0; done) )
 declare -a TEST_MIN=( $(for i in {1..100}; do echo 999999999; done) )
 declare -a TEST_MAX=( $(for i in {1..100}; do echo 0; done) )
+declare -a TEST_ALL=( $(for i in {1..100}; do echo ""; done) )
 
 while read LINE
 do
     # NAME OF TEST
-    LABEL=`echo $LINE | sed 's/^ Running topology \(.*\)$/\1/'`
-    if [[ $LABEL =~ $Topology.* ]]
+    LABEL=`echo $LINE | sed 's/^Running topology \(.*\)$/\1/'`
+    if [[ "$LABEL" =~ ^Topology.* ]]
     then
         i=1
         for NAME in "${TEST_NAME[@]}"
@@ -36,15 +37,15 @@ do
     
     # RESULT OF TEST
     RESULT=`echo $LINE | sed 's/^This run took: \([0-9]*\) milli_seconds$/\1/'`
-    if [[ $RESULT =~ ^[0-9]+$ ]]
+    if [[ "$RESULT" =~ ^[0-9]+$ ]]
     then
-        (( RESULT = 1000000 / RESULT ))
+        (( RESULT = 100000000000 / RESULT ))
         (( TEST_COUNT[TEST_INDEX]++ ))
         (( TEST_SUM[TEST_INDEX] += RESULT ))
         (( TEST_MAX[TEST_INDEX] = RESULT > TEST_MAX[TEST_INDEX] ? RESULT : TEST_MAX[TEST_INDEX] ))
         (( TEST_MIN[TEST_INDEX] = RESULT < TEST_MIN[TEST_INDEX] ? RESULT : TEST_MIN[TEST_INDEX] ))
-        TEST_ALL[$TEST_INDEX]=${TEST_ALL[$TEST_INDEX]}, $RESULT
-    fi    
+        TEST_ALL[TEST_INDEX]="$RESULT, ${TEST_ALL[$TEST_INDEX]}"
+    fi
 
 done < $SOURCE
 
