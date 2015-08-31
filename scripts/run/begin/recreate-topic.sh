@@ -33,10 +33,11 @@ do
     # DELETE AND CREATE TOPIC
     ssh $SERVER "
         $KAFKA_INSTALL/bin/kafka-topics.sh --delete --zookeeper localhost:2181 --topic $TOPIC
+        sleep 2
         $KAFKA_INSTALL/bin/kafka-topics.sh --create --zookeeper localhost:2181 --replication-factor 2 --partitions $PARTITIONS --topic $TOPIC
     "
 
-    sleep 5
+    sleep 6
 
     # SAVE ACTUAL NUMBER OF PARTITIONS AND DOWNLOAD IT
     ssh $SERVER "

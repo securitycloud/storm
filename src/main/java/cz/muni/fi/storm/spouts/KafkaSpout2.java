@@ -20,6 +20,7 @@ public class KafkaSpout2 extends BaseRichSpout {
     private final storm.kafka.KafkaSpout kafkaSpout;
     private SpoutOutputCollector collector;
     private FakeCollector fakeCollector;
+    private int counter = 0;
 
     public KafkaSpout2(Config config) {
         String topic = (String) config.get("kafkaConsumer.topic");
@@ -45,12 +46,15 @@ public class KafkaSpout2 extends BaseRichSpout {
 
     @Override
     public void nextTuple() {
+        counter++;
         kafkaSpout.nextTuple();
         Iterator<List<Object>> it = fakeCollector.getOutputIterator();
-        while (it.hasNext()) {
-            List<Object> message = it.next();
-            collector.emit(message);
-            it.remove();
+        if (counter % 100 == 0) {
+            while (it.hasNext()) {
+                List<Object> message = it.next();
+                collector.emit(message);
+                it.remove();
+            }
         }
     }
     
