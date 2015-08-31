@@ -7,7 +7,7 @@ import backtype.storm.topology.IRichSpout;
 import backtype.storm.topology.TopologyBuilder;
 import backtype.storm.tuple.Fields;
 import cz.muni.fi.storm.bolts.GlobalAggSortCounterBolt;
-import cz.muni.fi.storm.bolts.AggSortPacketCounterBolt;
+import cz.muni.fi.storm.bolts.AggSortCounterBolt;
 import cz.muni.fi.storm.bolts.PacketSenderBolt;
 import cz.muni.fi.storm.spouts.KafkaSpout;
 import cz.muni.fi.storm.tools.TopologyUtil;
@@ -28,19 +28,19 @@ public class TopologyTopN2 {
 
         IRichSpout kafkaSpout = new KafkaSpout(config);
         IRichBolt packetSenderBolt = new PacketSenderBolt();
-        IRichBolt aggSortPacketCounterBolt = new AggSortPacketCounterBolt(computers * parallelism);
+        IRichBolt aggSortCounterBolt = new AggSortCounterBolt(computers * parallelism);
         IRichBolt globalAggSortCounterBolt = new GlobalAggSortCounterBolt(computers * parallelism);
         
         TopologyBuilder builder = new TopologyBuilder();
         builder.setSpout("kafkaSpout", kafkaSpout, computers * parallelism);
         builder.setBolt("packetSenderBolt", packetSenderBolt, computers * parallelism)
                 .localOrShuffleGrouping("kafkaSpout");
-        builder.setBolt("aggSortPacketCounterBolt", aggSortPacketCounterBolt, computers * parallelism)
+        builder.setBolt("aggSortCounterBolt", aggSortCounterBolt, computers * parallelism)
                 .fieldsGrouping("packetSenderBolt", new Fields("ip"))
                 .allGrouping("packetSenderBolt", TupleUtils.getStreamIdForEndOfWindow());
         builder.setBolt("globalAggSortCounterBolt", globalAggSortCounterBolt)
-                .globalGrouping("aggSortPacketCounterBolt")
-                .globalGrouping("aggSortPacketCounterBolt", TupleUtils.getStreamIdForEndOfWindow());
+                .globalGrouping("aggSortCounterBolt")
+                .globalGrouping("aggSortCounterBolt", TupleUtils.getStreamIdForEndOfWindow());
 
         try {
             StormSubmitter.submitTopology("TopologyTopN2", config, builder.createTopology());

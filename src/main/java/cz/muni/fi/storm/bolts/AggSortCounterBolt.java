@@ -12,23 +12,23 @@ import cz.muni.fi.storm.tools.TupleUtils;
 import java.util.HashMap;
 import java.util.Map;
 
-public class AggSortPacketCounterBolt extends BaseRichBolt {
+public class AggSortCounterBolt extends BaseRichBolt {
     
     private final int totalSenders;
     private int actualSender = 0;
     private OutputCollector collector;
-    private Map<String, Integer> packetCounter;
+    private Map<String, Integer> counter;
     private int cleanUpSmallerThen;
     private int topN;
 
-    public AggSortPacketCounterBolt(int totalSenders) {
+    public AggSortCounterBolt(int totalSenders) {
         this.totalSenders = totalSenders;
     }
     
     @Override
     public void prepare(Map stormConf, TopologyContext context, OutputCollector collector) {
         this.collector = collector;
-        this.packetCounter = new HashMap<String, Integer>();
+        this.counter = new HashMap<String, Integer>();
         this.cleanUpSmallerThen = new Integer(stormConf.get("bigDataMap.cleanUpSmallerThen").toString());
         this.topN = new Integer(stormConf.get("sortPackets.topN").toString());
     }
@@ -39,8 +39,8 @@ public class AggSortPacketCounterBolt extends BaseRichBolt {
             actualSender++;
             if (actualSender == totalSenders) {
                 int top = 0;
-                BigDataUtil.cleanUpMap(packetCounter, cleanUpSmallerThen);
-                for (Map.Entry<String, Integer> entry : BigDataUtil.sortMap(packetCounter).entrySet()) {
+                BigDataUtil.cleanUpMap(counter, cleanUpSmallerThen);
+                for (Map.Entry<String, Integer> entry : BigDataUtil.sortMap(counter).entrySet()) {
                     top++;
                     collector.emit(new Values(entry.getKey(), entry.getValue()));
                     if (top == topN) {
@@ -54,10 +54,10 @@ public class AggSortPacketCounterBolt extends BaseRichBolt {
             String ip = tuple.getString(0);
             int packets = tuple.getInteger(1);
             
-            if (packetCounter.containsKey(ip)) {
-                packets += packetCounter.get(ip);
+            if (counter.containsKey(ip)) {
+                packets += counter.get(ip);
             }
-            packetCounter.put(ip, packets);
+            counter.put(ip, packets);
         }
     }
 
