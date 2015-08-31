@@ -35,7 +35,7 @@ public class FlowSenderBolt extends BaseRichBolt {
         try {
             Flow flow = mapper.readValue(flowJson, Flow.class);
             String ip = flow.getSrc_ip_addr();
-            collector.emit(new Values(ip, "1"));
+            collector.emit(new Values(ip, 1));
         } catch (IOException e) {
             throw new RuntimeException("Coult not parse JSON to Flow.");
         }

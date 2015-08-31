@@ -63,7 +63,7 @@ public class AggSortCounterBolt extends BaseRichBolt {
 
     @Override
     public void declareOutputFields(OutputFieldsDeclarer declarer) {
-        declarer.declare(new Fields("ip", "packets"));
+        declarer.declare(new Fields("ip", "count"));
         TupleUtils.declareEndOfWindow(declarer);
     }
 }
