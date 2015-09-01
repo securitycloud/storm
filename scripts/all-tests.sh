@@ -8,13 +8,9 @@ TOPOLOGIES[2]=TopologyFilter
 TOPOLOGIES[3]=TopologyCounter
 TOPOLOGIES[4]=TopologyAggregation
 TOPOLOGIES[5]=TopologyTopN
-TOPOLOGIES[6]=TopologyTopN2
-TOPOLOGIES[7]=TopologySynScan
-TOPOLOGIES[8]=TopologySynScan2
+TOPOLOGIES[6]=TopologySynScan
 
-COMPUTERS[1]=3
-COMPUTERS[2]=4
-COMPUTERS[3]=5
+COMPUTERS[1]=1
 
 PARALLELISM[1]=20
 
