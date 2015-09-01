@@ -18,12 +18,8 @@ SRV_ZK=${ALL_SERVERS[2]}
 KAFKA_PRODUCER=100.64.25.107
 KAFKA_CONSUMER=100.64.25.107
 
-KAFKA_SERVERS[1]=$KAFKA_PRODUCER
-KAFKA_SERVERS[2]=localhost
-
 URL_STORM=http://apache.miloslavbrada.cz/storm/apache-storm-0.9.4/apache-storm-0.9.4.tar.gz
 URL_ZK=http://apache.miloslavbrada.cz/zookeeper/zookeeper-3.4.6/zookeeper-3.4.6.tar.gz
-GIT_KAFKA=https://github.com/securitycloud/kafka.git
 
 KAFKA_INSTALL=/home/securitycloud/kafka/kafka_2.9.2-0.8.2.1
 FLOWS_FILE=/home/securitycloud/out_small
@@ -31,7 +27,6 @@ WRK=/home/securitycloud/stormisti/workdir
 
 INPUT_TOPIC=tst
 OUTPUT_TOPIC=out
-SERVICE_TOPIC=storm-service
 
 ERR="\033[1;31m"
 OK="\033[1;32m"

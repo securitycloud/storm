@@ -12,11 +12,5 @@ do
     $CUR_DIR/install-storm.sh $i
 done
 
-for i in "${KAFKA_SERVERS[@]}"
-do
-    echo -e $LOG Installing storm-kafka on $i $OFF
-    $CUR_DIR/install-kafka.sh $i
-done
-
 echo -e $LOG Installing project $OFF
 $CUR_DIR/install-project.sh

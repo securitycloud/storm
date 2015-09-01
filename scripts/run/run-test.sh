@@ -27,6 +27,5 @@ PARALLELISM=$3
 $CUR_DIR/begin/recreate-topic.sh $INPUT_TOPIC 100 $KAFKA_PRODUCER
 $CUR_DIR/begin/recreate-topic.sh $OUTPUT_TOPIC 1 $KAFKA_CONSUMER
 $CUR_DIR/begin/run-topology.sh $TOPOLOGY $COMPUTERS $PARALLELISM
-sleep 10
-ssh sc6 "cd ~/ekafsender/; ./run.sh"
+$CUR_DIR/end/fill-topic-and-done-test.sh
 $CUR_DIR/end/kill-topology.sh $TOPOLOGY
