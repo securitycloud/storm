@@ -20,13 +20,13 @@ Default configuration for this project:
 One script for testing
 ============================
 
-a) <i>Read tests:</i> It prepares storm on cluster, fills kafka-producer by input file
-and runs all topologies one by one. It downloads and parses results and saves to out.date.txt
+a) <i>Read tests:</i> Prepare storm on cluster, fill kafka-producer by input file
+and run all topologies one by one. Download and parse results and save to out.date.txt
 
     scripts/all-tests-read.sh
 
-b) <i>ReadWrite tests:</i> It prepares storm on cluster and runs all topologies one by one
-with filling kafka-producer by input file. It downloads and parses results and saves to
+b) <i>ReadWrite tests:</i> Prepare storm on cluster and run all topologies one by one
+with filling kafka-producer by input file. Download and parse results and save to
 out.date.txt
 
     scripts/all-tests-readwrite.sh
