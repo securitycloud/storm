@@ -28,7 +28,7 @@ supervisor.slots.ports:
 # 
 # 
 # ##### These may optionally be filled in:
-worker.childopts: "-Xmx10g"
+worker.childopts: "-Xmx100g"
 ui.port: 8081
 #    
 ## List of custom serializations
