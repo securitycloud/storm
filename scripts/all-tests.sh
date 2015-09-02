@@ -31,6 +31,7 @@ then
 else
     $CUR_DIR/install/install-project.sh
 fi
+$CUR_DIR/begin/recreate-topic.sh $OUTPUT_TOPIC 1 $KAFKA_CONSUMER
 
 for PC in "${COMPUTERS[@]}"
 do
