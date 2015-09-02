@@ -21,12 +21,7 @@ public class KafkaSpout extends BaseRichSpout {
         String zookeeper = (String) config.get("kafkaConsumer.zookeeper");
         ZkHosts zkHosts = new ZkHosts(zookeeper);
         SpoutConfig kafkaConfig = new SpoutConfig(zkHosts, topic, "", "storm");
-        kafkaConfig.scheme = new SchemeAsMultiScheme(new StringScheme() {
-            @Override
-            public Fields getOutputFields() {
-                return new Fields("flow");
-            }
-        });
+        kafkaConfig.scheme = new SchemeAsMultiScheme(new StringScheme());
         kafkaConfig.forceFromStart = true;
         this.kafkaSpout = new storm.kafka.KafkaSpout(kafkaConfig);
     }
