@@ -16,6 +16,10 @@ import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
 
+/**
+ * This bolt reads every flow and counts number of packets for each source ip.
+ * Final number of packets for each ip is emitted next to a global bolt.
+ */
 public class AggPacketCounterBolt extends BaseRichBolt {
     
     private OutputCollector collector;
@@ -24,6 +28,10 @@ public class AggPacketCounterBolt extends BaseRichBolt {
     private ServiceCounter serviceCounter;
     private int cleanUpSmallerThen;
 
+    /*
+     * Requires parameters from storm configuration:
+     * - bigDataMap.cleanUpSmallerThen limit to clean up for number of packets per ip
+     */
     @Override
     public void prepare(Map stormConf, TopologyContext context, OutputCollector collector) {
         this.collector = collector;

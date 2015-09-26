@@ -13,8 +13,22 @@ import cz.muni.fi.storm.spouts.KafkaSpout;
 import cz.muni.fi.storm.tools.TopologyUtil;
 import cz.muni.fi.storm.tools.TupleUtils;
 
+/**
+ * Tests top n aggregation of filtered ips with tcp syn flag.
+ * Reads flows from kafka, filters by tcp syn flag and counts flows
+ * for each ip. When done all flows in input kafka topic, then send
+ * top n sorted number of packets for ip to output kafka topic.
+ */
 public class TopologySynScan{
 
+    /**
+     * Submits topology for this test.
+     * Runs on defined number of computers and multiples by defined number of parallelism.
+     * It is 1 base stream, which network flows are flowed.
+     * It is second stream, which tag end of window are flowed.
+     * 
+     * @param args number of computers and number of parallelism.
+     */
     public static void main(String[] args) {
         if (args.length < 2) {
             throw new IllegalArgumentException("Missing argument: computers parallelism");

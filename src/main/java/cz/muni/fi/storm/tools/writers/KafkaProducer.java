@@ -5,11 +5,22 @@ import kafka.javaapi.producer.Producer;
 import kafka.producer.KeyedMessage;
 import kafka.producer.ProducerConfig;
 
+/**
+ * This writer able to write to kafka.
+ */
 public class KafkaProducer implements Writer {
 
     private final Producer<String, String> producer;
     private final String topic;
 
+    /**
+     * Open new kafka producer for this writer.
+     * 
+     * @param broker ip adress of kafka broker
+     * @param port number of port of kafka broker
+     * @param topic name of topic for kafka
+     * @param isAsync true allow asynchronism write, otherwise is synchronism write
+     */
     public KafkaProducer(String broker, int port, String topic, boolean isAsync) {
         Properties props = new Properties();
         props.put("metadata.broker.list", broker + ":" + port);
@@ -23,15 +34,6 @@ public class KafkaProducer implements Writer {
         ProducerConfig config = new ProducerConfig(props);
         this.producer = new Producer<String, String>(config);
         this.topic = topic;
-    }
-    
-    public KafkaProducer(KafkaProducer otherFakfaProducer, String topic) {
-        this.producer = otherFakfaProducer.getProducer();
-        this.topic = topic;
-    }
-    
-    protected Producer<String, String> getProducer() {
-        return producer;
     }
     
     @Override

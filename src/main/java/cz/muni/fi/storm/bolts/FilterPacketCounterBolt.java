@@ -13,6 +13,10 @@ import cz.muni.fi.storm.tools.pojo.Flow;
 import java.io.IOException;
 import java.util.Map;
 
+/**
+ * This bolt reads every flow and counts number of packets for chosen source ip.
+ * Final number of packets is emitted next to a global bolt.
+ */
 public class FilterPacketCounterBolt extends BaseRichBolt {
     
     private OutputCollector collector;
@@ -21,6 +25,12 @@ public class FilterPacketCounterBolt extends BaseRichBolt {
     private ServiceCounter serviceCounter;
     private String srcIp;
 
+    /*
+     * Requires parameters from storm configuration:
+     * - filter.srcIp ip address which packets are counted
+     * - serviceCounter.messagesPerTopic requires service counter
+     * - bigDataMap.cleanUpEveryFlows requires service counter
+     */
     @Override
     public void prepare(Map stormConf, TopologyContext context, OutputCollector collector) {
         this.collector = collector;

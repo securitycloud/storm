@@ -8,6 +8,10 @@ import backtype.storm.tuple.Tuple;
 import cz.muni.fi.storm.tools.writers.KafkaProducer;
 import java.util.Map;
 
+/**
+ * This global bolt counts final count from local bolts and sends result to kafka.
+ * Output kafka topic is extracted from configuration of storm.
+ */
 public class GlobalCounterBolt extends BaseRichBolt {
     
     private final int totalSenders;
@@ -15,10 +19,21 @@ public class GlobalCounterBolt extends BaseRichBolt {
     private long count = 0;
     private KafkaProducer kafkaProducer;
 
+    /**
+     * Constructor for new instance of global counter.
+     * 
+     * @param totalSenders number of local bolts which send count
+     */
     public GlobalCounterBolt(int totalSenders) {
         this.totalSenders = totalSenders;
     }
     
+    /*
+     * Requires parameters from storm configuration:
+     * - kafkaProducer.broker ip address of output kafka broker
+     * - kafkaProducer.port number of port of output kafka broker
+     * - kafkaProducer.topic name of output kafka topic
+     */
     @Override
     public void prepare(Map stormConf, TopologyContext context, OutputCollector collector) {
         String broker = (String) stormConf.get("kafkaProducer.broker");
@@ -37,7 +52,6 @@ public class GlobalCounterBolt extends BaseRichBolt {
             kafkaProducer.send("Count is " + count);
         }
     }
-
 
     @Override
     public void declareOutputFields(OutputFieldsDeclarer declarer) {}

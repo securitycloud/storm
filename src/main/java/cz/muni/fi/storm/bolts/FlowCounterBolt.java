@@ -10,11 +10,20 @@ import backtype.storm.tuple.Values;
 import cz.muni.fi.storm.tools.ServiceCounter;
 import java.util.Map;
 
+/**
+ * This bolt reads every flow and counts them.
+ * Final number of read flows is emitted next to a global bolt.
+ */
 public class FlowCounterBolt extends BaseRichBolt {
 
     private OutputCollector collector;
     private ServiceCounter serviceCounter;
     
+    /*
+     * Requires parameters from storm configuration:
+     * - serviceCounter.messagesPerTopic requires service counter
+     * - bigDataMap.cleanUpEveryFlows requires service counter
+     */
     @Override
     public void prepare(Map stormConf, TopologyContext context, OutputCollector collector) {
         this.collector = collector;

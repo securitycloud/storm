@@ -12,10 +12,19 @@ import storm.kafka.SpoutConfig;
 import storm.kafka.StringScheme;
 import storm.kafka.ZkHosts;
 
+/**
+ * This is spout which read from kafka topic.
+ * Uses kafka spout from Apache. Only get settings and sets kafka spout from Apache.
+ */
 public class KafkaSpout extends BaseRichSpout {
     
     private final storm.kafka.KafkaSpout kafkaSpout;
 
+    /**
+     * New instance need some settings included configuration of storm.
+     * 
+     * @param config configuration of storm
+     */
     public KafkaSpout(Config config) {
         String topic = (String) config.get("kafkaConsumer.topic");
         String zookeeper = (String) config.get("kafkaConsumer.zookeeper");

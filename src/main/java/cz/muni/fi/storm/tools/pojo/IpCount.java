@@ -5,14 +5,19 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import scala.Serializable;
 
 /**
- * POJO for mapping of parsed JSON packet counter.
+ * POJO for mapping of parsed JSON counter for ips.
  */
 @JsonInclude(JsonInclude.Include.NON_NULL)
 public class IpCount implements Serializable {
     
+    /**
+     * Rank of sorting ips by count.
+     */
     private Integer rank;
+    
     @JsonProperty("src_ip_addr")
     private String srcIp;
+    
     private Integer count;
     
     public Integer getRank() {

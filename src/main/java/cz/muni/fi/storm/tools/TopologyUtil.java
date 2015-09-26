@@ -5,10 +5,18 @@ import java.io.InputStream;
 import java.util.Map;
 import java.util.Properties;
 
+/**
+ * These utilities help for build topology.
+ */
 public class TopologyUtil {
     
     private static final String stormPropertiesFile = "/storm.properties";
     
+    /**
+     * Loads properties from property file.
+     * 
+     * @return map of properties for topology configuration
+     */
     public Map<String, Object> loadProperties() {
         try {
             InputStream inputStream = getClass().getResourceAsStream(stormPropertiesFile);

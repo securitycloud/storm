@@ -12,8 +12,20 @@ import cz.muni.fi.storm.bolts.GlobalCounterBolt;
 import cz.muni.fi.storm.spouts.KafkaSpout;
 import cz.muni.fi.storm.tools.TopologyUtil;
 
+/**
+ * Tests empty framework.
+ * Reads flows from kafka and counts them. When done all flows in input kafka topic,
+ * then send number of flows to output kafka topic.
+ */
 public class TopologyEmpty {
 
+    /**
+     * Submits topology for this test.
+     * Runs on defined number of computers and multiples by defined number of parallelism.
+     * It is only 1 base stream, which network flows are flowed.
+     * 
+     * @param args number of computers and number of parallelism.
+     */
     public static void main(String[] args) {
         if (args.length < 2) {
             throw new IllegalArgumentException("Missing argument: computers parallelism");

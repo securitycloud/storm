@@ -14,6 +14,11 @@ import cz.muni.fi.storm.tools.writers.KafkaProducer;
 import java.util.HashMap;
 import java.util.Map;
 
+/**
+ * This global bolt counts final count aggregated per ip sorted top n
+ * from local bolts and sends result to kafka.
+ * Output kafka topic is extracted from configuration of storm.
+ */
 public class GlobalAggSortCounterBolt extends BaseRichBolt {
 
     private ObjectMapper mapper;
@@ -23,10 +28,22 @@ public class GlobalAggSortCounterBolt extends BaseRichBolt {
     private KafkaProducer kafkaProducer;
     private int topN;
 
+    /**
+     * Constructor for new instance of global counter.
+     * 
+     * @param totalSenders number of local bolts which send count aggregated per ip
+     */
     public GlobalAggSortCounterBolt(int totalSenders) {
         this.totalSenders = totalSenders;
     }
 
+    /*
+     * Requires parameters from storm configuration:
+     * - kafkaProducer.broker ip address of output kafka broker
+     * - kafkaProducer.port number of port of output kafka broker
+     * - kafkaProducer.topic name of output kafka topic
+     * - sortPackets.topN first top n sorted count per ip
+     */
     @Override
     public void prepare(Map stormConf, TopologyContext context, OutputCollector collector) {
         String broker = (String) stormConf.get("kafkaProducer.broker");

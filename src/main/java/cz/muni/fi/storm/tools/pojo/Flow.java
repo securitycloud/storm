@@ -3,7 +3,7 @@ package cz.muni.fi.storm.tools.pojo;
 import scala.Serializable;
 
 /**
- * POJO for mapping of parsed JSON messages.
+ * POJO for mapping of parsed JSON flows.
  */
 public class Flow implements Serializable {
 

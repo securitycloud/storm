@@ -13,8 +13,22 @@ import cz.muni.fi.storm.spouts.KafkaSpout;
 import cz.muni.fi.storm.tools.TopologyUtil;
 import cz.muni.fi.storm.tools.TupleUtils;
 
+/**
+ * Tests aggregation of ips.
+ * Reads flows from kafka, counts their packets for each ip. Stores all packets
+ * for each ip, but when done all flows in input kafka topic, then send number
+ * of packets for only chosen ip to output kafka topic.
+ */
 public class TopologyAggregation {
 
+    /**
+     * Submits topology for this test.
+     * Runs on defined number of computers and multiples by defined number of parallelism.
+     * It is 1 base stream, which network flows are flowed.
+     * It is second stream, which tag end of window are flowed.
+     * 
+     * @param args number of computers and number of parallelism.
+     */
     public static void main(String[] args) {
         if (args.length < 2) {
             throw new IllegalArgumentException("Missing argument: computers parallelism");
