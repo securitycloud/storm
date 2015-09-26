@@ -22,16 +22,7 @@ NUM_TESTS=$((NUM_TESTS * ${#PARALLELISM[@]}))
 NUM_TESTS=$((NUM_TESTS * ${REPEAT}))
 ACT_TEST=1
 
-if [ -z "$1" ] 
-then
-    $CUR_DIR/clean/clean-cluster.sh
-    $CUR_DIR/install/install-cluster.sh
-    $CUR_DIR/start/start-cluster.sh
-    sleep 10
-else
-    $CUR_DIR/install/install-project.sh
-fi
-$CUR_DIR/begin/recreate-topic.sh $OUTPUT_TOPIC 1 $KAFKA_CONSUMER
+$CUR_DIR/run/recreate-topic.sh $OUTPUT_TOPIC 1 $KAFKA_CONSUMER
 
 for PC in "${COMPUTERS[@]}"
 do
@@ -42,7 +33,7 @@ do
             for PR in "${PARALLELISM[@]}"
             do
                 echo -e $LOG Running test $ACT_TEST/$NUM_TESTS: $OFF
-                $CUR_DIR/run/run-test.sh $TP $PC $PR
+                $CUR_DIR/run-test.sh $TP $PC $PR
                 ACT_TEST=$((ACT_TEST + 1))
              done
         done
