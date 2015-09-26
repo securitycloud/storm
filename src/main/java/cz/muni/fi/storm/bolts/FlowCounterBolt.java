@@ -22,7 +22,6 @@ public class FlowCounterBolt extends BaseRichBolt {
     /*
      * Requires parameters from storm configuration:
      * - serviceCounter.messagesPerTopic requires service counter
-     * - bigDataMap.cleanUpEveryFlows requires service counter
      */
     @Override
     public void prepare(Map stormConf, TopologyContext context, OutputCollector collector) {

@@ -33,6 +33,8 @@ public class AggSynFlowCounterBolt extends BaseRichBolt {
     /*
      * Requires parameters from storm configuration:
      * - bigDataMap.cleanUpSmallerThen limit to clean up for number of packets per ip
+     * - serviceCounter.messagesPerTopic requires service counter
+     * - bigDataMap.cleanUpEveryFlows requires service counter
      */
     @Override
     public void prepare(Map stormConf, TopologyContext context, OutputCollector collector) {

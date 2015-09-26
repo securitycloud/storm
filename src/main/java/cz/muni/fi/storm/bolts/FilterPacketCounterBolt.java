@@ -29,7 +29,6 @@ public class FilterPacketCounterBolt extends BaseRichBolt {
      * Requires parameters from storm configuration:
      * - filter.srcIp ip address which packets are counted
      * - serviceCounter.messagesPerTopic requires service counter
-     * - bigDataMap.cleanUpEveryFlows requires service counter
      */
     @Override
     public void prepare(Map stormConf, TopologyContext context, OutputCollector collector) {

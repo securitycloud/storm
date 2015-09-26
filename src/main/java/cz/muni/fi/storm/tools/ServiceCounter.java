@@ -12,7 +12,7 @@ public class ServiceCounter {
 
     private final int messagesPerTopic;
     private final int messagesPerPartition;
-    private final int cleanUpEveryFlows;
+    private int cleanUpEveryFlows;
     private int totalCount = 0;
     
     /**
@@ -29,7 +29,10 @@ public class ServiceCounter {
         this.messagesPerTopic = new Integer(conf.get("serviceCounter.messagesPerTopic").toString());
         int totalTasks = context.getComponentTasks(context.getThisComponentId()).size();
         this.messagesPerPartition = messagesPerTopic / totalTasks;
-        this.cleanUpEveryFlows = new Integer(conf.get("bigDataMap.cleanUpEveryFlows").toString());
+        Object rawCleanUpEveryFlows = conf.get("bigDataMap.cleanUpEveryFlows");
+        if (rawCleanUpEveryFlows != null) {
+            this.cleanUpEveryFlows = new Integer(rawCleanUpEveryFlows.toString());
+        }
     }
     
     /**
@@ -57,10 +60,14 @@ public class ServiceCounter {
     
     /**
      * Test whether is time to clean up.
+     * Requires set clean up time from configuration of storm.
      * 
      * @return true if it is now, otherwise not yet.
      */
     public boolean isTimeToClean() {
+        if (cleanUpEveryFlows == 0) {
+            throw new RuntimeException("Setting for clean up has been never set.");
+        }
         return totalCount % cleanUpEveryFlows == 0;
     }
 }
