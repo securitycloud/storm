@@ -7,10 +7,6 @@ import java.util.Map;
  * This is counter for bolts.
  * For every emitted tuple must call count.
  * At time may test or get count.
- * 
- * Requires parameters from storm configuration:
- * - serviceCounter.messagesPerTopic messages/flows per kafka topic
- * - bigDataMap.cleanUpEveryFlows number of flows for clean up
  */
 public class ServiceCounter {
 
@@ -21,6 +17,10 @@ public class ServiceCounter {
     
     /**
      * Constructor for service counter.
+     * 
+     * Requires parameters from storm configuration:
+     * - serviceCounter.messagesPerTopic messages/flows per kafka topic
+     * - bigDataMap.cleanUpEveryFlows number of flows for clean up
      * 
      * @param conf configuration of storm
      * @param context context of storm
