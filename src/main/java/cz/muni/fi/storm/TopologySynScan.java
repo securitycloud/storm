@@ -8,7 +8,7 @@ import backtype.storm.topology.IRichBolt;
 import backtype.storm.topology.IRichSpout;
 import backtype.storm.topology.TopologyBuilder;
 import cz.muni.fi.storm.bolts.AggSynFlowCounterBolt;
-import cz.muni.fi.storm.bolts.GlobalAggSortSynCounterBolt;
+import cz.muni.fi.storm.bolts.GlobalAggSortCounterBolt;
 import cz.muni.fi.storm.spouts.KafkaSpout;
 import cz.muni.fi.storm.tools.TopologyUtil;
 import cz.muni.fi.storm.tools.TupleUtils;
@@ -42,7 +42,7 @@ public class TopologySynScan{
 
         IRichSpout kafkaSpout = new KafkaSpout(config);
         IRichBolt aggSynFlowCounterBolt = new AggSynFlowCounterBolt();
-        IRichBolt globalAggSortCounterBolt = new GlobalAggSortSynCounterBolt(computers * parallelism);
+        IRichBolt globalAggSortCounterBolt = new GlobalAggSortCounterBolt(computers * parallelism, "synScan");
         
         TopologyBuilder builder = new TopologyBuilder();
         builder.setSpout("kafkaSpout", kafkaSpout, computers * parallelism);

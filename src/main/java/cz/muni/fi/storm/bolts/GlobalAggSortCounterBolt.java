@@ -23,6 +23,7 @@ public class GlobalAggSortCounterBolt extends BaseRichBolt {
 
     private ObjectMapper mapper;
     private Map<String, Integer> counter;
+    private final String topNPostfix;
     private final int totalSenders;
     private int actualSenders = 0;
     private KafkaProducer kafkaProducer;
@@ -32,9 +33,11 @@ public class GlobalAggSortCounterBolt extends BaseRichBolt {
      * Constructor for new instance of global counter.
      * 
      * @param totalSenders number of local bolts which send count aggregated per ip
+     * @param topNPostfix postfix of parameter for top n from storm configuration
      */
-    public GlobalAggSortCounterBolt(int totalSenders) {
+    public GlobalAggSortCounterBolt(int totalSenders, String topNPostfix) {
         this.totalSenders = totalSenders;
+        this.topNPostfix = topNPostfix;
     }
 
     /*
@@ -42,7 +45,7 @@ public class GlobalAggSortCounterBolt extends BaseRichBolt {
      * - kafkaProducer.broker ip address of output kafka broker
      * - kafkaProducer.port number of port of output kafka broker
      * - kafkaProducer.topic name of output kafka topic
-     * - sortPackets.topN first top n sorted count per ip
+     * - sortPackets.topN.* first top n sorted count per ip
      */
     @Override
     public void prepare(Map stormConf, TopologyContext context, OutputCollector collector) {
@@ -52,7 +55,7 @@ public class GlobalAggSortCounterBolt extends BaseRichBolt {
         this.kafkaProducer = new KafkaProducer(broker, port, topic, false);
         this.mapper = new ObjectMapper();
         this.counter = new HashMap<String, Integer>();
-        this.topN = new Integer(stormConf.get("sortPackets.topN").toString());
+        this.topN = new Integer(stormConf.get("sortPackets.topN." + topNPostfix).toString());
     }
 
     @Override

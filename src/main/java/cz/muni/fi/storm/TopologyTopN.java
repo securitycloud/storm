@@ -41,7 +41,7 @@ public class TopologyTopN {
 
         IRichSpout kafkaSpout = new KafkaSpout(config);
         IRichBolt aggPacketCounterBolt = new AggPacketCounterBolt();
-        IRichBolt globalSortPacketCounterBolt = new GlobalAggSortCounterBolt(computers * parallelism);
+        IRichBolt globalSortPacketCounterBolt = new GlobalAggSortCounterBolt(computers * parallelism, "topN");
         
         TopologyBuilder builder = new TopologyBuilder();
         builder.setSpout("kafkaSpout", kafkaSpout, computers * parallelism);
