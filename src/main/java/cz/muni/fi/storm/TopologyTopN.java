@@ -2,6 +2,8 @@ package cz.muni.fi.storm;
 
 import backtype.storm.Config;
 import backtype.storm.StormSubmitter;
+import backtype.storm.generated.AlreadyAliveException;
+import backtype.storm.generated.InvalidTopologyException;
 import backtype.storm.topology.IRichBolt;
 import backtype.storm.topology.IRichSpout;
 import backtype.storm.topology.TopologyBuilder;
@@ -38,8 +40,9 @@ public class TopologyTopN {
 
         try {
             StormSubmitter.submitTopology("TopologyTopN", config, builder.createTopology());
-        } catch (Exception e) {
-            e.printStackTrace();
+        } catch (AlreadyAliveException e) {
+            throw new IllegalStateException("Couldn't initialize the topology", e);
+        } catch (InvalidTopologyException e) {
             throw new IllegalStateException("Couldn't initialize the topology", e);
         }
     }

@@ -14,7 +14,6 @@ import cz.muni.fi.storm.tools.TupleUtils;
 import cz.muni.fi.storm.tools.pojo.Flow;
 import java.io.IOException;
 import java.util.HashMap;
-import java.util.Iterator;
 import java.util.Map;
 
 public class AggPacketCounterBolt extends BaseRichBolt {
