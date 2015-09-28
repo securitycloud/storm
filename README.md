@@ -1,8 +1,9 @@
 Requirements
 ============================
-* java 1.6 or greater
-* kafka machine
-* ssh connection 
+* java 1.6 (or higher)
+* kafka machine (input and output, or both in one)
+* ssh connection
+* filled input kafka topic
 
 Configuration
 ============================
