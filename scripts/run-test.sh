@@ -25,7 +25,7 @@ fi
 PARALLELISM=$3
 
 # If 4. parameter in not exist, try update project
-if [ ! -z "$4" ]
+if [ -n "$4" ]
 then
     $CUR_DIR/run/install-project.sh
 fi
