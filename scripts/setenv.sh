@@ -29,7 +29,7 @@ KAFKA_CONSUMER=10.16.31.201
 KAFKA_INSTALL=~/kafka/kafka_2.9.2-0.8.2.1
 
 # Kafka topics
-INPUT_TOPIC=tst
+INPUT_TOPIC=36m-1part
 OUTPUT_TOPIC=out
 
 # Coloring
