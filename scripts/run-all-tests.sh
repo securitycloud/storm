@@ -23,6 +23,7 @@ NUM_TESTS=$((NUM_TESTS * ${REPEAT}))
 ACT_TEST=1
 
 $CUR_DIR/run/recreate-topic.sh $OUTPUT_TOPIC 1 $KAFKA_CONSUMER
+$CUR_DIR/run/install-project.sh
 
 for PC in "${COMPUTERS[@]}"
 do
@@ -33,7 +34,7 @@ do
             for PR in "${PARALLELISM[@]}"
             do
                 echo -e $LOG Running test $ACT_TEST/$NUM_TESTS: $OFF
-                $CUR_DIR/run-test.sh $TP $PC $PR
+                $CUR_DIR/run-test.sh $TP $PC $PR projectExist
                 ACT_TEST=$((ACT_TEST + 1))
              done
         done

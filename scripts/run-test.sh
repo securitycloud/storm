@@ -24,6 +24,11 @@ then
 fi
 PARALLELISM=$3
 
+# If 4. parameter in not exist, try update project
+if [ ! -z "$4" ]
+then
+    $CUR_DIR/run/install-project.sh
+fi
 $CUR_DIR/run/run-topology.sh $TOPOLOGY $COMPUTERS $PARALLELISM
 $CUR_DIR/run/done-test.sh
 $CUR_DIR/run/kill-topology.sh $TOPOLOGY
