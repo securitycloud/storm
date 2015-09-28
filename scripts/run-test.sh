@@ -24,10 +24,10 @@ then
 fi
 PARALLELISM=$3
 
-# If 4. parameter in not exist, try update project
+# If 4. parameter is not exist, try update project
 if [ -n "$4" ]
 then
-    $CUR_DIR/run/install-project.sh
+    $CUR_DIR/install/install-project.sh
 fi
 $CUR_DIR/run/run-topology.sh $TOPOLOGY $COMPUTERS $PARALLELISM
 $CUR_DIR/run/done-test.sh
