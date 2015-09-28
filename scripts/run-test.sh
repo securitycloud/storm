@@ -24,7 +24,6 @@ then
 fi
 PARALLELISM=$3
 
-$CUR_DIR/run/recreate-topic.sh $INPUT_TOPIC 100 $KAFKA_PRODUCER
 $CUR_DIR/run/run-topology.sh $TOPOLOGY $COMPUTERS $PARALLELISM
 $CUR_DIR/run/done-test.sh
 $CUR_DIR/run/kill-topology.sh $TOPOLOGY

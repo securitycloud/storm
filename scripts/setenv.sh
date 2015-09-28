@@ -31,6 +31,7 @@ KAFKA_INSTALL=~/kafka/kafka_2.9.2-0.8.2.1
 # Kafka topics
 INPUT_TOPIC=36m-1part
 OUTPUT_TOPIC=out
+REPLICATION_FACTOR=1
 
 # Coloring
 ERR="\033[1;31m"
