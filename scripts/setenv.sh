@@ -26,7 +26,7 @@ URL_ZK=http://apache.miloslavbrada.cz/zookeeper/zookeeper-3.4.6/zookeeper-3.4.6.
 # Sets kafka servers and where kafka is installed
 KAFKA_PRODUCER=10.16.31.200
 KAFKA_CONSUMER=10.16.31.201
-KAFKA_INSTALL=~/kafka/kafka_2.9.2-0.8.2.1
+KAFKA_INSTALL=~/kafka/kafka_2.11-0.8.2.1
 
 # Kafka topics
 INPUT_TOPIC=36m-1part
