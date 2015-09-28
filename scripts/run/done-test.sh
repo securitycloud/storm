@@ -1,5 +1,8 @@
 #!/bin/bash
 
+CUR_DIR=`dirname $0`
+. $CUR_DIR/../setenv.sh
+
 # LOG
 echo -e $LOG Waiting for finish test $OFF
 
