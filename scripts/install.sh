@@ -5,7 +5,9 @@ CUR_DIR=`dirname $0`
 
 for i in "${ALL_SERVERS[@]}"
 do
-    mkdir -p $WRK
+    ssh $i "
+        mkdir -p $WRK
+    "
     echo -e $LOG Installing storm on $i $OFF
     $CUR_DIR/install/install-storm.sh $i
 done
