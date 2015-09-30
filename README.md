@@ -8,19 +8,19 @@ Requirements
 Configuration
 ============================
 
-Configuration for zookeeper:
+Configuration for zookeeper: (changes need reinstall)
 
         config/zoo.cfg
 
-Configuration for storm:
+Configuration for storm: (changes need reinstall)
 
         config/storm.yaml
 
-Configuration for scripts:
+Configuration for scripts: (changes can need reinstall)
 
         scripts/setenv.sh
 
-Configuration for this project:
+Configuration for this project: (changes not need reinstall)
 
         src/main/resources/storm.properties
 
