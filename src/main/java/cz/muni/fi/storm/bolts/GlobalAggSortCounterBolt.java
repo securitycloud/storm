@@ -86,11 +86,11 @@ public class GlobalAggSortCounterBolt extends BaseRichBolt {
 
         } else {
             String ip = tuple.getString(0);
-            int packets = tuple.getInteger(1);
+            int counts = tuple.getInteger(1);
             if (counter.containsKey(ip)) {
-                packets += counter.get(ip);
+                counts += counter.get(ip);
             }
-            counter.put(ip, packets);
+            counter.put(ip, counts);
         }
     }
 
