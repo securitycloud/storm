@@ -1,25 +1,26 @@
 Requirements
 ============================
-* java 1.6 or greater
-* kafka machine
-* ssh connection 
+* java 1.6 (or higher)
+* kafka machine (input and output, or both in one)
+* ssh connection
+* filled input kafka topic
 
 Configuration
 ============================
 
-Configuration for zookeeper:
+Configuration for zookeeper: (changes need reinstall)
 
         config/zoo.cfg
 
-Configuration for storm:
+Configuration for storm: (changes need reinstall)
 
         config/storm.yaml
 
-Configuration for scripts:
+Configuration for scripts: (changes can need reinstall)
 
         scripts/setenv.sh
 
-Configuration for this project:
+Configuration for this project: (changes not need reinstall)
 
         src/main/resources/storm.properties
 
