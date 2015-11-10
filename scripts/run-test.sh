@@ -24,11 +24,14 @@ then
 fi
 PARALLELISM=$3
 
-# If 4. parameter is not exist, try update project
-if [ -z "$4" ]
+if [ "$4" == "loop" ]
 then
-    $CUR_DIR/install/install-project.sh
+    LOOP="loop"
+else
+    LOOP=""
 fi
+
+$CUR_DIR/install/install-project.sh
 $CUR_DIR/run/run-topology.sh $TOPOLOGY $COMPUTERS $PARALLELISM
-$CUR_DIR/run/done-test.sh
+$CUR_DIR/run/done-test.sh $LOOP
 $CUR_DIR/run/kill-topology.sh $TOPOLOGY
