@@ -14,8 +14,8 @@ import java.util.HashMap;
 import java.util.Map;
 
 /**
- * This global bolt counts final count aggregated per ip from local bolts and
- * sends result for only one chosen ip to kafka.
+ * This global bolt counts final count aggregated per IP from local bolts and
+ * sends result for only one chosen IP to kafka.
  * Output kafka topic is extracted from configuration of storm.
  */
 public class GlobalAggCounterBolt extends BaseRichBolt {
@@ -60,7 +60,7 @@ public class GlobalAggCounterBolt extends BaseRichBolt {
             actualSender++ ;
             if (actualSender == totalSenders) {
                 IpCount ipCount = new IpCount();
-                ipCount.setSrcIpAddr(srcIp);
+                ipCount.setSrcIp(srcIp);
                 ipCount.setCount(counter.get(srcIp));
                 try {
                     String ipCountJson = mapper.writeValueAsString(ipCount);
