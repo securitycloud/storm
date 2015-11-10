@@ -16,7 +16,7 @@ public class KafkaProducer implements Writer {
     /**
      * Open new kafka producer for this writer.
      * 
-     * @param broker ip adress of kafka broker
+     * @param broker IP adress of kafka broker
      * @param port number of port of kafka broker
      * @param topic name of topic for kafka
      * @param isAsync true allow asynchronism write, otherwise is synchronism write
@@ -29,8 +29,8 @@ public class KafkaProducer implements Writer {
         props.put("request.required.acks", "0");
         if (isAsync) {
             props.put("producer.type", "async");
+            props.put("batch.size", 5000);
         }
-        props.put("batch.size", 5000);
         ProducerConfig config = new ProducerConfig(props);
         this.producer = new Producer<String, String>(config);
         this.topic = topic;
