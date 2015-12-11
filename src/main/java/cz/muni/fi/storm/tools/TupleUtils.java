@@ -1,5 +1,6 @@
 package cz.muni.fi.storm.tools;
 
+import backtype.storm.Constants;
 import backtype.storm.task.OutputCollector;
 import backtype.storm.topology.OutputFieldsDeclarer;
 import backtype.storm.tuple.Fields;
@@ -49,5 +50,16 @@ public class TupleUtils {
      */
     public static String getStreamIdForEndOfWindow() {
         return END_OF_WINDOW;
+    }
+    
+    /**
+     * Tests whether actual tuple is tick tuple.
+     * 
+     * @param tuple tuple for test
+     * @return true if matchers, otherwise not
+     */
+    public static boolean isTickTuple(Tuple tuple) {
+        return tuple.getSourceComponent().equals(Constants.SYSTEM_COMPONENT_ID)
+                && tuple.getSourceStreamId().equals(Constants.SYSTEM_TICK_STREAM_ID);
     }
 }
