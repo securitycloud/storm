@@ -24,6 +24,7 @@ public class GlobalReflectDosBolt extends BaseRichBolt {
     private int actualSenders = 0;
     private KafkaProducer kafkaProducer;
     private int minimalReplies;
+    private int minimalRequests;
     private int thresholdChanges;
 
     public GlobalReflectDosBolt(int totalSenders) {
@@ -39,6 +40,7 @@ public class GlobalReflectDosBolt extends BaseRichBolt {
         this.mapper = new ObjectMapper();
         this.serverPacketCounter = new HashMap<String, Map<String, PairInt>>();
         this.minimalReplies = new Integer(stormConf.get("reflectDos.minimalReplies").toString());
+        this.minimalRequests = new Integer(stormConf.get("reflectDos.minimalRequests").toString());
         this.thresholdChanges = new Integer(stormConf.get("reflectDos.thresholdChanges").toString());
     }
 
@@ -56,9 +58,10 @@ public class GlobalReflectDosBolt extends BaseRichBolt {
                         int sent = subEntry.getValue().x;
                         int received = subEntry.getValue().y;
                         
-                        if (sent > minimalReplies && sent > received * thresholdChanges) {
+                        if (sent > minimalReplies && received > minimalRequests &&
+                                sent > received * thresholdChanges) {
                             ServerClient communication = new ServerClient();
-                            communication.setServer(entry.getKey());
+                            communication.setLongServer(entry.getKey());
                             communication.setClient(subEntry.getKey());
                             communication.setSent(sent);
                             communication.setReceived(received);

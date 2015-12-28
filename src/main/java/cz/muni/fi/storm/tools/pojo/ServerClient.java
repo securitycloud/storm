@@ -9,14 +9,19 @@ public class ServerClient implements Serializable {
     
     private String server;
     private String client;
+    private int port;
+    private int protocol;
     private int sent;
     private int received;
 
     public String getServer() {
         return server;
     }
-    public void setServer(String server) {
-        this.server = server;
+    public void setLongServer(String server) {
+        String[] part = server.split("/");
+        this.server = part[0];
+        this.port = new Integer(part[1]);
+        this.protocol = new Integer(part[2]);
     }
 
     public String getClient() {
@@ -24,6 +29,14 @@ public class ServerClient implements Serializable {
     }
     public void setClient(String client) {
         this.client = client;
+    }
+
+    public int getPort() {
+        return port;
+    }
+
+    public int getProtocol() {
+        return protocol;
     }
 
     public int getSent() {

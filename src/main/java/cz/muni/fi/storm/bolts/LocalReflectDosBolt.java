@@ -67,16 +67,11 @@ public class LocalReflectDosBolt extends BaseRichBolt {
 
                 if (serverPacketCounter.containsKey(src)) {
                     if (serverPacketCounter.containsKey(dst)) {
-                        if (src.hashCode() > dst.hashCode()) {
-                            addFront(src, flow.getDst_ip_addr(), flow.getPackets());
-                        } else {
-                            addBack(dst, flow.getSrc_ip_addr(), flow.getPackets());
-                        }
-                    } else {
-                        addFront(src, flow.getDst_ip_addr(), flow.getPackets());
+                        addToReceived(dst, flow.getSrc_ip_addr(), flow.getPackets());
                     }
+                    addToSent(src, flow.getDst_ip_addr(), flow.getPackets());
                 } else if (serverPacketCounter.containsKey(dst)) {
-                    addBack(dst, flow.getSrc_ip_addr(), flow.getPackets());
+                    addToReceived(dst, flow.getSrc_ip_addr(), flow.getPackets());
                 }
 
             } catch (IOException e) {
@@ -91,7 +86,7 @@ public class LocalReflectDosBolt extends BaseRichBolt {
         TupleUtils.declareEndOfWindow(declarer);
     }
     
-    private void addFront(String server, String client, int packets) {
+    private void addToSent(String server, String client, int packets) {
         Map<String, PairInt> localMap = serverPacketCounter.get(server);
         if (localMap.containsKey(client)) {
             PairInt pair = localMap.get(client);
@@ -101,7 +96,7 @@ public class LocalReflectDosBolt extends BaseRichBolt {
         }
     }
     
-    private void addBack(String server, String client, int packets) {
+    private void addToReceived(String server, String client, int packets) {
         Map<String, PairInt> localMap = serverPacketCounter.get(server);
         if (localMap.containsKey(client)) {
             PairInt pair = localMap.get(client);
