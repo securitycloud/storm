@@ -15,8 +15,8 @@ import java.util.Map;
 
 /**
  * This global bolt counts final count aggregated per IP from local bolts and
- * sends result for only one chosen IP to kafka.
- * Output kafka topic is extracted from configuration of storm.
+ * sends result for only one chosen IP to Kafka.
+ * Output Kafka topic is extracted from configuration of storm.
  */
 public class GlobalAggCounterBolt extends BaseRichBolt {
 
@@ -30,7 +30,7 @@ public class GlobalAggCounterBolt extends BaseRichBolt {
     /**
      * Constructor for new instance of global counter.
      * 
-     * @param totalSenders number of local bolts which send count aggregated per ip
+     * @param totalSenders number of local bolts which send count aggregated per IP
      */
     public GlobalAggCounterBolt(int totalSenders) {
         this.totalSenders = totalSenders;
@@ -38,10 +38,10 @@ public class GlobalAggCounterBolt extends BaseRichBolt {
 
     /*
      * Requires parameters from storm configuration:
-     * - kafkaProducer.broker ip address of output kafka broker
+     * - kafkaProducer.broker IP address of output kafka broker
      * - kafkaProducer.port number of port of output kafka broker
      * - kafkaProducer.topic name of output kafka topic
-     * - filter.srcIp ip address for chosen ip
+     * - filter.srcIp ip address for chosen IP
      */
     @Override
     public void prepare(Map stormConf, TopologyContext context, OutputCollector collector) {

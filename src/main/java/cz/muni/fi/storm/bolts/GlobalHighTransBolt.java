@@ -13,6 +13,7 @@ import cz.muni.fi.storm.tools.pojo.IpCount;
 import cz.muni.fi.storm.tools.writers.KafkaProducer;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 public class GlobalHighTransBolt extends BaseRichBolt {
@@ -48,7 +49,8 @@ public class GlobalHighTransBolt extends BaseRichBolt {
         if (TupleUtils.isEndOfWindow(tuple)) {
             actualSenders++;
             if (actualSenders == totalSenders) {
-                String output = new String();
+                List<IpCount> output = new ArrayList<IpCount>();
+                
                 int rank = 0;
                 for (Map.Entry<String, Integer> entry :
                         BigDataUtil.sortMap(byteTotalCounter).entrySet()) {
@@ -72,15 +74,15 @@ public class GlobalHighTransBolt extends BaseRichBolt {
                         dstIpCount.setKilobytes(subEntry.getValue());
                         ipCount.getDestinations().add(dstIpCount);
                     }
-                    
-                    try {
-                        String ipCountJson = mapper.writeValueAsString(ipCount);
-                        output += ipCountJson;
-                    } catch (JsonProcessingException e) {
-                        throw new RuntimeException("Can not create JSON from IpCount", e);
-                    }
+                    output.add(ipCount);
                 }
-                kafkaProducer.send(output);
+                
+                try {
+                    kafkaProducer.send(mapper.writeValueAsString(output));
+                } catch (JsonProcessingException e) {
+                    throw new RuntimeException("Can not create JSON", e);
+                }
+                
                 actualSenders = 0;
                 byteTotalCounter.clear();
                 bytePartialCounter.clear();

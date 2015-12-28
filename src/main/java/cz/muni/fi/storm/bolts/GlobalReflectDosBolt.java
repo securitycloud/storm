@@ -73,7 +73,7 @@ public class GlobalReflectDosBolt extends BaseRichBolt {
                 try {
                     kafkaProducer.send(mapper.writeValueAsString(output));
                 } catch (JsonProcessingException e) {
-                    throw new RuntimeException("Can not create JSON from IpCount", e);
+                    throw new RuntimeException("Can not create JSON", e);
                 }
                 
                 actualSenders = 0;

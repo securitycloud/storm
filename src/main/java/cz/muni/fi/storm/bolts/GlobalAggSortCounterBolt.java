@@ -11,13 +11,15 @@ import cz.muni.fi.storm.tools.BigDataUtil;
 import cz.muni.fi.storm.tools.TupleUtils;
 import cz.muni.fi.storm.tools.pojo.IpCount;
 import cz.muni.fi.storm.tools.writers.KafkaProducer;
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 /**
  * This global bolt counts final count aggregated per IP sorted top n
- * from local bolts and sends result to kafka.
- * Output kafka topic is extracted from configuration of storm.
+ * from local bolts and sends result to Kafka.
+ * Output Kafka topic is extracted from configuration of storm.
  */
 public class GlobalAggSortCounterBolt extends BaseRichBolt {
 
@@ -32,7 +34,7 @@ public class GlobalAggSortCounterBolt extends BaseRichBolt {
     /**
      * Constructor for new instance of global counter.
      * 
-     * @param totalSenders number of local bolts which send count aggregated per ip
+     * @param totalSenders number of local bolts which send count aggregated per IP
      * @param topNPostfix postfix of parameter for top n from storm configuration
      */
     public GlobalAggSortCounterBolt(int totalSenders, String topNPostfix) {
@@ -42,10 +44,10 @@ public class GlobalAggSortCounterBolt extends BaseRichBolt {
 
     /*
      * Requires parameters from storm configuration:
-     * - kafkaProducer.broker ip address of output kafka broker
+     * - kafkaProducer.broker IP address of output kafka broker
      * - kafkaProducer.port number of port of output kafka broker
      * - kafkaProducer.topic name of output kafka topic
-     * - sortPackets.topN.* first top n sorted count per ip
+     * - sortPackets.topN.* first top n sorted count per IP
      */
     @Override
     public void prepare(Map stormConf, TopologyContext context, OutputCollector collector) {
@@ -63,7 +65,8 @@ public class GlobalAggSortCounterBolt extends BaseRichBolt {
         if (TupleUtils.isEndOfWindow(tuple)) {
             actualSenders++ ;
             if (actualSenders == totalSenders) {
-                String output = new String();
+                List<IpCount> output = new ArrayList<IpCount>();
+                
                 int rank = 0;
                 for (Map.Entry<String, Integer> entry : BigDataUtil.sortMap(counter).entrySet()) {
                     rank++;
@@ -71,17 +74,19 @@ public class GlobalAggSortCounterBolt extends BaseRichBolt {
                     ipCount.setRank(rank);
                     ipCount.setSrcIp(entry.getKey());
                     ipCount.setCount(entry.getValue());
-                    try {
-                        String ipCountJson = mapper.writeValueAsString(ipCount);
-                        output += ipCountJson;
-                    } catch (JsonProcessingException e) {
-                        throw new RuntimeException("Can not create JSON from IpCount", e);
-                    }
+                    output.add(ipCount);
+                    
                     if (rank == topN) {
                         break;
                     }
                 }
-                kafkaProducer.send(output);
+                
+                try {
+                    kafkaProducer.send(mapper.writeValueAsString(output));
+                } catch (JsonProcessingException e) {
+                    throw new RuntimeException("Can not create JSON", e);
+                }
+                
             }
 
         } else {
