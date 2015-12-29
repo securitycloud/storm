@@ -16,6 +16,11 @@ import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 
+/**
+ * This bolt reads every flow, filters exclude servers and
+ * saves transfered KBs for each source IP.
+ * Finally (in time window) emits batch of data to global bolt.
+ */
 public class LocalHighTransBolt extends BaseRichBolt {
     
     private OutputCollector collector;
@@ -28,6 +33,13 @@ public class LocalHighTransBolt extends BaseRichBolt {
     private Set<String> excludeServers;
     private Set<String> legalServers;
 
+    /*
+     * Requires parameters from storm configuration:
+     * - highTrans.noEmitSmallerThen final filter small transfers
+     * - highTrans.timeWindowInSec batch in time window
+     * - highTrans.excludeServers filtered source IPs
+     * - highTrans.legalServers filtered destination IPs
+     */
     @Override
     public void prepare(Map stormConf, TopologyContext context, OutputCollector collector) {
         this.collector = collector;

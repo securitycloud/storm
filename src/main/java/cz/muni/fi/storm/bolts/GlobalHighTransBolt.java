@@ -16,6 +16,11 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+/**
+ * This global bolt detects high transfer KB by defined threshold.
+ * When receives all signals end of time window from local bolts,
+ * sent found anomaly to output Kafka topic.
+ */
 public class GlobalHighTransBolt extends BaseRichBolt {
 
     private ObjectMapper mapper;
@@ -24,13 +29,21 @@ public class GlobalHighTransBolt extends BaseRichBolt {
     private final int totalSenders;
     private int actualSenders = 0;
     private KafkaProducer kafkaProducer;
-    private int transferTrashold;
+    private int transferThreshold;
     private int targetPercentile;
 
     public GlobalHighTransBolt(int totalSenders) {
         this.totalSenders = totalSenders;
     }
 
+    /*
+     * Requires parameters from storm configuration:
+     * - kafkaProducer.broker IP address of output kafka broker
+     * - kafkaProducer.port number of port of output kafka broker
+     * - kafkaProducer.topic name of output kafka topic
+     * - highTrans.transferThreshold threshold of sum KB tranfer for source IP
+     * - highTrans.targetPercentile detected only higher destinations
+     */
     @Override
     public void prepare(Map stormConf, TopologyContext context, OutputCollector collector) {
         String broker = (String) stormConf.get("kafkaProducer.broker");
@@ -40,7 +53,7 @@ public class GlobalHighTransBolt extends BaseRichBolt {
         this.mapper = new ObjectMapper();
         this.byteTotalCounter = new HashMap<String, Integer>();
         this.bytePartialCounter = new HashMap<String, Map<String, Integer>>();
-        this.transferTrashold = new Integer(stormConf.get("highTrans.transferTrashold").toString());
+        this.transferThreshold = new Integer(stormConf.get("highTrans.transferThreshold").toString());
         this.targetPercentile = new Integer(stormConf.get("highTrans.targetPercentile").toString());
     }
 
@@ -54,7 +67,7 @@ public class GlobalHighTransBolt extends BaseRichBolt {
                 int rank = 0;
                 for (Map.Entry<String, Integer> entry :
                         BigDataUtil.sortMap(byteTotalCounter).entrySet()) {
-                    if (entry.getValue() <= transferTrashold) {
+                    if (entry.getValue() <= transferThreshold) {
                         break;
                     }
                     rank++;

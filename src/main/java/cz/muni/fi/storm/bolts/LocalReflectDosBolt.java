@@ -15,6 +15,12 @@ import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
 
+/**
+ * This bolt reads every flow, filters and saves count
+ * of sent and received packets to/from defined servers
+ * (services of NTP and DNS).
+ * Finally (in time window) emits batch of data to global bolt.
+ */
 public class LocalReflectDosBolt extends BaseRichBolt {
     
     private OutputCollector collector;
@@ -23,6 +29,12 @@ public class LocalReflectDosBolt extends BaseRichBolt {
     private int timeWindowInSec;
     private int actualTimeInSec;
 
+    /*
+     * Requires parameters from storm configuration:
+     * - reflectDos.timeWindowInSec batch in time window
+     * - reflectDos.DNSServers monitored DNS servers
+     * - reflectDos.NTPServers monitored NTP servers
+     */
     @Override
     public void prepare(Map stormConf, TopologyContext context, OutputCollector collector) {
         this.collector = collector;

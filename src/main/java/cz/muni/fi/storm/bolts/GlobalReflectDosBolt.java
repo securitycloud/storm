@@ -16,6 +16,12 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+/**
+ * This global bolt detects reflect DoS by defined minimal requests,
+ * replies and ratio between them.
+ * When receives all signals end of time window from local bolts,
+ * sent found anomaly to output Kafka topic.
+ */
 public class GlobalReflectDosBolt extends BaseRichBolt {
 
     private ObjectMapper mapper;
@@ -31,6 +37,15 @@ public class GlobalReflectDosBolt extends BaseRichBolt {
         this.totalSenders = totalSenders;
     }
 
+    /*
+     * Requires parameters from storm configuration:
+     * - kafkaProducer.broker IP address of output kafka broker
+     * - kafkaProducer.port number of port of output kafka broker
+     * - kafkaProducer.topic name of output kafka topic
+     * - reflectDos.minimalReplies minimal replies for detection of anomaly
+     * - reflectDos.minimalRequests minimal requests for detection of anomaly
+     * - reflectDos.thresholdChanges ratio of requests and replies for detection of anomaly
+     */
     @Override
     public void prepare(Map stormConf, TopologyContext context, OutputCollector collector) {
         String broker = (String) stormConf.get("kafkaProducer.broker");

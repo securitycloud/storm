@@ -13,8 +13,21 @@ import cz.muni.fi.storm.spouts.KafkaSpout;
 import cz.muni.fi.storm.tools.TopologyUtil;
 import cz.muni.fi.storm.tools.TupleUtils;
 
+/**
+ * Tests detection of Reflect DoS.
+ * Reads flows from Kafka, in batch (in time window) detects reflect DoS on defined services.
+ * Detected anomaly are emitted to output Kafka topic.
+ */
 public class TopologyReflectDos {
 
+    /**
+     * Submits topology for this test.
+     * Runs on defined number of computers and multiples by defined number of parallelism.
+     * There is 1 base stream, that network flows are flowed.
+     * There is second stream, that tag end of window are flowed.
+     * 
+     * @param args number of computers and number of parallelism.
+     */
     public static void main(String[] args) {
         if (args.length < 2) {
             throw new IllegalArgumentException("Missing argument: computers parallelism");

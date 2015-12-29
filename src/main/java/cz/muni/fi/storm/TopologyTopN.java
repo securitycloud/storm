@@ -14,17 +14,17 @@ import cz.muni.fi.storm.tools.TopologyUtil;
 import cz.muni.fi.storm.tools.TupleUtils;
 
 /**
- * Tests top n aggregation of ips.
- * Reads flows from kafka, counts their packets for each ip. When done all flows in input
- * kafka topic, then send top n sorted number of packets for ip to output kafka topic.
+ * Tests top n aggregation of IPs.
+ * Reads flows from Kafka, counts their packets for each IP. When done all flows in input
+ * Kafka topic, then send top n sorted number of packets for IP to output Kafka topic.
  */
 public class TopologyTopN {
 
     /**
      * Submits topology for this test.
      * Runs on defined number of computers and multiples by defined number of parallelism.
-     * It is 1 base stream, which network flows are flowed.
-     * It is second stream, which tag end of window are flowed.
+     * It is 1 base stream, that network flows are flowed.
+     * It is second stream, that tag end of window are flowed.
      * 
      * @param args number of computers and number of parallelism.
      */

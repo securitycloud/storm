@@ -13,8 +13,23 @@ import cz.muni.fi.storm.spouts.KafkaSpout;
 import cz.muni.fi.storm.tools.TopologyUtil;
 import cz.muni.fi.storm.tools.TupleUtils;
 
+/**
+ * Tests detection of high transfer.
+ * Reads flows from Kafka, in batch (in time window) detects high transfer from source IPs.
+ * Detected anomaly are emitted to output Kafka topic.
+ */
 public class TopologyHighTrans {
 
+    /**
+     * Submits topology for this test.
+     * Runs on defined number of computers and multiples by defined number of parallelism.
+     * There are 2 base streams:
+     * - "total" where sum KB for source IP are flowed,
+     * - "partial" where sum KB for destination IP are flowed, too.
+     * There is stream, that tag end of window are flowed.
+     * 
+     * @param args number of computers and number of parallelism.
+     */
     public static void main(String[] args) {
         if (args.length < 2) {
             throw new IllegalArgumentException("Missing argument: computers parallelism");
